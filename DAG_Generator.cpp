@@ -26,7 +26,6 @@ bool Checkcyclic(int ed[][2], int edge, bool check[], int v) {  //to check for t
 }
 
 void GenerateRandomGraphs(int e) {
-	printf("!\n");
 	int i, j, ed[e][2], count;
 	bool c[11];
 	i = 0;
