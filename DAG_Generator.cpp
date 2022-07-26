@@ -7,29 +7,27 @@ bool Checkcyclic(int ed[][2], int edge, bool check[], int v) {  //to check for t
 	// If the current vertex is visited already, then the graph contains cycle.
 	if(check[v] == true) {
 		return false;
-	} else {
+	} 
+	else {
 		check[v] = true;
 		// For each vertex, go for all the vertex connected to it.
 		for(i = edge; i >= 0; i--) {
 			if(ed[i][0] == v) {
-				return Checkcyclic(ed, edge, check, ed[i][1]);
-				
+				return Checkcyclic(ed, edge, check, ed[i][1]);				
 			}
-			
 		}
-		
 	}
 	// In case, if the path ends then reassign the vertexes visited in that path to false again.
 	check[v] = false;
 	if(i == 0) return true;
-	else return false;
 }
 
 void GenerateRandomGraphs(int e) {
-	int i, j, ed[e][2], count;
+	int i, j, ed[e][2], count, p;
 	bool c[11];
 	i = 0;
 	while(i < e) {
+		printf("%d", i);
 		ed[i][0] = rand()%N+1;
 		ed[i][1] = rand()%N+1;
 		for(j = 1; j <= 10; j++)
