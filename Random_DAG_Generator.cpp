@@ -6,6 +6,7 @@
 using namespace std;
 
 int Decide_Input_run(int INPUT[], int n);
+int Decide_Output_run(int INPUT[], int n, int input);
 
 class DAG //러너블 개수 = n, 러너블 목록[n], 엣지목록[n][n-1], 입력러너블[], 출력러너블[]
 { 
@@ -13,26 +14,31 @@ private:
     /* data*/    
 public:
     int num;
-    int Input() {
-        cout << "Please Enter the number of Runnable Node(50 ~ 500) : ";
-        cin >> num;
-        int runnable[num] = {0};
+    int runnable[];
+    DAG();
+
+    void Input() {
         cout << "Runnable number : " << num << endl;
-        int edge[num][num-1] = {0, };
-        //int Input_run[num] = {0};
+        for (int i = 0; i <= num; i++) runnable[i] = 0;
         int Input_num = Decide_Input_run(runnable, num);
         int Output_num = Decide_Output_run(runnable, num, Input_num);
-        int Output_run[num] = {0}; 
-        
         for (int i = 0; i < num; i++) {
             printf("%d ", runnable[i]);
         }
-        
-        return num;
-    } 
+    }
+    //int edge[num][num-1] = {0, };
     //void GetEdge();
+    ~DAG();
 };
+DAG::DAG() {
+    cout << "Please Enter the number of Runnable Node(50 ~ 500) : ";
+    cin >> num;
+    int runnable[num] = {0};
+}
 
+DAG::~DAG() {
+    cout << endl << "end" << endl;
+}
 class Runnable //동작시간, 엣지
 {
 private:
@@ -45,17 +51,15 @@ public:
 };
 
 int Decide_Input_run(int INPUT[], int n) {
-    int Input_count = rand() % 5;
-    for (int i = 0; i <= Input_count; i++) INPUT[i] = i+1;
-
+    int Input_count = rand() % 4 + 2;
+    for (int i = 0; i <= Input_count; i++) INPUT[i] = 1;
     return Input_count;
 }
 
 int Decide_Output_run(int INPUT[], int n, int input) {
-    int output_count = rand() % 5;
-    for (int i = n; i >= Output_count; i++) INPUT[i] = i+1;
-
-    return Input_count;
+    int Output_count = rand() % 4 + 2;
+    for (int i = n; i >= n - Output_count; i--) INPUT[i] = 2;
+    return Output_count;
 }
 /*
 void Runnable_Generator() {
