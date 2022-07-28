@@ -21,12 +21,17 @@ public:
         //cout << "Please Enter the number of Runnable Node(50 ~ 500) : ";
         //cin >> num;
         int runnable[num] = {0};
+        cout << runnable;
         cout << "Runnable number : " << num << endl;
         for (int i = 0; i <= num; i++) runnable[i] = 0;
         int Input_num = Decide_Input_run(runnable, num);
         int Output_num = Decide_Output_run(runnable, num, Input_num);
-        for (int i = 0; i <= num; i++) cout << runnable[i] ;
+        //for (int i = 0; i <= num; i++) cout << runnable[i] ;
+        //display(runnable); 
         cout << endl;
+    }
+    void display(int runnable[]) {
+        for (int i = 0; i <= num; i++) cout << *runnable[i];
     }
     //int edge[num][num-1] = {0, };
     //void GetEdge();
@@ -38,19 +43,6 @@ DAG::DAG() {
 DAG::~DAG() {
     cout << "DAG END" << endl;
 }
-
-
-class Runnable //동작시간, 엣지
-{
-private:
-
-public:
-    int DAG_NUM;
-    int exe_time = rand() % 30;
-    //int execution_time = random 1~30; 
-    //int edge_run[];
-
-};
 
 int Decide_Input_run(int INPUT[], int n) {
     int Input_count = rand() % 4 + 2;
@@ -64,21 +56,6 @@ int Decide_Output_run(int INPUT[], int n, int input) {
     return Output_count;
 }
 /*
-void Runnable_Generator() {
-    int run_num = random 1~100;
-    Runnable run[run_num];
-
-}
-*/
-
-/*
-void DAG_Generator(DAG DAG1) {
-    Runnable_Generator();
-    Random_DAG_Generate();
-    return DAG1;
-}
-*/
-/*
 void Random_DAG_Generate(~~~,~~~,~~~) {
 
 }
@@ -89,6 +66,7 @@ int main() {
     DAG DAG1[ran];
     for (int i = 0; i < ran; i++) {
         DAG1[i].Input();
+        DAG1[i].display(DAG1[i].runnable);
     }
     //DAG_Generator();
 
