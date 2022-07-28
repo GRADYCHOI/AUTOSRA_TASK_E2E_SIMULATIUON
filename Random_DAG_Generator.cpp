@@ -13,38 +13,40 @@ class DAG //러너블 개수 = n, 러너블 목록[n], 엣지목록[n][n-1], 입
 private:
     /* data*/    
 public:
-    int num;
+    int num = rand() % 50 + 100;
     int runnable[];
     DAG();
 
     void Input() {
+        //cout << "Please Enter the number of Runnable Node(50 ~ 500) : ";
+        //cin >> num;
+        int runnable[num] = {0};
         cout << "Runnable number : " << num << endl;
         for (int i = 0; i <= num; i++) runnable[i] = 0;
         int Input_num = Decide_Input_run(runnable, num);
         int Output_num = Decide_Output_run(runnable, num, Input_num);
-        for (int i = 0; i < num; i++) {
-            printf("%d ", runnable[i]);
-        }
+        for (int i = 0; i <= num; i++) cout << runnable[i] ;
+        cout << endl;
     }
     //int edge[num][num-1] = {0, };
     //void GetEdge();
-    ~DAG();
+    ~DAG(); 
 };
 DAG::DAG() {
-    cout << "Please Enter the number of Runnable Node(50 ~ 500) : ";
-    cin >> num;
-    int runnable[num] = {0};
+    cout << "DAG START" << endl;
+}
+DAG::~DAG() {
+    cout << "DAG END" << endl;
 }
 
-DAG::~DAG() {
-    cout << endl << "end" << endl;
-}
+
 class Runnable //동작시간, 엣지
 {
 private:
-    int ID;
 
 public:
+    int DAG_NUM;
+    int exe_time = rand() % 30;
     //int execution_time = random 1~30; 
     //int edge_run[];
 
@@ -83,8 +85,11 @@ void Random_DAG_Generate(~~~,~~~,~~~) {
 */
 int main() {
     srand(time(NULL));
-    DAG DAG1;
-    DAG1.Input();
+    int ran = rand() % 10;
+    DAG DAG1[ran];
+    for (int i = 0; i < ran; i++) {
+        DAG1[i].Input();
+    }
     //DAG_Generator();
 
     return 0;
