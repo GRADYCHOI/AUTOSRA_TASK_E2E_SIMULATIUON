@@ -1,6 +1,6 @@
-#ifdef __DAG__HPP__
-
-#include <TASK.hpp>
+#include<iostream>
+#include "TASK.hpp"
+using namespace std;
 
 class DAG //러너블 개수 = n, 러너블 목록[n], 엣지목록[n][n-1], 입력러너블[], 출력러너블[]
 { 
@@ -16,7 +16,7 @@ public:
     double data_age;
     
 
-    vector<TASK> task;
+    vector<int> task;
 
     void set_hyper_period();
     void get_hyper_period();

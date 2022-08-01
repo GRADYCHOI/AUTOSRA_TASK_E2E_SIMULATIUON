@@ -1,6 +1,9 @@
-#include <vector>
+#include<iostream>
+#include<stdlib.h>
+#include<vector>
+using namespace std;
 
-class RUNNABLE //러너블 개수 = n, 러너블 목록[n], 엣지목록[n][n-1], 입력러너블[], 출력러너블[]
+class RUNNABLE 
 { 
 private:
     double execution_time;
@@ -10,10 +13,13 @@ private:
     vector<int> output_runnable;
 
 public:
+    int ID;
+    RUNNABLE();
     RUNNABLE(double time, int status);
 
-    int get_status();
+    void get_status();
     void set_precedence(int number);
+    void get_execution_time(double time);
 
     ~RUNNABLE();
 };
