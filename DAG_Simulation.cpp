@@ -20,9 +20,9 @@ int main(int argc, char **argv) {
 
 void set_release_table(DAG& dag, vector<vector<double>> *release_table) {
 
-    for (int task = 0; task < dag.hyperperiod; task++) {
-        int period = dag.runnable[task].period;
-        int offset = dag.runnable[task].offset;
+    for (int task_id = 0; task_id < (dag.hyperperiod / dag.task[task_id].period); task_id++) {
+        int period = dag.task[task_id].period;
+        int offset = dag.task[task_id].offset;
         vector<double> release_times;
 
         for (int cycle = 0; cycle < dag.runnable[task].cycle; cycle++) {
