@@ -1,8 +1,8 @@
 #include <RUNNABLE.hpp>
 
-RUNNABLE::RUNNABLE(double time, int status) {
-    this.execution_time = time;
-    this.status = status;
+RUNNABLE::RUNNABLE(double execution_time, int status) {
+    this->execution_time = execution_time;
+    this->status = status;
 }
 
 void RUNNABLE::set_precedence(int number) {

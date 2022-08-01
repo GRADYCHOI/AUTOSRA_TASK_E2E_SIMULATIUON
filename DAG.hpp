@@ -1,28 +1,39 @@
-#ifdef __DAG__HPP__
+#ifndef __DAG_HPP__
+
+#define __DAG_HPP__
 
 #include <TASK.hpp>
+#include <algorithm>
+#include <vector>
 
-class DAG //러너블 개수 = n, 러너블 목록[n], 엣지목록[n][n-1], 입력러너블[], 출력러너블[]
+class DAG
 { 
 private:
-    int num_task;
-    int num_runnable;
-    double hyper_period;
+    int numOfTasks = -1;
+    int numOfRunnables = -1;
+    double hyperPeriod = -1.0;
+
+    double reactionTime = -1.0;
+    double dataAge = -1.0;
+    
+    vector<TASK> task;
+ 
+    void SetParameters();
+    void SetNumberOfTasks();
+    void SetNumberOfRunnables();
+    void SetHyperPeriod();
 
 public:
     DAG();
-
-    double reaction_time;
-    double data_age;
-    
-
-    vector<TASK> task;
-
-    void set_hyper_period();
-    void get_hyper_period();
-    void get_num_task();
-    void get_num_runnable();
-
     ~DAG();
 
+    int GetNumberOfTasks();
+    int GetNumberOfRunnables();
+    double GetHyperPeriod();
+    double GetReactionTime();
+    double GetDataAge();
+
+    void AddTask(Task task);
 };
+
+#endif
