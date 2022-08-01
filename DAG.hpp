@@ -34,6 +34,8 @@ public:
     double GetDataAge();
 
     void AddTask(Task task);
+
+    void Simulate();
 };
 
 #endif
