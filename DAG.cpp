@@ -30,9 +30,9 @@ void DAG::SetHyperPeriod() {
     double tmpPeriod = 0.0;
 
     for(int count = 0; count < this->numOfTasks; count++) {
-        if (tmpPeriod < this->task[count].GetPeriod()) {
-            this->hyperPeriod = lcm(this->hyperPeriod, this->task[count].GetPeriod());
-            tmpPeriod = this->task[count].GetPeriod();
+        if (tmpPeriod < this->task[count]->GetPeriod()) {
+            this->hyperPeriod = lcm(this->hyperPeriod, this->task[count]->GetPeriod());
+            tmpPeriod = this->task[count]->GetPeriod();
         }
     }
 }
@@ -45,7 +45,7 @@ void DAG::SetNumberOfRunnables() {
     this->numOfRunnables = 0;
 
     for (int count = 0; count < this->numOfTasks; count++) {
-        this->numOfRunnables += this->task[count].GetNumRunnable();
+        this->numOfRunnables += this->task[count]->GetNumberOfRunnables();
     }
 }
 
