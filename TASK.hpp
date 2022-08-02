@@ -1,29 +1,33 @@
-#include<iostream>
+#include <iostream>
 #include "RUNNABLE.hpp"
 
-using namespace std;
-class TASK 
-{ 
+
+class TASK
+{
 private:
     double period;
     double offset;
-    double execution_time;
-    int numOfRunnables;
+    double executionTime;
+
+    int numberOfRunnables;
     int priority;
 
+    std::vector<std::shared_ptr<RUNNABLE>> runnables;
+
+    void SetExecutionTime();
+    void SetNumberOfRunnables();
+
 public:
-    TASK();
+    TASK(int id, double period, double offset);
     ~TASK();
-    
-    vector<int> runnable;
 
-    int GetNumRunnable() {
-        return this->numOfRunnables;
-    };
-    double GetPeriod() {
-        return this->period;
-    };
-    void set_execution_time();
+    void SetPriority(int priority);
 
+    double GetPeriod();
+    double GetOffset();
+    double GetExecutionTime();
+    int GetNumberOfRunnables();
+    int GetPriority();
 
+    void AddRunnable(const std::shared_ptr<RUNNABLE>& runnable);
 };
