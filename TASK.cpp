@@ -53,7 +53,7 @@ void TASK::AddRunnable(const std::shared_ptr<RUNNABLE>& runnable) {
     bool searchFlag = false;
     
     for (int count = 0; 0 < this->runnables.size(); count++) {
-        if (this->runnables[count]->id == runnable->id) {
+        if (this->runnables[count]->GetId() == runnable->GetId()) {
             searchFlag = true;
             break;
         }
