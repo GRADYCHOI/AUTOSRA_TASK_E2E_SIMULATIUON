@@ -59,7 +59,7 @@ void TASK::AddRunnable(const std::shared_ptr<RUNNABLE>& runnable) {
         }
     }
 
-    if !(searchFlag) {
+    if (!searchFlag) {
         this->runnables.push_back(runnable);
 
         this->SetNumberOfRunnables();
