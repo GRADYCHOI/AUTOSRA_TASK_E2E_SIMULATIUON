@@ -8,7 +8,7 @@ private:
     double period;
     double offset;
     double execution_time;
-    int num_runnable;
+    int numOfRunnables;
     int priority;
 
 public:
@@ -16,7 +16,12 @@ public:
     
     vector<int> runnable;
 
-    int get_num_runnable();
+    int GetNumRunnable() {
+        return this->numOfRunnables;
+    };
+    double GetPeriod() {
+        return this->period;
+    };
     void set_execution_time();
 
     ~TASK();

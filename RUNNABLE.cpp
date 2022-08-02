@@ -1,9 +1,13 @@
 #include "RUNNABLE.hpp"
 
 
-RUNNABLE::RUNNABLE(double execution_time, int status) {
+RUNNABLE::RUNNABLE() {
+    this->id = 0;
+}
+
+RUNNABLE::RUNNABLE(int id, double execution_time) {
     this->execution_time = execution_time;
-    this->status = status;
+    this->id = id;
 }
 
 RUNNABLE::~RUNNABLE() {

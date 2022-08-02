@@ -13,32 +13,32 @@ void DAG::SetParameters() {
 void DAG::SetHyperPeriod() {
     double tmpPeriod = 0.0;
 
-    for(int count = 0; count < this->numberOfTasks; count++) {
-        if (tmpPeriod < this->task[count].period) {
-            this->hyperPeriod = std::lcm(this->hyperPeriod, this->task[count].period);
-            tmpPeriod = this->task[count].period;
+    for(int count = 0; count < this->numOfTasks; count++) {
+        if (tmpPeriod < this->task[count].GetPeriod()) {
+            this->hyperPeriod = std::lcm(this->hyperPeriod, this->task[count].GetPeriod());
+            tmpPeriod = this->task[count].GetPeriod();
         }
     }
 }
 
 void DAG::SetNumberOfTasks() {
-    this->numberOfTasks = this->task.size();
+    this->numOfTasks = this->task.size();
 }
 
 void DAG::SetNumberOfRunnables() {
-    this->numberOfRunnabels = 0;
+    this->numOfRunnables = 0;
 
-    for (int count = 0; count < this->numberOfTasks; count++) {
-        this->numberOfRunnables += this->task[count].numberOfRunnables;
+    for (int count = 0; count < this->numOfTasks; count++) {
+        this->numOfRunnables += this->task[count].GetNumRunnable();
     }
 }
 
 int DAG::GetNumberOfTasks() {
-    return this->numberOfTasks;
+    return this->numOfTasks;
 }
 
 int DAG::GetNumberOfRunnables() {
-    return this->numberOfRunnables;
+    return this->numOfRunnables;
 }
 
 double DAG::GetHyperPeriod() {
@@ -49,7 +49,7 @@ double DAG::GetReactionTime() {
     return this->reactionTime;
 }
 
-couble DAG::GetDataAge() {
+double DAG::GetDataAge() {
     return this->dataAge;
 }
 

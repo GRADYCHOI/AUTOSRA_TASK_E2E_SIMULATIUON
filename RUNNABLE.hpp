@@ -15,6 +15,7 @@ private:
     std::vector<std::shared_ptr<RUNNABLE>> outputRunnables;
 
 public:
+    RUNNABLE();
     RUNNABLE(int id, double time);
     ~RUNNABLE();
 

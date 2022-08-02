@@ -5,8 +5,8 @@
 #include<cstdlib>
 #include<ctime>
 #include<vector>
-//#include"DAG.hpp"
-#include"RUNNABLE.hpp"
+#include"DAG.hpp"
+//#include"RUNNABLE.hpp"
 using namespace std;
 
 int main() {
@@ -20,10 +20,8 @@ int main() {
     RUNNABLE runnable[num];
     srand(time(NULL));
     for (int i = 0; i <= num; i++) {
-        runnable[i].ID = i;
-        //double exe = 0.1;
+        //runnable[i].id = i;
         double exe = (double)(rand() % 100) / 100;
-        runnable[i].get_execution_time(exe);
     }
     
 
