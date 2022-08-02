@@ -49,7 +49,8 @@ void RUNNABLE::LinkInputRunnable(const std::weak_ptr<RUNNABLE>& inputRunnable) {
 
     if (tmpRunnable) {
         for (int count = 0; 0 < this->inputRunnables.size(); count++) {
-            if (this->inputRunnables[count].id == tmpRunnable->id) {
+            std::shared_ptr<RUNNABLE> tmpRunnable2 = this->inputRunnables[count].lock();
+            if (tmpRunnable2->GetId() == tmpRunnable->GetId()) {
                 searchFlag = true;
                 break;
             }
@@ -68,7 +69,7 @@ void RUNNABLE::LinkOutputRunnable(const std::shared_ptr<RUNNABLE>& outputRunnabl
     bool searchFlag = false;
     
     for (int count = 0; 0 < this->outputRunnables.size(); count++) {
-        if (this->outputRunnables[count].id == outputRunnable->id) {
+        if (this->outputRunnables[count]->GetId() == outputRunnable->GetId()) {
             searchFlag = true;
             break;
         }
@@ -86,7 +87,7 @@ void RUNNABLE::LinkOutputRunnable(const std::shared_ptr<RUNNABLE>& outputRunnabl
 void RUNNABLE::SetPrecedence() {
     
 }
-/*
-std::shared_ptr<RUNNABLE> GetSharedPtr() {
+
+std::shared_ptr<RUNNABLE> RUNNABLE::GetSharedPtr() {
     return shared_from_this();
-}*/
+}
