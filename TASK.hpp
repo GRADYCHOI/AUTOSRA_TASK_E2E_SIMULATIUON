@@ -2,7 +2,7 @@
 #include "RUNNABLE.hpp"
 
 using namespace std;
-class TASK //러너블 개수 = n, 러너블 목록[n], 엣지목록[n][n-1], 입력러너블[], 출력러너블[]
+class TASK 
 { 
 private:
     double period;
@@ -13,6 +13,7 @@ private:
 
 public:
     TASK();
+    ~TASK();
     
     vector<int> runnable;
 
@@ -24,6 +25,5 @@ public:
     };
     void set_execution_time();
 
-    ~TASK();
 
 };

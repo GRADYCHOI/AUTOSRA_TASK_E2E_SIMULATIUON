@@ -22,6 +22,8 @@ public:
     double GetExecutionTime();
     int GetPrecedence();
     int GetStatus();
+    void AddInputRunnable(const std::shared_ptr<RUNNABLE> &inputRunnable);
+    void AddOutputRunnable(const std::shared_ptr<RUNNABLE> &outputRunnable);
 
     void SetPrecedence();
 };

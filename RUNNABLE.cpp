@@ -1,18 +1,20 @@
 #include "RUNNABLE.hpp"
+#include<iostream>
 
+using namespace std;
 
 RUNNABLE::RUNNABLE() {
     this->id = 0;
 }
 
 RUNNABLE::RUNNABLE(int id, double execution_time) {
-    this->execution_time = execution_time;
+    this->executionTime = execution_time;
     this->id = id;
 }
 
 RUNNABLE::~RUNNABLE() {
-    cout << execution_time << endl;
-    cout << ID << endl;
+    cout << this->executionTime << endl;
+    cout << id << endl;
 }
 
 double RUNNABLE::GetExecutionTime() {

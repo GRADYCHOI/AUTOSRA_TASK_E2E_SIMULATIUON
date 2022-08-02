@@ -33,7 +33,7 @@ public:
     double GetReactionTime();
     double GetDataAge();
 
-    void AddTask(Task task);
+    //void AddTask(Task task);
 
     void Simulate();
 };

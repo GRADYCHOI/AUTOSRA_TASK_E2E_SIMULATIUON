@@ -1,4 +1,20 @@
 #include "DAG.hpp"
+#include<iostream>
+
+using namespace std;
+
+int lcm(int a,int b) {
+    int i,j;
+    int temp; //공배수를 저장할 변수
+    j = (a>b)?a:b; //둘중 큰수를 구함
+    for(i=j;;i++) {
+        if(i%a==0 && i%b==0){
+            temp = i;
+            break;
+        }
+    }
+    return temp;
+}
 
 DAG::DAG() {}
 
@@ -15,7 +31,7 @@ void DAG::SetHyperPeriod() {
 
     for(int count = 0; count < this->numOfTasks; count++) {
         if (tmpPeriod < this->task[count].GetPeriod()) {
-            this->hyperPeriod = std::lcm(this->hyperPeriod, this->task[count].GetPeriod());
+            this->hyperPeriod = lcm(this->hyperPeriod, this->task[count].GetPeriod());
             tmpPeriod = this->task[count].GetPeriod();
         }
     }
@@ -52,12 +68,12 @@ double DAG::GetReactionTime() {
 double DAG::GetDataAge() {
     return this->dataAge;
 }
-
+/*
 void DAG::AddTask(Task& task) {
     this->task.push_back(task);
 
     this->SetParamters();
-}
+}*/
 
 void DAG::Simulate() {
 
