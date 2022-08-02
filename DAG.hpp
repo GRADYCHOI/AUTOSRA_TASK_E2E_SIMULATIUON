@@ -16,7 +16,9 @@ private:
     double reactionTime = -1.0;
     double dataAge = -1.0;
     
-    vector<TASK> task;
+    //std::vector<TASK> task;
+    std::vector<std::shared_ptr<TASK>> task;
+    std::vector<std::shared_ptr<RUNNABLE>> runnables;
  
     void SetParameters();
     void SetNumberOfTasks();
@@ -32,6 +34,7 @@ public:
     double GetHyperPeriod();
     double GetReactionTime();
     double GetDataAge();
+    void AddRunnables();
 
     //void AddTask(Task task);
 
