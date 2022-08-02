@@ -27,8 +27,8 @@ public:
     double GetExecutionTime();
     int GetPrecedence();
     int GetStatus();
-    void AddInputRunnable(const std::shared_ptr<RUNNABLE> &inputRunnable);
-    void AddOutputRunnable(const std::shared_ptr<RUNNABLE> &outputRunnable);
+    //void AddInputRunnable(const std::shared_ptr<RUNNABLE> &inputRunnable);
+    //void AddOutputRunnable(const std::shared_ptr<RUNNABLE> &outputRunnable);
 
     void LinkInputRunnable(const std::weak_ptr<RUNNABLE>& inputRunnable);
     void LinkOutputRunnable(const std::shared_ptr<RUNNABLE>& outputRunnable);

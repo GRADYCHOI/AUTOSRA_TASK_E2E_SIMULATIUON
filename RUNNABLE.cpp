@@ -16,7 +16,7 @@ void RUNNABLE::SetStatus() {
     this->status = -1;
 
     if (this->inputRunnables.size()) this->status += 1;
-    if (this->outputRunnbales.size()) this->status += 2;
+    if (this->outputRunnables.size()) this->status += 2;
 }
 
 void RUNNABLE::AddInputRunnable(const std::weak_ptr<RUNNABLE>& inputRunnable) {
