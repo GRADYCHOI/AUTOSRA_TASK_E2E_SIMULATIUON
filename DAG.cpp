@@ -1,4 +1,4 @@
-#include <DAG.hpp>
+#include "DAG.hpp"
 
 DAG::DAG() {}
 
@@ -60,5 +60,5 @@ void DAG::AddTask(Task& task) {
 }
 
 void DAG::Simulate() {
-    
+
 }

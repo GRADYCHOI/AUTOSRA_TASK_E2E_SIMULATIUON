@@ -1,25 +1,26 @@
-#include<iostream>
-#include<stdlib.h>
-#include<vector>
-using namespace std;
+#include <iostream>
+#include <stdlib.h>
+#include <vector>
+#include <memory>
+
 
 class RUNNABLE 
 { 
 private:
-    double execution_time;
+    int id;
+    double executionTime = -1;
     int precedence = -1;
     int status = -1; // 0 = input runnable, 1 = middle runnable, 2 = output runnable
-    vector<int> input_runnable;
-    vector<int> output_runnable;
+    std::vector<std::shared_ptr<RUNNABLE>> inputRunnables;
+    std::vector<std::shared_ptr<RUNNABLE>> outputRunnables;
 
 public:
-    int ID;
-    RUNNABLE();
-    RUNNABLE(double time, int status);
-
-    void get_status();
-    void set_precedence(int number);
-    void get_execution_time(double time);
-
+    RUNNABLE(int id, double time);
     ~RUNNABLE();
+
+    double GetExecutionTime();
+    int GetPrecedence();
+    int GetStatus();
+
+    void SetPrecedence();
 };
