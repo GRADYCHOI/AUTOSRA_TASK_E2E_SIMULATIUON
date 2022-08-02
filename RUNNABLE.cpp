@@ -27,6 +27,10 @@ void RUNNABLE::AddOutputRunnable(const std::shared_ptr<RUNNABLE>& outputRunnable
     this->outputRunnables.push_back(outputRunnable);
 }
 
+int RUNNABLE::GetId() {
+    return this->id;
+}
+
 double RUNNABLE::GetExecutionTime() {
     return this->executionTime;
 }
@@ -51,7 +55,7 @@ void RUNNABLE::LinkInputRunnable(const std::weak_ptr<RUNNABLE>& inputRunnable) {
             }
         }
 
-        if !(searchFlag) {
+        if (!searchFlag) {
             this->AddInputRunnable(inputRunnable);
             tmpRunnable->AddOutputRunnable(this->GetSharedPtr());
         }
@@ -70,7 +74,7 @@ void RUNNABLE::LinkOutputRunnable(const std::shared_ptr<RUNNABLE>& outputRunnabl
         }
     }
 
-    if !(searchFlag) {
+    if (!searchFlag) {
         this->AddOutputRunnable(outputRunnable);
         outputRunnable->AddInputRunnable(this->GetSharedPtr());
     }
@@ -82,7 +86,7 @@ void RUNNABLE::LinkOutputRunnable(const std::shared_ptr<RUNNABLE>& outputRunnabl
 void RUNNABLE::SetPrecedence() {
     
 }
-
+/*
 std::shared_ptr<RUNNABLE> GetSharedPtr() {
     return shared_from_this();
-}
+}*/

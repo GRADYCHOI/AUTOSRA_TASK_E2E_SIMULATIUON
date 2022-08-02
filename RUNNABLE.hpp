@@ -24,6 +24,7 @@ public:
     RUNNABLE(int id, double time);
     ~RUNNABLE();
 
+    int GetId();
     double GetExecutionTime();
     int GetPrecedence();
     int GetStatus();
