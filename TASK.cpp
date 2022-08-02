@@ -11,8 +11,14 @@ TASK::~TASK() {
     std::cout << "Delete TASK ID : " << this->id << std::endl;
 }
 
-void TASK::SetExecutionTime(double executionTime) {
-    this->executionTime = executionTime;
+void TASK::SetExecutionTime() {
+    double tmpExecutionTime = 0;
+
+    for (int count = 0; 0 < this->runnables.size(); count++) {
+        tmpExecutionTime += runnable[count]->GetExecutionTime();
+    }
+
+    this->executionTime = tmpExecutionTime;
 }
 
 void TASK::SetNumberOfRunnables() {
@@ -20,25 +26,43 @@ void TASK::SetNumberOfRunnables() {
 }
 
 void TASK::SetPriority(int priority) {
-
+    this->priority = priority;
 }
 
 double TASK::GetPeriod() {
-
+    return this->period;
 }
 
 double TASK::GetOffset() {
-
+    return this->offset;
 }
 
 double TASK::GetExecutionTime() {
-
+    return this->executionTime;
 }
 
 int TASK::GetNumberOfRunnables() {
-
+    return this->numberOfRunnables;
 }
 
 int TASK::GetPriority() {
+    return this->priority;
+}
 
+void TASK::AddRunnable(const std::shared_ptr<RUNNABLE>& runnable) {
+    bool searchFlag = false;
+    
+    for (int count = 0; 0 < this->runnables.size(); count++) {
+        if (this->outputRunnables[count].id == runnable->id) {
+            searchFlag = true;
+            break;
+        }
+    }
+
+    if !(searchFlag) {
+        this->runnables.push_back(runnable);
+
+        this->SetNumberOfRunnables();
+        this->SetExecutionTime();
+    }
 }
