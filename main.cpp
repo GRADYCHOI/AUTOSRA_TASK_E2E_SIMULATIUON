@@ -6,7 +6,6 @@
 #include<ctime>
 #include<vector>
 #include"DAG.hpp"
-//#include"RUNNABLE.hpp"
 using namespace std;
 
 int main() {
@@ -15,14 +14,16 @@ int main() {
     int num;
     num = rand() % 50 + 50;
     cout << "Number of Runnable : " << num << endl;
+    DAG dag;
+    dag.GenerateRunnables(num);
     //cin >> num;
-    
+    /* 
     RUNNABLE runnable[num];
     srand(time(NULL));
     for (int i = 0; i <= num; i++) {
         //runnable[i].id = i;
         double exe = (double)(rand() % 100) / 100;
-    }
+    }*/
     
 
     return 0;

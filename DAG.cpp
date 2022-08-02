@@ -49,6 +49,12 @@ void DAG::SetNumberOfRunnables() {
     }
 }
 
+void DAG::GenerateRunnables(int num) {
+    for (int i = 1; i <= num; i++) {
+        RUNNABLE runnable(i, (double)(rand() % 100) / 100);
+    }
+
+}
 int DAG::GetNumberOfTasks() {
     return this->numOfTasks;
 }

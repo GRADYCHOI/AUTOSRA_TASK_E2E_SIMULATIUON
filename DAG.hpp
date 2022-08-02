@@ -16,7 +16,6 @@ private:
     double reactionTime = -1.0;
     double dataAge = -1.0;
     
-    //std::vector<TASK> task;
     std::vector<std::shared_ptr<TASK>> task;
     std::vector<std::shared_ptr<RUNNABLE>> runnables;
  
@@ -28,13 +27,14 @@ private:
 public:
     DAG();
     ~DAG();
-
+    void GenerateRunnables(int num);
     int GetNumberOfTasks();
     int GetNumberOfRunnables();
     double GetHyperPeriod();
     double GetReactionTime();
     double GetDataAge();
     void AddRunnables();
+    void AddTask();
 
     //void AddTask(Task task);
 
