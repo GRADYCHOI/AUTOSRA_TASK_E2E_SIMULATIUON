@@ -49,12 +49,24 @@ void DAG::SetNumberOfRunnables() {
     }
 }
 
+void DAG::AddRunnablePtr(const std::shared_ptr<RUNNABLE>& runnable) {
+    this->runnables.push_back(runnable);
+}
+
 void DAG::GenerateRunnables(int num) {
     for (int i = 1; i <= num; i++) {
-        RUNNABLE runnable(i, (double)(rand() % 100) / 100);
+        shared_ptr<RUNNABLE> runnalbe(new RUNNABLE(i, (double)(rand() % 100) / 1000));
+        AddRunnablePtr(runnalbe);
     }
-
 }
+
+void DAG::DisplayRunnablesPtr(){
+    cout << runnables.size() << " " << runnables.capacity() << endl;
+    for (const auto &runnable : runnables) {
+        cout << runnable->GetExecutionTime()  << " " << runnable->GetId() << endl;
+    }
+}
+
 int DAG::GetNumberOfTasks() {
     return this->numOfTasks;
 }

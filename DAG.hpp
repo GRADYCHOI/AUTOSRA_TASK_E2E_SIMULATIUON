@@ -5,6 +5,8 @@
 #include "TASK.hpp"
 #include <algorithm>
 #include <vector>
+#include <memory>
+
 
 class DAG
 { 
@@ -28,6 +30,8 @@ public:
     DAG();
     ~DAG();
     void GenerateRunnables(int num);
+    void AddRunnablePtr(const std::shared_ptr<RUNNABLE>& runnable);
+    void DisplayRunnablesPtr();
     int GetNumberOfTasks();
     int GetNumberOfRunnables();
     double GetHyperPeriod();

@@ -16,6 +16,7 @@ int main() {
     cout << "Number of Runnable : " << num << endl;
     DAG dag;
     dag.GenerateRunnables(num);
+    dag.DisplayRunnablesPtr();
     //cin >> num;
     /* 
     RUNNABLE runnable[num];
