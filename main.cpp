@@ -11,12 +11,16 @@ using namespace std;
 int main() {
     srand(time(NULL));
     //int num = 0;
-    int num;
-    num = rand() % 50 + 50;
+    int num, input, output;
+    num = rand() % 20 + 40;
     cout << "Number of Runnable : " << num << endl;
+    cout << "Input Runnable num : ";
+    cin >> input;
+    cout << "Output Runnable num : ";
+    cin >> output;
     DAG dag;
-    dag.GenerateRunnables(num);
     dag.DisplayRunnablesPtr();
+    dag.GenerateRunnables(num, input, output);
     //cin >> num;
     /* 
     RUNNABLE runnable[num];

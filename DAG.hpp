@@ -29,7 +29,8 @@ private:
 public:
     DAG();
     ~DAG();
-    void GenerateRunnables(int num);
+    void GenerateRunnables(int num, int in, int out);
+    void RandomEdge();
     void AddRunnablePtr(const std::shared_ptr<RUNNABLE>& runnable);
     void DisplayRunnablesPtr();
     int GetNumberOfTasks();

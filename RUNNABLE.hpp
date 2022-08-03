@@ -20,7 +20,7 @@ private:
     void AddOutputRunnable(const std::shared_ptr<RUNNABLE>& outputRunnable);
 
 public:
-    RUNNABLE(int id, double time);
+    RUNNABLE(int id, double time, int status);
     ~RUNNABLE();
 
     int GetId();

@@ -53,11 +53,15 @@ void DAG::AddRunnablePtr(const std::shared_ptr<RUNNABLE>& runnable) {
     this->runnables.push_back(runnable);
 }
 
-void DAG::GenerateRunnables(int num) {
+void DAG::GenerateRunnables(int num, int in, int out) {
+    int status = -1;
     for (int i = 1; i <= num; i++) {
         shared_ptr<RUNNABLE> runnalbe(new RUNNABLE(i, (double)(rand() % 100) / 1000));
         AddRunnablePtr(runnalbe);
     }
+}
+void DAG::RandomEdge() { //Runnable edge random generation
+
 }
 
 void DAG::DisplayRunnablesPtr(){

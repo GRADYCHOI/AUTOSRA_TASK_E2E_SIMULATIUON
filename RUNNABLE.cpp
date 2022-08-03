@@ -3,13 +3,14 @@
 
 using namespace std;
 
-RUNNABLE::RUNNABLE(int id, double executionTime) {
+RUNNABLE::RUNNABLE(int id, double executionTime, int status) {
     this->id = id;
     this->executionTime = executionTime;
+    this->status = status;
 }
 
 RUNNABLE::~RUNNABLE() {
-    std::cout << "Delete Runnable ID : " << this->id << ", Execution Time : " << this->executionTime << "ms."<< std::endl;
+    std::cout << "Delete Runnable ID : " << this->id << ", Execution Time : " << this->executionTime << "ms, Status : " << this->status << std::endl;
 }
 
 void RUNNABLE::SetStatus() {
@@ -84,7 +85,7 @@ void RUNNABLE::LinkOutputRunnable(const std::shared_ptr<RUNNABLE>& outputRunnabl
 }
 
 
-void RUNNABLE::SetPrecedence() {
+void RUNNABLE::SetPrecedence() { // Set Runnable's precedence. 
     
 }
 
