@@ -20,7 +20,7 @@ private:
     void AddOutputRunnable(const std::shared_ptr<RUNNABLE>& outputRunnable);
 
 public:
-    RUNNABLE(int id, double time, int status);
+    RUNNABLE(int id, double time);
     ~RUNNABLE();
 
     int GetId();
@@ -32,8 +32,9 @@ public:
 
     void LinkInputRunnable(const std::weak_ptr<RUNNABLE>& inputRunnable);
     void LinkOutputRunnable(const std::shared_ptr<RUNNABLE>& outputRunnable);
-
+    //링크드 러너블 호출함수 만들기
     void SetPrecedence();
+    void SetStatus(int status);
 
     std::shared_ptr<RUNNABLE> GetSharedPtr();
 };

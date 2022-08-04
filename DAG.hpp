@@ -32,7 +32,7 @@ public:
     void GenerateRunnables(int num, int in, int out);
     void RandomEdge();
     void AddRunnablePtr(const std::shared_ptr<RUNNABLE>& runnable);
-    void DisplayRunnablesPtr();
+    void DisplayRunnablesPtr(); // -> 러너블 edge도 출력되게 수정
     int GetNumberOfTasks();
     int GetNumberOfRunnables();
     double GetHyperPeriod();
