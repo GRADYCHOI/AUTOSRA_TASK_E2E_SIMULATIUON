@@ -20,6 +20,7 @@ bool Checkcyclic(int ed[][2], int edge, bool check[], int v) {  //to check for t
 	// In case, if the path ends then reassign the vertexes visited in that path to false again.
 	check[v] = false;
 	if(i == 0) return true;
+	else return false;
 }
 
 void GenerateRandomGraphs(int e) {
