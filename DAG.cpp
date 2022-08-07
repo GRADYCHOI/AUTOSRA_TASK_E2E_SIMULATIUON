@@ -98,5 +98,148 @@ void DAG::AddTask(Task& task) {
 }*/
 
 void DAG::Simulate() {
+    std::cin >> option >> std::endl;
 
+    switch (option) {
+        case IMPLICIT_RUNNABLE:
+            break;
+        case IMPLICIT_TASK:
+            break;
+        default:
+            std::cout << "Unknown Communication" << std::endl;
+            break;
+    }
+    
+}
+
+void DAG::SimulateImplicitRunnable() {
+    int maxCycle = static_cast<int>(this->hyperPeriod / this->task->runnables->getPeriod());
+
+    int* runnableCyclePtr = new int[this->runnables.size()];
+    double* runnableExecutionTable = new double[this->runnables.size() * maxCycle];
+
+
+
+    delete[] runnableExecutionTable;
+    delete[] runnableCyclePtr;
+}
+
+void DAG::SimulateImplicitTask() {
+    int maxCycle = static_cast<int>(this->hyperPeriod / this->task[0]->getPeriod());
+    int taskSize = this->task.size();
+
+    double* taskPeriods = new double[taskSize];
+    double* taskOffsets = new double[taskSize];
+    double* taskExecutionTimes = new double[taskSize];
+    double* taskReleaseTable = new double[taskSize * maxCycle];
+    double* taskStartTable = new double[taskSize * maxCycle];
+    double* taskEndTable = new double[taskSize * maxCycle];
+
+    std::memset(taskPeriods, -1, sizeof(double) * taskSize);
+    std::memset(taskOffsets, -1, sizeof(double) * taskSize);
+    std::memset(taskExecutionTimes, -1, sizeof(double) * taskSize);
+    std::memset(taskReleaseTable, -1, sizeof(double) * taskSize * maxCycle);
+    std::memset(taskStartTable, -1, sizeof(double) * taskSize * maxCycle);
+    std::memset(taskEndTable, -1, sizeof(double) * taskSize * maxCycle);
+
+    this->GetTaskPeriods(taskSize, taskPeriods);
+    this->GetTaskOffsets(taskSize, taskOffsets);
+    this->GetTaskExecutionTimes(taskSize, taskExecutionTimes);
+    this->GetReleaseTable(taskPeriods, taskOffsets, taskSize, maxCycle, taskReleaseTable);
+    this->GetExecutionTable(taskReleaseTable, taskExecutionTimes, taskSize, maxCycle, taskStartTable, taskEndTable);
+
+    delete[] taskEndTable;
+    delete[] taskStartTable;
+    delete[] taskReleaseTable;
+    delete[] taskExecutionTimes;
+    delete[] taskOffsets;
+    delete[] taskPeriods;
+}
+
+void DAG::GetTaskPeriods(int taskSize, double* periods) {
+    for (int rows = 0; rows < taskSize; rows++) {
+        periods[rows] = this->task[rows]->GetPeriod();
+    }
+}
+
+void DAG::GetTaskOffsets(int taskSize, double* offsets) {
+    for (int rows = 0; rows < taskSize; rows++) {
+        offsets[rows] = this->task[rows]->GetOffset();
+    }
+}
+
+void DAG::GetTaskExecutionTimes(int taskSize, double* executions) {
+    for (int rows = 0; rows < taskSize; rows++) {
+        executions[rows] = 0;
+        int numberOfRunnables = this->task[rows]->GetNumberOfRunnables();
+
+        for (int index = 0; index < numberOfRunnables; index++) {
+            executions[rows] += this->task[rows]->runnables[index]->GetExecutionTime();
+        }
+    }
+}
+
+void DAG::GetRunnablePeriods(int runnableSize, double* periods) {
+    int index = 0;
+
+    for (int rows = 0; rows < runnableSize; ) {
+        int numberOfRunnables = this->task[index]->GetNumberOfRunnables();
+
+        for (int tmpCount = 0; tmpCount < numberOfRunnables; tmpCount++) {
+            periods[rows] = this->task[index]->GetPeriod();
+            rows++;
+        }
+
+        index++;
+    }
+}
+
+void DAG::GetRunnableOffsets(int runnableSize, double* offsets) {
+    int index = 0;
+
+    for (int rows = 0; rows < runnableSize; ) {
+        int numberOfRunnables = this->task[index]->GetNumberOfRunnables();
+
+        for (int tmpCount = 0; tmpCount < numberOfRunnables; tmpCount++) {
+            offsets[rows] = this->task[index]->GetOffset();
+            rows++;
+        }
+
+        index++;
+    }
+}
+
+void DAG::GetRunnableExecutionTimes(int runnableSize, double* executions) {
+    for (int rows = 0; rows < runnableSize; rows++) {
+        executions[rows] = this->runnables[index]->GetExecutionTime();
+    }
+}
+
+void DAG::GetReleaseTable(double* periods, double* offsets, int size, int maxCycle, double* releaseTable) {
+    for (int rows = 0; rows < size; rows++) {
+        double period = periods[rows];
+        double offset = offsets[rows];
+        int cycle = static_cast<int>(this->hyperPeriod / periods[rows]);
+
+        for (int cols = 0; cols < cycle; cols++) {
+            double releaseTime = period * cols + offset;
+            releaseTable[rows * maxCycle + cols] = releaseTime;
+        }
+    }
+}
+
+void DAG::GetExecutionTable(double* periods, double* offsets, double* executions, int size, int maxCycle, double* startTable, double* endTable) {
+    std::vector<std::pair<double,double>> empty_times;
+    empty_times.push_back({0, this->hyperPeriod});
+
+    for (int rows = 0; rows < size; rows++) {
+        double period = periods[rows];
+        double offset = offsets[rows];
+        double execution = executions[rows];
+        int cycle = static_cast<int>(this->hyperPeriod / periods[rows]);
+
+        for (int cols = 0; cols < cycle; cols++) {
+            double releaseTime = period * cols + offset;
+        }
+    }
 }

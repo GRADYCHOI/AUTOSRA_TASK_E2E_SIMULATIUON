@@ -18,13 +18,16 @@ private:
     double reactionTime = -1.0;
     double dataAge = -1.0;
     
-    std::vector<std::shared_ptr<TASK>> task;
+    std::vector<std::shared_ptr<TASK>> task;  // Tasks로 바꿔야 함
     std::vector<std::shared_ptr<RUNNABLE>> runnables;
  
     void SetParameters();
     void SetNumberOfTasks();
     void SetNumberOfRunnables();
     void SetHyperPeriod();
+
+    // simulation
+    void setExecutionTable();
 
 public:
     DAG();
