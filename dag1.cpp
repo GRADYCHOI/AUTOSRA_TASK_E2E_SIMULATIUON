@@ -12,24 +12,34 @@ int main (void)
 {
   int i, j, k,nodes = 0;
   srand (time (NULL));
+  int input = 3;
 
-  int ranks = MIN_RANKS + (rand () % (MAX_RANKS - MIN_RANKS + 1));
-
-  printf ("%d = ranks, digraph {\n", ranks);
-  for (i = 0; i < ranks; i++)
-    {
+  //int ranks = MIN_RANKS + (rand () % (MAX_RANKS - MIN_RANKS + 1));
+  int Max = rand() % 6 + 10;
+  printf ("%d = num of runnable, digraph {\n", Max);
+/*
+  for (i = 0; i < ranks; i++) {
       printf("%d's !!", i);
-      /* New nodes of 'higher' rank than all nodes generated till now.  */
       int new_nodes = MIN_PER_RANK + (rand () % (MAX_PER_RANK - MIN_PER_RANK + 1));
 
-      /* Edges from old nodes ('nodes') to new ones ('new_nodes').  */
-      for (j = nodes; j < MIN_RANKS; j++) 
-        for (k = nodes; k < new_nodes; k++) 
+      for (j = 0; j < nodes; j++) 
+        for (k = 0; k < new_nodes; k++) 
           if ( (rand () % 100) < PERCENT) // edge 만드는 비율
-            printf ("  %d -> %d;\n", j, k + nodes); /* An Edge.  */
+            printf ("  %d -> %d;   k: %d\n", j, k + nodes, k); 
             printf("node : %d, new_node : %d\n", nodes, new_nodes);
-      nodes += new_nodes; /* Accumulate into old node set.  */
+      nodes += new_nodes; 
+  }*/
+
+  for (i = 0; i < Max; i++) {
+      int new_nodes = MIN_PER_RANK + (rand () % (MAX_PER_RANK - MIN_PER_RANK + 1));
+    for (j = i; j < Max - new_nodes; j++) { 
+      if ((rand() % 100) < PERCENT) printf("  %d -> %d; \n", j, j + new_nodes);
     }
-  printf ("}\n");
+    printf("\n");
+  }
+  
+
+  printf ("}\n"); 
+
   return 0;
 }
