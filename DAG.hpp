@@ -6,7 +6,10 @@
 #include <algorithm>
 #include <vector>
 #include <memory>
+#include <cmath>
 
+
+#define EMPTY_TIME_THRESHOLD 5
 
 class DAG
 { 

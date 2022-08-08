@@ -215,7 +215,9 @@ void DAG::GetRunnableExecutionTimes(int runnableSize, double* executions) {
     }
 }
 
-void DAG::GetReleaseTable(double* periods, double* offsets, int size, int maxCycle, double* releaseTable) {
+/*
+
+void DAG::GetReleaseTable(double* periods, double* offsets, int size, int maxCycle, double* releaseTable) { // release time 계산식을 위한 임시 함수 (사용 안할 예정)
     for (int rows = 0; rows < size; rows++) {
         double period = periods[rows];
         double offset = offsets[rows];
@@ -228,9 +230,12 @@ void DAG::GetReleaseTable(double* periods, double* offsets, int size, int maxCyc
     }
 }
 
+*/
+
+// period와 offset이 1ms 단위인 경우만 한정
 void DAG::GetExecutionTable(double* periods, double* offsets, double* executions, int size, int maxCycle, double* startTable, double* endTable) {
-    std::vector<std::pair<double,double>> empty_times;
-    empty_times.push_back({0, this->hyperPeriod});
+    double* emptyTimes = new double[this->hyperPeriod];
+    std::memset(emptyTimes, 1, sizeof(double) * this->hyperPeriod);
 
     for (int rows = 0; rows < size; rows++) {
         double period = periods[rows];
@@ -240,6 +245,58 @@ void DAG::GetExecutionTable(double* periods, double* offsets, double* executions
 
         for (int cols = 0; cols < cycle; cols++) {
             double releaseTime = period * cols + offset;
+            double deadTime = period * (cols + 1) + offset;
+
+            int integerReleaseTime = static_cast<int>(std::floor(releaseTime));
+            int integerDeadTime = static_cast<int>(std::floor(deadTime));
+
+            // Regard time-line
+            while !(emptyTimes[integerReleaseTime]) integerReleaseTime++;
+
+            // Set start table
+            startTable[rows * maxCycle + cols] = static_cast<double>(integerReleaseTime) + 1 - emptyTimes[integerReleaseTime];
+
+            // Set end table
+            while (execution) {
+                if (emptyTimes[integerReleaseTime] < execution) {
+                    integerReleaseTime += 1;
+                    execution -= emptyTimes[integerReleaseTime];
+                    emptyTimes[integerReleaseTime] = 0.0;
+                } else {
+                    endTable[rows * maxCycle + cols] = releaseTime + execution;
+
+                    emptyTimes[integerReleaseTime] -= execution;
+                    execution = 0;
+                }
+            }
         }
     }
 }
+
+/* TODO : period와 offset이 double형 값인 경우에 대응되는 방법 고안
+    vector의 연결리스트로 결과값 서로 잇기
+
+void DAG::GetExecutionTable(double* periods, double* offsets, double* executions, int size, int maxCycle, double* startTable, double* endTable) {
+    int numberOfEmptyTimesColumn = EMPTY_TIME_THRESHOLD * 2 + 1;
+    double* emptyTimes = new double[this->hyperPeriod * numberOfEmptyTimesColumn]; // First Column is remained time capacity
+    std::memset(emptyTimes, 1, sizeof(double) * numberOfEmptyTimesColumn);
+
+    for (int rows = 0; rows < size; rows++) {
+        double period = periods[rows];
+        double offset = offsets[rows];
+        double execution = executions[rows];
+        int cycle = static_cast<int>(this->hyperPeriod / periods[rows]);
+
+        for (int cols = 0; cols < cycle; cols++) {
+            double releaseTime = period * cols + offset;
+            double deadTime = period * (cols + 1) + offset;
+
+            int integerReleaseTime = static_cast<int>(std::floor(releaseTime));
+            int integerDeadTime = static_cast<int>(std::floor(deadTime));
+            double mantissaReleaseTime = releaseTime - std::floor(releaseTime);
+            double mantissaDeadTime = deadTime - std::floor(deadTime);
+        }
+    }
+}
+
+*/
