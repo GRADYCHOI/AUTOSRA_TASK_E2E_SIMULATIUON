@@ -2,44 +2,35 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define MIN_PER_RANK 1 /* Nodes/Rank: How 'fat' the DAG should be.  */
-#define MAX_PER_RANK 5
-#define MIN_RANKS 3    /* Ranks: How 'tall' the DAG should be.  */
-#define MAX_RANKS 5
-#define PERCENT 30     /* Chance of having an Edge.  */
 
 int main (void)
 {
   int i, j, k,nodes = 0;
   srand (time (NULL));
-  int input = 3;
 
-  //int ranks = MIN_RANKS + (rand () % (MAX_RANKS - MIN_RANKS + 1));
   int Max = rand() % 6 + 10;
   printf ("%d = num of runnable, digraph {\n", Max);
-/*
-  for (i = 0; i < ranks; i++) {
-      printf("%d's !!", i);
-      int new_nodes = MIN_PER_RANK + (rand () % (MAX_PER_RANK - MIN_PER_RANK + 1));
-
-      for (j = 0; j < nodes; j++) 
-        for (k = 0; k < new_nodes; k++) 
-          if ( (rand () % 100) < PERCENT) // edge 만드는 비율
-            printf ("  %d -> %d;   k: %d\n", j, k + nodes, k); 
-            printf("node : %d, new_node : %d\n", nodes, new_nodes);
-      nodes += new_nodes; 
-  }*/
-
-  for (i = 0; i < Max; i++) {
-      int new_nodes = MIN_PER_RANK + (rand () % (MAX_PER_RANK - MIN_PER_RANK + 1));
-    for (j = i; j < Max - new_nodes; j++) { 
-      if ((rand() % 100) < PERCENT) printf("  %d -> %d; \n", j, j + new_nodes);
+  int input;
+  printf("input num : ");
+  scanf("%d", &input);
+  for (i = 1; i < Max; i++) {
+    for (int j = i+1; j <= Max; j++) {
+      if (i <= input) {
+        if ((rand() % 100) < 40) {
+          printf("input");
+          printf("  %d -> %d;  \n", i, j);
+        }
+      }
+      else {
+        if ((rand() % 100) < 30) {
+          printf("output");
+          printf("   %d -> %d;  \n", i, j);
+          //if j가 0이거나 or vector 첫번째면 만들고,
+          //else vector 있으면 push_back하고.
+        }
+      }
     }
-    printf("\n");
   }
-  
-
-  printf ("}\n"); 
 
   return 0;
 }
