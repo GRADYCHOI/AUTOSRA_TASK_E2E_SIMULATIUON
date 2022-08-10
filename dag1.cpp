@@ -11,10 +11,10 @@ int main (void)
   int Max = rand() % 6 + 10;
   printf ("%d = num of runnable, digraph {\n", Max);
   int input;
-  printf("input num : ");
+  printf("input num(narrow-2, wide-3) : ");
   scanf("%d", &input);
   for (i = 1; i < Max; i++) {
-    for (int j = i+1; j <= Max; j++) {
+    for (int j = input+1; j <= Max; j++) {
       if (i <= input) {
         if ((rand() % 100) < 40) {
           printf("input");

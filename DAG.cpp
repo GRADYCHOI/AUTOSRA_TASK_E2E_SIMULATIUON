@@ -64,7 +64,7 @@ void DAG::GenerateRunnables(int num, int in, int out) {
     }
     /*
     for (int j = 1; j <= num; j++) {
-        for (int k = j+1; k <= num; k++) {
+        for (int k = in+1; k <= num; k++) {
             if (j <= in) {
                 if ((rand() % 100) < 40) {
                     //j runnable link -> k runnable
@@ -76,19 +76,6 @@ void DAG::GenerateRunnables(int num, int in, int out) {
                 }
             }
         }
-    }*/
-
-    /*for (const auto &runnable : runnables) {
-        if (runnable->GetStatus() == 0) {
-            runnable->LinkOutputRunnable(runnables[(runnable->GetId() + in)]);
-        }
-        else if (runnable->GetStatus() == 2) {
-            runnable->LinkOutputRunnable(runnables[(runnable->GetId() + in)]);
-        }
-        //else {
-       
-        //}
-        
     }*/
 }
 void DAG::RandomEdge() { //Runnable edge random generation
