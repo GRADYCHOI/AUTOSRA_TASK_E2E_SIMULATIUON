@@ -1,5 +1,5 @@
 #include "DAG.hpp"
-#include<iostream>
+#include <iostream>
 
 using namespace std;
 
@@ -90,6 +90,7 @@ double DAG::GetReactionTime() {
 double DAG::GetDataAge() {
     return this->dataAge;
 }
+
 /*
 void DAG::AddTask(Task& task) {
     this->task.push_back(task);
@@ -134,20 +135,26 @@ void DAG::SimulateImplicitTask() {
     double* taskReleaseTable = new double[taskSize * maxCycle];
     double* taskStartTable = new double[taskSize * maxCycle];
     double* taskEndTable = new double[taskSize * maxCycle];
+    double* taskReactionTime = new double[maxCycle];
+    double* taskDataAge = new double[maxCycle];
 
-    std::memset(taskPeriods, -1, sizeof(double) * taskSize);
-    std::memset(taskOffsets, -1, sizeof(double) * taskSize);
-    std::memset(taskExecutionTimes, -1, sizeof(double) * taskSize);
-    std::memset(taskReleaseTable, -1, sizeof(double) * taskSize * maxCycle);
-    std::memset(taskStartTable, -1, sizeof(double) * taskSize * maxCycle);
-    std::memset(taskEndTable, -1, sizeof(double) * taskSize * maxCycle);
+    std::memset(taskPeriods, -1.0, sizeof(double) * taskSize);
+    std::memset(taskOffsets, -1.0, sizeof(double) * taskSize);
+    std::memset(taskExecutionTimes, -1.0, sizeof(double) * taskSize);
+    std::memset(taskReleaseTable, -1.0, sizeof(double) * taskSize * maxCycle);
+    std::memset(taskStartTable, -1.0, sizeof(double) * taskSize * maxCycle);
+    std::memset(taskEndTable, -1.0, sizeof(double) * taskSize * maxCycle);
+    std::memset(taskReactionTime, -1.0, sizeof(double) * maxCycle);
+    std::memset(taskDataAge, -1.0, sizeof(double) * maxCycle);
 
-    this->GetTaskPeriods(taskSize, taskPeriods);
-    this->GetTaskOffsets(taskSize, taskOffsets);
-    this->GetTaskExecutionTimes(taskSize, taskExecutionTimes);
-    this->GetReleaseTable(taskPeriods, taskOffsets, taskSize, maxCycle, taskReleaseTable);
-    this->GetExecutionTable(taskReleaseTable, taskExecutionTimes, taskSize, maxCycle, taskStartTable, taskEndTable);
+    // command set
+    this->GetTaskInfo(taskSize, taskPeriods, taskOffsets, taskExecutionTimes);
+    this->GetExecutionTable(taskPeriods, taskOffsets, taskExecutionTimes, taskSize, maxCycle, taskStartTable, taskEndTable);
+    this->GetReactionTime(taskStartTable, taskEndTable, taskSize, maxCycle, taskReactionTime);
+    this->GetDataAge(taskStartTable, taskEndTable, taskSize, maxCycle, taskDataAge);
 
+    delete[] taskDataAge;
+    delete[] taskReactionTime;
     delete[] taskEndTable;
     delete[] taskStartTable;
     delete[] taskReleaseTable;
@@ -157,55 +164,55 @@ void DAG::SimulateImplicitTask() {
 }
 
 void DAG::GetTaskPeriods(int taskSize, double* periods) {
-    for (int rows = 0; rows < taskSize; rows++) {
-        periods[rows] = this->task[rows]->GetPeriod();
+    for (int taskRows = 0; taskRows < taskSize; taskRows++) {
+        periods[taskRows] = this->task[taskRows]->GetPeriod();
     }
 }
 
 void DAG::GetTaskOffsets(int taskSize, double* offsets) {
-    for (int rows = 0; rows < taskSize; rows++) {
-        offsets[rows] = this->task[rows]->GetOffset();
+    for (int taskRows = 0; taskRows < taskSize; taskRows++) {
+        periods[taskRows] = this->task[taskRows]->GetOffset();
     }
 }
 
 void DAG::GetTaskExecutionTimes(int taskSize, double* executions) {
-    for (int rows = 0; rows < taskSize; rows++) {
-        executions[rows] = 0;
-        int numberOfRunnables = this->task[rows]->GetNumberOfRunnables();
+    for (int taskRows = 0; taskRows < taskSize; taskRows++) {
+        executions[taskRows] = 0;
+        int numberOfRunnables = this->task[taskRows]->GetNumberOfRunnables();
 
-        for (int index = 0; index < numberOfRunnables; index++) {
-            executions[rows] += this->task[rows]->runnables[index]->GetExecutionTime();
+        for (int tmpCount = 0; tmpCount < numberOfRunnables; tmpCount++) {
+            executions[taskRows] += this->task[taskRows]->runnables[tmpCount]->GetExecutionTime();
         }
     }
 }
 
 void DAG::GetRunnablePeriods(int runnableSize, double* periods) {
-    int index = 0;
+    int mappingPtr = 0;
 
-    for (int rows = 0; rows < runnableSize; ) {
-        int numberOfRunnables = this->task[index]->GetNumberOfRunnables();
+    for (int runnableRows = 0; runnableRows < runnableSize; ) {
+        int numberOfRunnables = this->task[mappingPtr]->GetNumberOfRunnables();
 
         for (int tmpCount = 0; tmpCount < numberOfRunnables; tmpCount++) {
-            periods[rows] = this->task[index]->GetPeriod();
-            rows++;
+            periods[runnableRows] = this->task[mappingPtr]->GetPeriod();
+            runnableRows++;
         }
 
-        index++;
+        mappingPtr++;
     }
 }
 
 void DAG::GetRunnableOffsets(int runnableSize, double* offsets) {
-    int index = 0;
+    int mappingPtr = 0;
 
-    for (int rows = 0; rows < runnableSize; ) {
-        int numberOfRunnables = this->task[index]->GetNumberOfRunnables();
+    for (int runnableRows = 0; runnableRows < runnableSize; ) {
+        int numberOfRunnables = this->task[mappingPtr]->GetNumberOfRunnables();
 
         for (int tmpCount = 0; tmpCount < numberOfRunnables; tmpCount++) {
-            offsets[rows] = this->task[index]->GetOffset();
-            rows++;
+            offsets[runnableRows] = this->task[mappingPtr]->GetOffset();
+            runnableRows++;
         }
 
-        index++;
+        mappingPtr++;
     }
 }
 
@@ -215,27 +222,23 @@ void DAG::GetRunnableExecutionTimes(int runnableSize, double* executions) {
     }
 }
 
-/*
-
-void DAG::GetReleaseTable(double* periods, double* offsets, int size, int maxCycle, double* releaseTable) { // release time 계산식을 위한 임시 함수 (사용 안할 예정)
-    for (int rows = 0; rows < size; rows++) {
-        double period = periods[rows];
-        double offset = offsets[rows];
-        int cycle = static_cast<int>(this->hyperPeriod / periods[rows]);
-
-        for (int cols = 0; cols < cycle; cols++) {
-            double releaseTime = period * cols + offset;
-            releaseTable[rows * maxCycle + cols] = releaseTime;
-        }
-    }
+void DAG::GetTaskInfo(int taskSize, double* periods, double* offsets, double* executions) {
+    this->GetTaskPeriods(taskSize, periods);
+    this->GetTaskOffsets(taskSize, offsets);
+    this->GetTaskExecutionTimes(taskSize, executions);
 }
 
-*/
+void DAG::GetRunnableInfo(int runnableSize, double* periods, double* offsets, double* executions) {
+    this->GetRunnablePeriods(runnableSize, periods);
+    this->GetRunnableOffsets(runnableSize, offsets);
+    this->GetRunnableExecutionTimes(runnableSize, executions);
+}
+
 
 // period와 offset이 1ms 단위인 경우만 한정
 void DAG::GetExecutionTable(double* periods, double* offsets, double* executions, int size, int maxCycle, double* startTable, double* endTable) {
     double* emptyTimes = new double[this->hyperPeriod];
-    std::memset(emptyTimes, 1, sizeof(double) * this->hyperPeriod);
+    std::memset(emptyTimes, 1.0, sizeof(double) * this->hyperPeriod);
 
     for (int rows = 0; rows < size; rows++) {
         double period = periods[rows];
@@ -271,6 +274,8 @@ void DAG::GetExecutionTable(double* periods, double* offsets, double* executions
             }
         }
     }
+
+    delete[] emptyTimes;
 }
 
 /* TODO : period와 offset이 double형 값인 경우에 대응되는 방법 고안
@@ -300,3 +305,99 @@ void DAG::GetExecutionTable(double* periods, double* offsets, double* executions
 }
 
 */
+
+void DAG::SetInputRunnableList() {
+    // vector capacity control : swap technique
+    std::vector<std::shared_ptr<RUNNABLE>> tmpList;
+    int numberOfRunnables = this->task[index]->GetNumberOfRunnables();
+
+    for (int tmpCount = 0; tmpCount < numberOfRunnables; tmpCount++) {
+        if (this->runnables[tmp]->GetStatus() == 1) {
+            tmpList.push_back(this->runnables[tmp]->GetSharedPtr());
+        }
+    }
+
+    tmpList.swap(this->inputRunnables);
+}
+
+void DAG::SetOutputRunnableList() {
+    std::vector<std::shared_ptr<RUNNABLE>> tmpList;
+    int numberOfRunnables = this->task[index]->GetNumberOfRunnables();
+
+    for (int tmpCount = 0; tmpCount < numberOfRunnables; tmpCount++) {
+        if (this->runnables[tmp]->GetStatus() == 1) {
+            tmpList.push_back(this->runnables[tmp]->GetSharedPtr());
+        }
+    }
+
+    tmpList.swap(this->outputRunnables);
+}
+
+void DAG::GetInputTimeTable(double* startTable, int size, int maxCycle, int option, double* inputTable, ) {
+    if (size == this->GetNumberOfRunnables()) { // Task가 Runnable 수와 같은 case 포함
+        for (int tmpCount = 0; tmpCount < size; tmpCount++) {
+
+        }
+    } else if (size == this->GetNumberOfTasks()) { // Task Communication인 경우
+
+    }
+}
+
+void DAG::GetOutputTable(double* endTable, int size, int maxCycle, double* outputTable) {
+    if (size == this->GetNumberOfRunnables()) {
+        std::memcpy(outputTable, endTable, sizeof(double) * size * maxCycle);
+
+    } else if (size == this->GetNumberOfTasks()) {
+        int runnableRows = 0;
+        
+        for (int taskRows = 0; taskRows < size; taskRows++) {
+            int numberOfRunnables = this->task[taskRows]->GetNumberOfRunnables();
+
+            for (int tmpCount = 0; tmpCount < numberOfRunnables; tmpCount++) {
+                std::memcpy(outputTable[runnableRows], this->runnables[taskRows], sizeof(double) * maxCycle);
+                runnableRows++;
+            }
+        }
+    }
+}
+
+void DAG::GetReleaseTimeOutputTable(double* endTable, double* periods, double* offsets, int size, int maxCycle, double* outputTable) {
+    if (size == this->GetNumberOfRunnables()) {
+        for (int runnableRows = 0; runnableRows < size; runnableRows++) {
+            for (int cycle = 0; cycle < maxCycle; cycle++) {
+                outputTable[runnableRows * maxCycle + cycle] = periods[runnableRows] * (cycle + 1) + offsets[runnableRows];
+            }
+        }
+
+    } else if (size == this->GetNumberOfTasks()) {
+        int runnableRows = 0;
+
+        for (int taskRows = 0; taskRows < size; taskRows++) {
+            int numberOfRunnables = this->task[taskRows]->GetNumberOfRunnables();
+
+            for (int tmpCount = 0; tmpCount < numberOfRunnables; tmpCount++) {
+
+                for (int cycle = 0; cycle < maxCycle; cycle++) {
+                outputTable[runnableRows * maxCycle + cycle] = periods[taskRows] * (cycle + 1) + offsets[taskRows];
+            }
+                outputTable[runnableRows] = periods[taskRows] * (cols + 1) + offsets[taskRows];
+                runnableRows++;
+            }
+
+
+            std::memcpy(outputTable[tmpCount], this->runnables[tmpCount], sizeof(double) * maxCycle);
+        }
+    }
+}
+
+void DAG::GetReactionTime(double* inputTable, double* outputTable, int maxCycle, double* reactionTime) {
+    int numberOfRunnables = this->task[index]->GetNumberOfRunnables();
+
+    for (int cols = 0; cols < maxCycle; cols++) {
+        endTable
+
+        for (int rows = 1; rows < size; rows++) {
+            reactionTime[rows] = ;
+        }
+    }
+}

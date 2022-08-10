@@ -9,11 +9,10 @@
 #include <cmath>
 
 
-#define EMPTY_TIME_THRESHOLD 5
-
 class DAG
 { 
 private:
+    enum { RELEASETIME = 100, IMMEDIATE = 101}; // 클래스용 상수
     int numOfTasks = -1;
     int numOfRunnables = -1;
     double hyperPeriod = -1.0;
@@ -23,6 +22,9 @@ private:
     
     std::vector<std::shared_ptr<TASK>> task;  // Tasks로 바꿔야 함
     std::vector<std::shared_ptr<RUNNABLE>> runnables;
+
+    std::vector<std::shared_ptr<RUNNABLE>> inputRunnables;
+    std::vector<std::shared_ptr<RUNNABLE>> outputRunnables;
  
     void SetParameters();
     void SetNumberOfTasks();
