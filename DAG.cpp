@@ -60,10 +60,11 @@ void DAG::RandomEdge(int num, int in) { //Runnable edge random generation
     for (int j = 0; j < num; j++) {
         for (int k = j+1; k <= num; k++) {
             if ((rand() % 100) < 30) {
-                //cout << j << " -> " << k << endl;
+                cout << j << " -> " << k << endl;
                 //this->runnables[j]->LinkInputRunnable(this->runnables[k]->GetSharedPtr());
-                //this->runnables[j]->LinkOutputRunnable(this->runnables[k]->GetSharedPtr());
-                this->runnables[j]->AddOutputRun(this->runnables[k]->GetSharedPtr());
+                this->runnables[j]->LinkOutputRunnable(this->runnables[k]->GetSharedPtr());
+                //this->runnables[j]->AddOutputRun(this->runnables[k]->GetSharedPtr());
+                cout << "!";
             }
         }
     }

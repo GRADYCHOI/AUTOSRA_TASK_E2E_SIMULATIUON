@@ -21,10 +21,12 @@ void RUNNABLE::SetStatus() {
 
 void RUNNABLE::AddInputRunnable(const std::weak_ptr<RUNNABLE> inputRunnable) {
     this->inputRunnables.push_back(inputRunnable);
+    this->SetStatus();
 }
 
 void RUNNABLE::AddOutputRunnable(const std::shared_ptr<RUNNABLE> outputRunnable) {
     this->outputRunnables.push_back(outputRunnable);
+    this->SetStatus();
 }
 
 
@@ -49,7 +51,7 @@ void RUNNABLE::LinkInputRunnable(const std::weak_ptr<RUNNABLE> inputRunnable) {
     std::shared_ptr<RUNNABLE> tmpRunnable = inputRunnable.lock(); // weak_ptr 특성
 
     if (tmpRunnable) {
-        for (int count = 0; 0 < this->inputRunnables.size(); count++) {
+        for (int count = 0; count < this->inputRunnables.size(); count++) {
             std::shared_ptr<RUNNABLE> tmpRunnable2 = this->inputRunnables[count].lock();
             if (tmpRunnable2->GetId() == tmpRunnable->GetId()) {
                 searchFlag = true;
@@ -61,15 +63,13 @@ void RUNNABLE::LinkInputRunnable(const std::weak_ptr<RUNNABLE> inputRunnable) {
             this->AddInputRunnable(inputRunnable);
             tmpRunnable->AddOutputRunnable(this->GetSharedPtr());
         }
-
-        this->SetStatus();
     }
 }
 
 void RUNNABLE::LinkOutputRunnable(const std::shared_ptr<RUNNABLE> outputRunnable) {
     bool searchFlag = false;
     
-    for (int count = 0; 0 < this->outputRunnables.size(); count++) {
+    for (int count = 0; count < this->outputRunnables.size(); count++) {
         if (this->outputRunnables[count]->GetId() == outputRunnable->GetId()) {
             searchFlag = true;
             break;
@@ -80,8 +80,6 @@ void RUNNABLE::LinkOutputRunnable(const std::shared_ptr<RUNNABLE> outputRunnable
         this->AddOutputRunnable(outputRunnable);
         outputRunnable->AddInputRunnable(this->GetSharedPtr());
     }
-
-    this->SetStatus();
 }
 
 void RUNNABLE::AddInputRun(const std::weak_ptr<RUNNABLE> inputRunnable) {
