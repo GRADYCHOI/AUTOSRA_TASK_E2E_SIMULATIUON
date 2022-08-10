@@ -49,43 +49,32 @@ void DAG::SetNumberOfRunnables() {
     }
 }
 
-void DAG::AddRunnablePtr(const std::shared_ptr<RUNNABLE>& runnable) {
-    this->runnables.push_back(runnable);
+void DAG::GenerateRunnables(int num, int in, int out) {
+    for (int i = 0; i <= num; i++) {
+        shared_ptr<RUNNABLE> runnable(new RUNNABLE(i, (double)(rand() % 100) / 1000));
+        this->runnables.push_back(runnable);
+    }
 }
 
-void DAG::GenerateRunnables(int num, int in, int out) {
-    int status = -1;
-    for (int i = 1; i <= num; i++) {
-        shared_ptr<RUNNABLE> runnable(new RUNNABLE(i, (double)(rand() % 100) / 1000));
-        AddRunnablePtr(runnable);
-        //if (i <= in) runnable->SetStatus(0);
-        //else if (i > num - out) runnable->SetStatus(1);
-        //else runnable->SetStatus(2);    
-    }
-    /*
-    for (int j = 1; j <= num; j++) {
-        for (int k = in+1; k <= num; k++) {
-            if (j <= in) {
-                if ((rand() % 100) < 40) {
-                    //j runnable link -> k runnable
-                }
-            }
-            else {
-                if ((rand() % 100) < 30) {
-                    //j runnable link -> k runnable
-                }
+void DAG::RandomEdge(int num, int in) { //Runnable edge random generation
+    for (int j = 0; j < num; j++) {
+        for (int k = j+1; k <= num; k++) {
+            if ((rand() % 100) < 30) {
+                //cout << j << " -> " << k << endl;
+                //this->runnables[j]->LinkInputRunnable(this->runnables[k]->GetSharedPtr());
+                //this->runnables[j]->LinkOutputRunnable(this->runnables[k]->GetSharedPtr());
+                this->runnables[j]->AddOutputRun(this->runnables[k]->GetSharedPtr());
             }
         }
-    }*/
-}
-void DAG::RandomEdge() { //Runnable edge random generation
-
+    }
 }
 
 void DAG::DisplayRunnablesPtr(){
     cout << runnables.size() << " " << runnables.capacity() << endl;
     for (const auto &runnable : runnables) {
-        cout << runnable->GetExecutionTime()  << " " << runnable->GetId() << endl;
+        cout << runnable->GetExecutionTime()  << " " << runnable->GetId() << " ,  ";
+        runnable->DisplayRunnable();
+        cout << endl;
     }
 }
 

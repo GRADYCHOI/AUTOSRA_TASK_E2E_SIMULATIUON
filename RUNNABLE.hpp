@@ -16,8 +16,8 @@ private:
 
     void SetStatus();
 
-    void AddInputRunnable(const std::weak_ptr<RUNNABLE>& inputRunnable);
-    void AddOutputRunnable(const std::shared_ptr<RUNNABLE>& outputRunnable);
+    void AddInputRunnable(const std::weak_ptr<RUNNABLE> inputRunnable);
+    void AddOutputRunnable(const std::shared_ptr<RUNNABLE> outputRunnable);
 
 public:
     RUNNABLE(int id, double time);
@@ -27,12 +27,13 @@ public:
     double GetExecutionTime();
     int GetPrecedence();
     int GetStatus();
-    //void AddInputRunnable(const std::shared_ptr<RUNNABLE> &inputRunnable);
-    //void AddOutputRunnable(const std::shared_ptr<RUNNABLE> &outputRunnable);
+    void AddInputRun(const std::weak_ptr<RUNNABLE> inputRunnable);
+    void AddOutputRun(const std::shared_ptr<RUNNABLE> outputRunnable);
 
-    void LinkInputRunnable(const std::weak_ptr<RUNNABLE>& inputRunnable);
-    void LinkOutputRunnable(const std::shared_ptr<RUNNABLE>& outputRunnable);
+    void LinkInputRunnable(const std::weak_ptr<RUNNABLE> inputRunnable);
+    void LinkOutputRunnable(const std::shared_ptr<RUNNABLE> outputRunnable);
     //링크드 러너블 호출함수 만들기
+    void DisplayRunnable();
     void SetPrecedence();
     void SetStatus(int status);
 

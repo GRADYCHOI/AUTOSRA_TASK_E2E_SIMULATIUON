@@ -21,6 +21,7 @@ int main() {
     DAG dag;
     dag.GenerateRunnables(num, input, output);
     //After, add a option, DAG Enter
+    dag.RandomEdge(num, input);
     dag.DisplayRunnablesPtr();
     //cin >> num;
     /* 
