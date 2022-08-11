@@ -100,7 +100,7 @@ void RUNNABLE::SetPrecedence() { // Set Runnable's precedence.
 }
 
 void RUNNABLE::SetStatus(int status) {
-    this->status = status;
+    if (this->status < status) this->status = status;
 }
 
 std::shared_ptr<RUNNABLE> RUNNABLE::GetSharedPtr() {
