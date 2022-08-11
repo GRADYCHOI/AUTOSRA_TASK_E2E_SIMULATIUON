@@ -27,6 +27,10 @@ public:
     double GetExecutionTime();
     int GetPrecedence();
     int GetStatus();
+    int GetNumberOfInputRunnables();
+    int GetNumberOfOutputRunnables();
+    int GetInputRunnableId(int index);
+    int GetOutputRunnableId(int index);
     //void AddInputRunnable(const std::shared_ptr<RUNNABLE> &inputRunnable);
     //void AddOutputRunnable(const std::shared_ptr<RUNNABLE> &outputRunnable);
 

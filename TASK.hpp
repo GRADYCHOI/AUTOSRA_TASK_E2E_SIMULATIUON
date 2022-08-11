@@ -33,6 +33,7 @@ public:
     double GetExecutionTime();
     int GetNumberOfRunnables();
     int GetPriority();
+    std::shared_ptr<Runnable> GetRunnable(int index);
 
     void AddRunnable(const std::shared_ptr<RUNNABLE>& runnable);
 };
