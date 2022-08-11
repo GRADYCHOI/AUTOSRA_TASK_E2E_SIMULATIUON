@@ -49,31 +49,47 @@ void DAG::SetNumberOfRunnables() {
     }
 }
 
-void DAG::GenerateRunnables(int num, int in, int out) {
-    for (int i = 0; i <= num; i++) {
+void DAG::GenerateRunnables(int num) {
+    for (int i = 0; i < num; i++) {
         shared_ptr<RUNNABLE> runnable(new RUNNABLE(i, (double)(rand() % 100) / 1000));
         this->runnables.push_back(runnable);
+        cout << "Runnable ID : " << runnable->GetId() << ", Execution Time : " << runnable->GetExecutionTime() << endl;
     }
+    RandomEdge();
+    DisplayRunnablesPtr();
 }
 
-void DAG::RandomEdge(int num, int in) { //Runnable edge random generation
-    for (int j = 0; j < num; j++) {
-        for (int k = j+1; k <= num; k++) {
-            if ((rand() % 100) < 30) {
+void DAG::RandomEdge() { 
+    int rate;
+    cout << "Enter Edge rate(20~40) : ";
+    cin >> rate;
+    for (int j = 0; j < (int)this->runnables.size(); j++) {
+        for (int k = j+1; k < (int)this->runnables.size(); k++) {
+            if ((rand() % 100) < rate) {
                 cout << j << " -> " << k << endl;
-                //this->runnables[j]->LinkInputRunnable(this->runnables[k]->GetSharedPtr());
                 this->runnables[j]->LinkOutputRunnable(this->runnables[k]->GetSharedPtr());
-                //this->runnables[j]->AddOutputRun(this->runnables[k]->GetSharedPtr());
-                cout << "!";
             }
         }
+    }
+    SetRunnablePrecedence();
+}
+
+void DAG::SetRunnablePrecedence() {
+    
+    for (auto &runnable : runnables) {
+
     }
 }
 
 void DAG::DisplayRunnablesPtr(){
     cout << runnables.size() << " " << runnables.capacity() << endl;
     for (const auto &runnable : runnables) {
-        cout << runnable->GetExecutionTime()  << " " << runnable->GetId() << " ,  ";
+        cout << "Runnable ID : " <<  runnable->GetId() << " ,  ";
+        cout << "Execution Time : " << runnable->GetExecutionTime() << " , ";
+        if (runnable->GetStatus() == 0) cout << "INPUT , ";
+        else if (runnable->GetStatus() == 1) cout << "OUTPUT , ";
+        else if (runnable->GetStatus() == 2) cout << "MIDDLE , ";
+        cout << runnable->GetId() << " -> ";
         runnable->DisplayRunnable();
         cout << endl;
     }

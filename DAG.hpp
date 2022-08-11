@@ -29,9 +29,10 @@ private:
 public:
     DAG();
     ~DAG();
-    void GenerateRunnables(int num, int in, int out);
-    void RandomEdge(int num, int in);
+    void GenerateRunnables(int num);
+    void RandomEdge();
     void DisplayRunnablesPtr(); // -> 러너블 edge도 출력되게 수정
+    void SetRunnablePrecedence();
     int GetNumberOfTasks();
     int GetNumberOfRunnables();
     double GetHyperPeriod();
