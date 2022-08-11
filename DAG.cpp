@@ -193,6 +193,7 @@ void DAG::GetTaskPeriods(double* periods) {
     // --------------------------------------------------------------------------------------------------------------
     // periods : [2 X Task size]     Output
     // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable or Task is based on their priority
     // 1 : Task ID
     // 2 : Task Period
     // --------------------------------------------------------------------------------------------------------------
@@ -209,6 +210,7 @@ void DAG::GetTaskOffsets(double* offsets) {
     // --------------------------------------------------------------------------------------------------------------
     // offsets : [2 X Task size]     Output
     // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable or Task is based on their priority
     // 1 : Task ID
     // 2 : Task Offset
     // --------------------------------------------------------------------------------------------------------------
@@ -225,6 +227,7 @@ void DAG::GetTaskExecutionTimes(double* executions) {
     // --------------------------------------------------------------------------------------------------------------
     // executions : [2 X Task size]     Output
     // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable or Task is based on their priority
     // 1 : Task ID
     // 2 : Task Execution Time
     // --------------------------------------------------------------------------------------------------------------
@@ -247,6 +250,7 @@ void DAG::GetRunnablePeriods(double* periods) {
     // --------------------------------------------------------------------------------------------------------------
     // periods : [2 X Runnable size]     Output
     // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable or Task is based on their priority
     // 1 : Runnable ID
     // 2 : Runnable Period
     // --------------------------------------------------------------------------------------------------------------
@@ -267,6 +271,7 @@ void DAG::GetRunnableOffsets(double* offsets) {
     // --------------------------------------------------------------------------------------------------------------
     // offsets : [2 X Runnable size]     Output
     // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable or Task is based on their priority
     // 1 : Runnable ID
     // 2 : Runnable Offset
     // --------------------------------------------------------------------------------------------------------------
@@ -287,6 +292,7 @@ void DAG::GetRunnableExecutionTimes(double* executions) {
     // --------------------------------------------------------------------------------------------------------------
     // executions : [2 X Runnable size]     Output
     // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable or Task is based on their priority
     // 1 : Runnable ID
     // 2 : Runnable Execution Time
     // --------------------------------------------------------------------------------------------------------------
@@ -303,16 +309,19 @@ void DAG::GetTaskInfo(double* periods, double* offsets, double* executions) {
     // --------------------------------------------------------------------------------------------------------------
     // periods : [2 X Runnable size]     Output
     // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable or Task is based on their priority
     // 1 : Runnable ID
     // 2 : Runnable Period
     // --------------------------------------------------------------------------------------------------------------
     // offsets : [2 X Runnable size]     Output
     // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable or Task is based on their priority
     // 1 : Runnable ID
     // 2 : Runnable Offset
     // --------------------------------------------------------------------------------------------------------------
     // executions : [2 X Runnable size]     Output
     // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable or Task is based on their priority
     // 1 : Runnable ID
     // 2 : Runnable Execution Time
     // --------------------------------------------------------------------------------------------------------------
@@ -326,16 +335,19 @@ void DAG::GetRunnableInfo(double* periods, double* offsets, double* executions) 
     // --------------------------------------------------------------------------------------------------------------
     // periods : [2 X Runnable size]     Output
     // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable or Task is based on their priority
     // 1 : Runnable ID
     // 2 : Runnable Period
     // --------------------------------------------------------------------------------------------------------------
     // offsets : [2 X Runnable size]     Output
     // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable or Task is based on their priority
     // 1 : Runnable ID
     // 2 : Runnable Offset
     // --------------------------------------------------------------------------------------------------------------
     // executions : [2 X Runnable size]     Output
     // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable or Task is based on their priority
     // 1 : Runnable ID
     // 2 : Runnable Execution Time
     // --------------------------------------------------------------------------------------------------------------
@@ -351,21 +363,25 @@ void DAG::GetExecutionTable(double* periods, double* offsets, double* executions
     // --------------------------------------------------------------------------------------------------------------
     // periods : [2 X (Runnable or Task) size]     Input
     // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable or Task is based on their priority
     // 1 : (Runnable or Task) ID
     // 2 : (Runnable or Task) Period
     // --------------------------------------------------------------------------------------------------------------
     // offsets : [2 X (Runnable or Task) size]     Input
     // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable or Task is based on their priority
     // 1 : (Runnable or Task) ID
     // 2 : (Runnable or Task) Offset
     // --------------------------------------------------------------------------------------------------------------
     // executions : [2 X (Runnable or Task) size]     Input
     // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable or Task is based on their priority
     // 1 : (Runnable or Task) ID
     // 2 : (Runnable or Task) Execution Time
     // --------------------------------------------------------------------------------------------------------------
     // startTable : [(maxCycle + 1) X (Runnable or Task) size]     Output
     // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable or Task is based on their priority
     // 1 : (Runnable or Task) ID
     // 2 : First Cycle
     // 3 : Second Cycle
@@ -373,6 +389,7 @@ void DAG::GetExecutionTable(double* periods, double* offsets, double* executions
     // --------------------------------------------------------------------------------------------------------------
     // endTable : [(maxCycle + 1) X (Runnable or Task) size]     Output
     // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable or Task is based on their priority
     // 1 : (Runnable or Task) ID
     // 2 : First Cycle
     // 3 : Second Cycle
@@ -435,6 +452,7 @@ void DAG::GetReadTable(double* startTable, int size, int maxCycle, double* readT
     // --------------------------------------------------------------------------------------------------------------
     // startTable : [(maxCycle + 1) X (Runnable or Task) size]     Input
     // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable or Task is based on their priority
     // 1 : (Runnable or Task) ID
     // 2 : First Cycle
     // 3 : Second Cycle
@@ -442,6 +460,7 @@ void DAG::GetReadTable(double* startTable, int size, int maxCycle, double* readT
     // --------------------------------------------------------------------------------------------------------------
     // readTable : [(maxCycle + 1) X Runnable size]     Output
     // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable or Task is based on their IDs
     // 1 : Runnable ID
     // 2 : First Cycle
     // 3 : Second Cycle
@@ -450,19 +469,18 @@ void DAG::GetReadTable(double* startTable, int size, int maxCycle, double* readT
 
     // 직관적인 방법이 있지만, 실행시간을 줄이기 위해 아래 방법 채택
     if (size == this->GetNumberOfRunnables()) {
-        std::memcpy(readTable, startTable, sizeof(double) * size * (maxCycle + 1));
+        for (int runnableIndex = 0; runnableIndex < size; runnableIndex++) {
+            std::memcpy(readTable[startTable[runnableIndex * maxCycle] * maxCycle], startTable[runnableIndex * maxCycle], sizeof(double) * (maxCycle + 1));
+        }
 
     } else if (size == this->GetNumberOfTasks()) {
-        int runnableIndex = 0;
-        
         for (int taskIndex = 0; taskIndex < size; taskIndex++) {
-            int numberOfRunnables = this->tasks[taskPriority[taskIndex]]->GetNumberOfRunnables();
+            int numberOfRunnables = this->tasks[taskIndex]->GetNumberOfRunnables();
 
             for (int tmpCount = 0; tmpCount < numberOfRunnables; tmpCount++) {
-                readTable[runnableIndex * maxCycle] = this->runnables[runnablePriority[runnableIndex]]->GetId();
-                std::memcpy(readTable[runnableIndex * maxCycle + 1], startTable[taskIndex * maxCycle + 1], sizeof(double) * maxCycle);
-                runnableIndex++;
-            }   // periods[this->runnablePriority[this->tasks[taskIndex]->GetRunnable(tmpCount)->GetId()] * 2] = this->tasks[taskIndex]->GetRunnable(tmpCount)->GetId();
+                readTable[this->tasks[taskIndex]->GetRunnable(tmpCount)->GetId() * maxCycle] = this->tasks[taskIndex]->GetRunnable(tmpCount)->GetId();
+                std::memcpy(readTable[this->tasks[taskIndex]->GetRunnable(tmpCount)->GetId() * maxCycle + 1], startTable[this->taskPriority[taskIndex] * maxCycle + 1], sizeof(double) * maxCycle);
+            }
         }
     }
 }
@@ -472,35 +490,37 @@ void DAG::GetReleaseTimeReadTable(double* periods, double* offsets, int size, in
     // --------------------------------------------------------------------------------------------------------------
     // periods : [2 X (Runnable or Task) size]     Input
     // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable or Task is based on their priority
     // 1 : (Runnable or Task) ID
     // 2 : (Runnable or Task) Period
     // --------------------------------------------------------------------------------------------------------------
     // offsets : [2 X (Runnable or Task) size]     Input
     // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable or Task is based on their priority
     // 1 : (Runnable or Task) ID
     // 2 : (Runnable or Task) Offset
     // --------------------------------------------------------------------------------------------------------------
     // readTable : [(maxCycle + 1) X (Runnable or Task) size]     Output
     // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable or Task is based on their IDs
     // 1 : (Runnable or Task) ID
     // 2 : First Cycle
     // 3 : Second Cycle
     // ..
     // --------------------------------------------------------------------------------------------------------------
 
-    int runnableIndex = 0;
-
     for (int taskIndex = 0; taskIndex < size; taskIndex++) {
         int numberOfRunnables = this->tasks[taskPriority[taskIndex]]->GetNumberOfRunnables();
 
         for (int tmpCount = 0; tmpCount < numberOfRunnables; tmpCount++) {
-            readTable[runnableIndex * (maxCycle + 1)] = this->runnables[runnablePriority[runnableIndex]]->GetId();
+            int runnableId = this->tasks[taskIndex]->GetRunnable(tmpCount)->GetId();
+            int taskIndexPriority = this->taskPriority[taskIndex];
+
+            readTable[runnableId * maxCycle] = runnableId;
 
             for (int cycle = 0; cycle < maxCycle; cycle++) {
-                readTable[runnableIndex * (maxCycle + 1) + cycle + 1] = periods[taskIndex * 2 + 1] * cycle + offsets[taskIndex * 2 + 1];
+                readTable[runnableId * maxCycle + cycle + 1] = periods[taskIndexPriority * 2 + 1] * cycle + offsets[taskIndexPriority * 2 + 1];
             }
-
-            runnableIndex++;
         }
     }
 }
@@ -509,6 +529,7 @@ void DAG::GetWriteTable(double* endTable, int size, int maxCycle, double* writeT
     // --------------------------------------------------------------------------------------------------------------
     // endTable : [(maxCycle + 1) X (Runnable or Task) size]     Input
     // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable or Task is based on their priority
     // 1 : (Runnable or Task) ID
     // 2 : First Cycle
     // 3 : Second Cycle
@@ -516,6 +537,7 @@ void DAG::GetWriteTable(double* endTable, int size, int maxCycle, double* writeT
     // --------------------------------------------------------------------------------------------------------------
     // writeTable : [(maxCycle + 1) X Runnable size]     Output
     // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable or Task is based on their IDs
     // 1 : Runnable ID
     // 2 : First Cycle
     // 3 : Second Cycle
@@ -524,18 +546,17 @@ void DAG::GetWriteTable(double* endTable, int size, int maxCycle, double* writeT
 
     // 직관적인 방법이 있지만, 실행시간을 줄이기 위해 아래 방법 채택
     if (size == this->GetNumberOfRunnables()) {
-        std::memcpy(writeTable, endTable, sizeof(double) * size * (maxCycle + 1));
+        for (int runnableIndex = 0; runnableIndex < size; runnableIndex++) {
+            std::memcpy(writeTable[startTable[runnableIndex * maxCycle] * maxCycle], endTable[runnableIndex * maxCycle], sizeof(double) * (maxCycle + 1));
+        }
 
     } else if (size == this->GetNumberOfTasks()) {
-        int runnableIndex = 0;
-        
         for (int taskIndex = 0; taskIndex < size; taskIndex++) {
-            int numberOfRunnables = this->tasks[taskPriority[taskIndex]]->GetNumberOfRunnables();
+            int numberOfRunnables = this->tasks[taskIndex]->GetNumberOfRunnables();
 
             for (int tmpCount = 0; tmpCount < numberOfRunnables; tmpCount++) {
-                writeTable[runnableIndex * maxCycle] = this->runnables[runnablePriority[runnableIndex]]->GetId();
-                std::memcpy(writeTable[runnableIndex * maxCycle + 1], endTable[taskIndex * maxCycle + 1], sizeof(double) * maxCycle);
-                runnableIndex++;
+                writeTable[this->tasks[taskIndex]->GetRunnable(tmpCount)->GetId() * maxCycle] = this->tasks[taskIndex]->GetRunnable(tmpCount)->GetId();
+                std::memcpy(writeTable[this->tasks[taskIndex]->GetRunnable(tmpCount)->GetId() * maxCycle + 1], endTable[this->taskPriority[taskIndex] * maxCycle + 1], sizeof(double) * maxCycle);
             }
         }
     }
@@ -546,32 +567,37 @@ void DAG::GetReleaseTimeWriteTable(double* periods, double* offsets, int size, i
     // --------------------------------------------------------------------------------------------------------------
     // periods : [2 X (Runnable or Task) size]     Input
     // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable or Task is based on their priority
     // 1 : (Runnable or Task) ID
     // 2 : (Runnable or Task) Period
     // --------------------------------------------------------------------------------------------------------------
     // offsets : [2 X (Runnable or Task) size]     Input
     // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable or Task is based on their priority
     // 1 : (Runnable or Task) ID
     // 2 : (Runnable or Task) Offset
     // --------------------------------------------------------------------------------------------------------------
     // writeTable : [(maxCycle + 1) X (Runnable or Task) size]     Output
     // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable or Task is based on their IDs
     // 1 : (Runnable or Task) ID
     // 2 : First Cycle
     // 3 : Second Cycle
     // ..
     // --------------------------------------------------------------------------------------------------------------
 
-    int runnableIndex = 0;
-
     for (int taskIndex = 0; taskIndex < size; taskIndex++) {
-        int numberOfRunnables = this->task[taskIndex]->GetNumberOfRunnables();
+        int numberOfRunnables = this->tasks[taskPriority[taskIndex]]->GetNumberOfRunnables();
 
         for (int tmpCount = 0; tmpCount < numberOfRunnables; tmpCount++) {
+            int runnableId = this->tasks[taskIndex]->GetRunnable(tmpCount)->GetId();
+            int taskIndexPriority = this->taskPriority[taskIndex];
+
+            writeTable[runnableId * maxCycle] = runnableId;
+
             for (int cycle = 0; cycle < maxCycle; cycle++) {
-                writeTable[runnableIndex * maxCycle + cycle] = periods[taskIndex] * (cycle + 1) + offsets[taskIndex];
+                writeTable[runnableId * maxCycle + cycle + 1] = periods[taskIndexPriority * 2 + 1] * (cycle + 1) + offsets[taskIndexPriority * 2 + 1];
             }
-            runnableIndex++;
         }
     }
 }
@@ -579,24 +605,54 @@ void DAG::GetReleaseTimeWriteTable(double* periods, double* offsets, int size, i
 // TASK 기준에서만 가능
 void DAG::GetNextJobWriteTable(double* startTable, int size, int maxCycle, double* writeTable) {
     // --------------------------------------------------------------------------------------------------------------
-    // startTable : [Cycle X Task]     Input
+    // startTable : [(maxCycle + 1) X (Runnable or Task) size]     Input
     // --------------------------------------------------------------------------------------------------------------
-    // writeTable : [Cycle X Runnable]     Output
+    // ## The order of Runnable or Task is based on their priority
+    // 1 : (Runnable or Task) ID
+    // 2 : First Cycle
+    // 3 : Second Cycle
+    // ..
     // --------------------------------------------------------------------------------------------------------------
-    int runnableIndex = 0;
+    // writeTable : [(maxCycle + 1) X Runnable size]     Output
+    // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable or Task is based on their IDs
+    // 1 : Runnable ID
+    // 2 : First Cycle
+    // 3 : Second Cycle
+    // ..
+    // --------------------------------------------------------------------------------------------------------------
 
     for (int taskIndex = 0; taskIndex < size; taskIndex++) {
         int numberOfRunnables = this->task[taskIndex]->GetNumberOfRunnables();
 
         for (int tmpCount = 0; tmpCount < numberOfRunnables; tmpCount++) {
-            std::memcpy(writeTable[runnableIndex], startTable[taskIndex + 1], sizeof(double) * (maxCycle - 1));
-            writeTable[runnableIndex * maxCycle + (maxCycle - 1)] = startTable[taskIndex] + this->GetHyperPeriod();
-            runnableIndex++;
+            writeTable[this->tasks[taskIndex]->GetRunnable(tmpCount)->GetId() * maxCycle] = this->tasks[taskIndex]->GetRunnable(tmpCount)->GetId();
+            std::memcpy(writeTable[this->tasks[taskIndex]->GetRunnable(tmpCount)->GetId() * maxCycle + cycle + 1], startTable[this->taskPriority[taskIndex] * maxCycle + 1], sizeof(double) * (maxCycle - 1));
+            writeTable[this->tasks[taskIndex]->GetRunnable(tmpCount)->GetId() * maxCycle + (maxCycle - 1)] = startTable[this->taskPriority[taskIndex] * maxCycle] + this->GetHyperPeriod();
         }
     }
 }
 
 void DAG::DataFlow(int thisRunnableId, int cycle, double intputTime, double* readTable, double* writeTable, int maxCycle, double* outputTimeTable) {
+    // --------------------------------------------------------------------------------------------------------------
+    // readTable : [(maxCycle + 1) X (Runnable or Task) size]     Input
+    // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable or Task is based on their IDs
+    // 1 : (Runnable or Task) ID
+    // 2 : First Cycle
+    // 3 : Second Cycle
+    // ..
+    // --------------------------------------------------------------------------------------------------------------
+    // writeTable : [(maxCycle + 1) X (Runnable or Task) size]     Input
+    // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable or Task is based on their IDs
+    // 1 : (Runnable or Task) ID
+    // 2 : First Cycle
+    // 3 : Second Cycle
+    // ..
+    // --------------------------------------------------------------------------------------------------------------
+    // reactionTime : [maxCycle X InputRunnable size X OutputRunnable size]     Output
+    // --------------------------------------------------------------------------------------------------------------
 
     if (this->runnables[thisRunnableId]->GetStatus() == 1) {
         outputTimeTable[runnablePriority[thisRunnableId] * numberOfInputRunnables * maxCycle + inputRunnableIndex * maxCycle + cycle] = writeTable[runnablePriority[thisRunnableID] * maxCycle + cycle];
@@ -609,10 +665,11 @@ void DAG::DataFlow(int thisRunnableId, int cycle, double intputTime, double* rea
     }
 }
 
-void DAG::GetReactionTime(double* readTable, double* writeTable, int runnableSize, int maxCycle, double* reactionTime) {
+void DAG::GetReactionTime(double* readTable, double* writeTable, int numberOfRunnables, int maxCycle, double* reactionTime) {
     // --------------------------------------------------------------------------------------------------------------
     // readTable : [(maxCycle + 1) X (Runnable or Task) size]     Input
     // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable or Task is based on their IDs
     // 1 : (Runnable or Task) ID
     // 2 : First Cycle
     // 3 : Second Cycle
@@ -620,6 +677,7 @@ void DAG::GetReactionTime(double* readTable, double* writeTable, int runnableSiz
     // --------------------------------------------------------------------------------------------------------------
     // writeTable : [(maxCycle + 1) X (Runnable or Task) size]     Input
     // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable or Task is based on their IDs
     // 1 : (Runnable or Task) ID
     // 2 : First Cycle
     // 3 : Second Cycle
@@ -627,6 +685,7 @@ void DAG::GetReactionTime(double* readTable, double* writeTable, int runnableSiz
     // --------------------------------------------------------------------------------------------------------------
     // reactionTime : [maxCycle X InputRunnable size X OutputRunnable size]     Output
     // --------------------------------------------------------------------------------------------------------------
+    
     int numberOfInputRunnables = this->GetNumberOfInputRunnables();
     int numberOfOutputRunnables = this->GetNumberOfOutputRunnables();
 
