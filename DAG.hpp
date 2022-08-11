@@ -18,8 +18,8 @@ private:
     std::vector<std::shared_ptr<TASK>> tasks;  // Tasks로 바꿔야 함
     std::vector<std::shared_ptr<RUNNABLE>> runnables;
 
-    std::vector<std::shared_ptr<RUNNABLE>> inputRunnables;
-    std::vector<std::shared_ptr<RUNNABLE>> outputRunnables;
+    std::vector<int> inputRunnables;
+    std::vector<int> outputRunnables;
 
     std::vector<int> taskPriority;
     std::vector<int> runablePriority;
