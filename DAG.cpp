@@ -74,12 +74,12 @@ double DAG::GetHyperPeriod() {
 
 void DAG::SetInputRunnableList() {
     // vector capacity control : swap technique
-    std::vector<std::shared_ptr<RUNNABLE>> tmpList;
+    std::vector<int> tmpList;
     int numberOfRunnables = this->GetNumberOfRunnables();
 
     for (int runnableIndex = 0; runnableIndex < numberOfRunnables; runnableIndex++) {
         if (this->runnables[runnableIndex]->GetStatus() == 0) {
-            tmpList.push_back(this->runnables[runnableIndex]->GetSharedPtr());
+            tmpList.push_back(this->runnables[runnableIndex]->GetId());
         }
     }
 
@@ -87,12 +87,12 @@ void DAG::SetInputRunnableList() {
 }
 
 void DAG::SetOutputRunnableList() {
-    std::vector<std::shared_ptr<RUNNABLE>> tmpList;
+    std::vector<int> tmpList;
     int numberOfRunnables = this->GetNumberOfRunnables();
 
     for (int runnableIndex = 0; runnableIndex < numberOfRunnables; runnableIndex++) {
         if (this->runnables[runnableIndex]->GetStatus() == 1) {
-            tmpList.push_back(this->runnables[runnableIndex]->GetSharedPtr());
+            tmpList.push_back(this->runnables[runnableIndex]->GetId());
         }
     }
 
@@ -621,7 +621,7 @@ void DAG::GetNextJobWriteTable(double* startTable, int size, int maxCycle, doubl
     }
 }
 
-void DAG::SetArrivalTable(double* readTable, double* writeTable, int inputRunnableIndex, int thisRunnableId, double thisCycle, int maxCycle, double* arrivalTable) {
+void DAG::SetArrivalTable(double* readTable, double* writeTable, int inputRunnableIndex, int inputCycle, int hyperPeriodCount, int thisRunnableId, int thisCycle, int maxCycle, double* arrivalTable) {
     // --------------------------------------------------------------------------------------------------------------
     // readTable : [maxCycle X Runnable size]     Input
     // --------------------------------------------------------------------------------------------------------------
@@ -646,18 +646,62 @@ void DAG::SetArrivalTable(double* readTable, double* writeTable, int inputRunnab
     // --------------------------------------------------------------------------------------------------------------
 
     if (this->runnables[thisRunnableId]->GetStatus() == 1) {
-        arrivalTable[outputRunnables.find(thisRunnableId) * this->GetnumberOfInputRunnables() * maxCycle + inputRunnableIndex * maxCycle + cycle] = writeTable[runnablePriority[thisRunnableID] * maxCycle + cycle];
+        arrivalTable[(find(this->outputRunnables.begin(), this->outputRunnables.end(), thisRunnableId) - this->outputRunnables.begin()) * this->GetnumberOfInputRunnables() * maxCycle + inputRunnableIndex * maxCycle + inputCycle] = writeTable[thisRunnableId * maxCycle + thisCycle] + this->GetHyperPeriod() * hyperPeriodCount;
     } else {
-        for (int outputRunnableIndex = 0; outputRunnableIndex < inputRunnable->GetNumberOfOutputRunnables(); outputRunnableIndex++) {
-            if (inputTime <= readTable[runnablePriority[thisRunnableId]]) {
-                this->ReactionTimeFlow(startTime, cycle, this->runnables[thisRunnableId]->GetOutputRunnableId(outputRunnableIndex), readTable, writeTable, maxCycle, reactionTime);
+        for (int tmpCount = 0; tmpCount < this->runnables[thisRunnableId]->GetNumberOfOutputRunnables(); tmpCount++) {
+            int tmpCycle = 0;
+            int outputRunnableId = this->runnables[thisRunnableId]->GetOutputRunnableId(tmpCount);
+            int readTime = readTable[outputRunnableId * maxCycle + tmpCycle];
+
+            // hyperPeriod가 서로 같으니 생략
+            while (writeTable[thisRunnableId * maxCycle + thisCycle] > readtime) {
+                tmpCycle++;
+
+                if (tmpCycle == maxCycle || readTable[outputRunnableId * maxCycle + tmpCycle] == -1.0) {
+                    readtime = readTable[outputRunnableId * maxCycle] + this->GetHyperPeriod();
+                    tmpCycle = 0;
+                    hyperPeriodCount++;
+                } else {
+                    readtime = readTable[outputRunnableId * maxCycle + tmpCycle];
+                }
             }
+
+            this->SetArrivalTable(readTable, writeTable, inputRunnableIndex, hyperPeriodCount, inputCycle, outputRunnableId, tmpCycle, maxCycle, reactionTime);
         }
     }
 }
 
-void DAG::GetArrivalTable(double* readTable, double* writeTable, int thisRunnableId, double thisCycle, int maxCycle, double* arrivalTable) {
+void DAG::GetArrivalTable(double* readTable, double* writeTable, int maxCycle, double* arrivalTable) {
+    // --------------------------------------------------------------------------------------------------------------
+    // readTable : [maxCycle X Runnable size]     Input
+    // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable is based on their IDs
+    // 1 : First Cycle
+    // 2 : Second Cycle
+    // ..
+    // --------------------------------------------------------------------------------------------------------------
+    // writeTable : [maxCycle X Runnable size]     Input
+    // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable is based on their IDs
+    // 1 : First Cycle
+    // 2 : Second Cycle
+    // ..
+    // --------------------------------------------------------------------------------------------------------------
+    // arrivalTime : [maxCycle X InputRunnable size X OutputRunnable size]     Output
+    // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable is based on their IDs
+    // 1 : First Cycle
+    // 2 : Second Cycle
+    // ..
+    // --------------------------------------------------------------------------------------------------------------
 
+    int numberOfInputRunnables = this->GetNumberOfInputRunnables();
+
+    for (int inputRunnableIndex = 0; inputRunnableIndex < numberOfInputRunnables; inputRunnableIndex++) {
+        for (int cycle = 0; cycle < maxCycle; cycle++) {
+            this->SetArrivalTable(readTable, writeTable, inputRunnableIndex, cycle, 0, inputRunnableIndex, cycle, maxCycle, arrivalTable);
+        }
+    }
 }
 
 void DAG::GetReactionTime(double* arrivalTable, int runnableSize, int maxCycle, double* reactionTime) {
@@ -686,13 +730,10 @@ void DAG::GetReactionTime(double* arrivalTable, int runnableSize, int maxCycle, 
 
     for (int inputRunnableIndex = 0; inputRunnableIndex < numberOfInputRunnables; inputRunnableIndex++) {
         for (int cycle = 0; cycle < maxCycle; cycle++) {
-            double inputTime = readTable[runnablePriority[this->inputRunnables[inputRunnableIndex]->GetId()] * maxCycle];
-            this->ReactionTimeFlow(this->inputRunnables[inputRunnableIndex]->GetId(), cycle, inputTime, inputTime, readTable, writeTable, maxCycle, reactionTime);
-            reactionTime[outputRunnableIndex * numberOfInputRunnables * maxCycle + inputRunnableIndex * maxCycle + cycle] = ;
         }
     }
 }
 
-void DAG::GetDataAge(double* readTAble, double* writeTable, int maxCycle, double* dataAge) {
+void DAG::GetDataAge(double* readTable, double* writeTable, int maxCycle, double* dataAge) {
 
 }
