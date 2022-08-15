@@ -22,7 +22,7 @@ DAG::DAG() {}
 
 DAG::~DAG() {
     inputRunnables.clear();
-    outputRunnabels.clear();
+    outputRunnables.clear();
     tasks.clear();
     runnables.clear();
 }
@@ -704,7 +704,14 @@ void DAG::GetArrivalTable(double* readTable, double* writeTable, int maxCycle, d
     }
 }
 
-void DAG::GetReactionTime(double* arrivalTable, int runnableSize, int maxCycle, double* reactionTime) {
+void DAG::GetReactionTime(double* arrivalTable, double* readTable, int maxCycle, double* reactionTime) {
+    // --------------------------------------------------------------------------------------------------------------
+    // arrivalTime : [maxCycle X InputRunnable size X OutputRunnable size]     Input
+    // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable is based on their IDs
+    // 1 : First Cycle
+    // 2 : Second Cycle
+    // ..    
     // --------------------------------------------------------------------------------------------------------------
     // readTable : [(maxCycle + 1) X Runnable size]     Input
     // --------------------------------------------------------------------------------------------------------------
@@ -713,6 +720,39 @@ void DAG::GetReactionTime(double* arrivalTable, int runnableSize, int maxCycle, 
     // 2 : First Cycle
     // 3 : Second Cycle
     // ..
+    // --------------------------------------------------------------------------------------------------------------
+    // reactionTime : [maxCycle X InputRunnable size X OutputRunnable size]     Output
+    // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable is based on their IDs
+    // 1 : First Cycle
+    // 2 : Second Cycle
+    // ..
+    // --------------------------------------------------------------------------------------------------------------
+
+    int numberOfInputRunnables = this->GetNumberOfInputRunnables();
+    int numberOfOutputRunnables = this->GetNumberOfOutputRunnables();
+
+    for (int inputRunnableIndex = 0; inputRunnableIndex < numberOfInputRunnables; inputRunnableIndex++) {
+        for (int cycle = 0; cycle < maxCycle; cycle++) {
+            for (int outputRunnableIndex = 0; outputRunnableIndex < numberOfOutputRunnables; outputRunnableIndex++) {
+                double outputTime = arrivalTable[outputRunnableIndex * numberOfInputRunnables * maxCycle + inputRunnableIndex * maxCycle + cycle];
+
+                if (outputTime > 0.0) {
+                    reactionTime[outputRunnableIndex * numberOfInputRunnables * maxCycle + inputRunnableIndex * maxCycle + cycle] = outputTime - readTable[inputRunnables[inputRunnableIndex] * maxCycle + cycle];
+                }
+            }
+        }
+    }
+}
+
+void DAG::GetDataAge(double* arrivalTable, double* writeTable, int maxCycle, double* dataAge) {
+    // --------------------------------------------------------------------------------------------------------------
+    // arrivalTime : [maxCycle X InputRunnable size X OutputRunnable size]     Input
+    // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable is based on their IDs
+    // 1 : First Cycle
+    // 2 : Second Cycle
+    // ..    
     // --------------------------------------------------------------------------------------------------------------
     // writeTable : [(maxCycle + 1) X Runnable size]     Input
     // --------------------------------------------------------------------------------------------------------------
@@ -724,16 +764,12 @@ void DAG::GetReactionTime(double* arrivalTable, int runnableSize, int maxCycle, 
     // --------------------------------------------------------------------------------------------------------------
     // reactionTime : [maxCycle X InputRunnable size X OutputRunnable size]     Output
     // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable is based on their IDs
+    // 1 : First Cycle
+    // 2 : Second Cycle
+    // ..
+    // --------------------------------------------------------------------------------------------------------------
 
     int numberOfInputRunnables = this->GetNumberOfInputRunnables();
     int numberOfOutputRunnables = this->GetNumberOfOutputRunnables();
-
-    for (int inputRunnableIndex = 0; inputRunnableIndex < numberOfInputRunnables; inputRunnableIndex++) {
-        for (int cycle = 0; cycle < maxCycle; cycle++) {
-        }
-    }
-}
-
-void DAG::GetDataAge(double* readTable, double* writeTable, int maxCycle, double* dataAge) {
-
 }
