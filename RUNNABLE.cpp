@@ -46,6 +46,9 @@ int RUNNABLE::GetPrecedence() {
 int RUNNABLE::GetStatus() {
     return this->status;
 }
+int RUNNABLE::GetOutputRunnable() {
+    return (int)this->outputRunnables.size()
+}
 
 void RUNNABLE::LinkInputRunnable(const std::weak_ptr<RUNNABLE> inputRunnable) {
     bool searchFlag = false; 
@@ -95,8 +98,8 @@ void RUNNABLE::DisplayRunnable() {
 
 }
 
-void RUNNABLE::SetPrecedence() { // Set Runnable's precedence. 
-    
+void RUNNABLE::SetPrecedence(int precedence) { // Set Runnable's precedence. 
+    this->precedence = precedence;
 }
 
 void RUNNABLE::SetStatus(int status) {

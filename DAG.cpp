@@ -74,10 +74,25 @@ void DAG::RandomEdge() {
     SetRunnablePrecedence();
 }
 
+int CheckPrecedence(std::shared_ptr<RUNNABLE> tmpRunnable, int precedence) {
+    if (tmpRunnable->GetOutputRunnable() == 0) return precedence;
+    else {
+        precedence++;
+        CheckPrecedence
+    }
+
+    return precedence;
+}
+
 void DAG::SetRunnablePrecedence() {
     
     for (auto &runnable : runnables) {
+        int precedence = 0;
+        std::shared_ptr<RUNNABLE> tmpRunnable = runnable;
 
+        precedende = CheckPrecedence(tmpRunnable, precedence);
+        
+        runnable->SetPrecedence(precedence);
     }
 }
 

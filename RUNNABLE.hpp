@@ -27,12 +27,13 @@ public:
     double GetExecutionTime();
     int GetPrecedence();
     int GetStatus();
+    int GetOutputRunnable();
 
     void LinkInputRunnable(const std::weak_ptr<RUNNABLE> inputRunnable);
     void LinkOutputRunnable(const std::shared_ptr<RUNNABLE> outputRunnable);
     //링크드 러너블 호출함수 만들기
     void DisplayRunnable();
-    void SetPrecedence();
+    void SetPrecedence(int precedence);
     void SetStatus(int status);
 
     std::shared_ptr<RUNNABLE> GetSharedPtr();
