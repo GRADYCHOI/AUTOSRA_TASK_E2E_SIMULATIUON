@@ -47,7 +47,10 @@ int RUNNABLE::GetStatus() {
     return this->status;
 }
 int RUNNABLE::GetOutputRunnable() {
-    return (int)this->outputRunnables.size()
+    return (int)this->outputRunnables.size();
+}
+int RUNNABLE::GetInputRunnable() {
+    return (int)this->inputRunnables.size();
 }
 
 void RUNNABLE::LinkInputRunnable(const std::weak_ptr<RUNNABLE> inputRunnable) {
@@ -104,6 +107,10 @@ void RUNNABLE::SetPrecedence(int precedence) { // Set Runnable's precedence.
 
 void RUNNABLE::SetStatus(int status) {
     if (this->status < status) this->status = status;
+}
+
+void RUNNABLE::PointOutputRunnable() {
+    return outputRunnables;
 }
 
 std::shared_ptr<RUNNABLE> RUNNABLE::GetSharedPtr() {

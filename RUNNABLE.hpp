@@ -15,7 +15,6 @@ private:
     std::vector<std::shared_ptr<RUNNABLE>> outputRunnables;
 
     void SetStatus();
-
     void AddInputRunnable(const std::weak_ptr<RUNNABLE> inputRunnable);
     void AddOutputRunnable(const std::shared_ptr<RUNNABLE> outputRunnable);
 
@@ -28,13 +27,14 @@ public:
     int GetPrecedence();
     int GetStatus();
     int GetOutputRunnable();
+    int GetInputRunnable();
 
     void LinkInputRunnable(const std::weak_ptr<RUNNABLE> inputRunnable);
     void LinkOutputRunnable(const std::shared_ptr<RUNNABLE> outputRunnable);
-    //링크드 러너블 호출함수 만들기
     void DisplayRunnable();
     void SetPrecedence(int precedence);
     void SetStatus(int status);
+    void PointOutputRunnable();
 
     std::shared_ptr<RUNNABLE> GetSharedPtr();
 };

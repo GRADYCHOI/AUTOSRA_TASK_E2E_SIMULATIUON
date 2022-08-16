@@ -66,7 +66,7 @@ void DAG::RandomEdge() {
     for (int j = 0; j < (int)this->runnables.size(); j++) {
         for (int k = j+1; k < (int)this->runnables.size(); k++) {
             if ((rand() % 100) < rate) {
-                cout << j << " -> " << k << endl;
+                //cout << j << " -> " << k << endl;
                 this->runnables[j]->LinkOutputRunnable(this->runnables[k]->GetSharedPtr());
             }
         }
@@ -74,33 +74,42 @@ void DAG::RandomEdge() {
     SetRunnablePrecedence();
 }
 
-int CheckPrecedence(std::shared_ptr<RUNNABLE> tmpRunnable, int precedence) {
-    if (tmpRunnable->GetOutputRunnable() == 0) return precedence;
+void CheckPrecedence(std::shared_ptr<RUNNABLE> runnable, int precedence) {
+    precedence++;
+    if (runnable->GetInputRunnable() == 0) runnable->SetPrecedence(precedence);
     else {
-        precedence++;
-        CheckPrecedence
-    }
+        if (runnable->GetOutputRunnable() == 0) runnable->SetPrecedence(precedence);            
+        for (auto &OutputRunnable : runnable->outputRunnables) {
+            CheckPrecedence(OutputRunnable, precedence);
 
-    return precedence;
+        }
+        /*
+        for (int i = 0; i < runnable->GetOutputRunnable(); i++) {
+            //std::shared_ptr<RUNNABLE>tmpRunnable = tmpRunnable;
+            CheckPrecedence(runnable->, precedence);
+            cout << "11" << endl;
+        }*/
+    }
+    runnable->SetPrecedence(precedence);
 }
 
 void DAG::SetRunnablePrecedence() {
     
     for (auto &runnable : runnables) {
         int precedence = 0;
-        std::shared_ptr<RUNNABLE> tmpRunnable = runnable;
-
-        precedende = CheckPrecedence(tmpRunnable, precedence);
-        
-        runnable->SetPrecedence(precedence);
+        CheckPrecedence(runnable, precedence);
+        cout << endl;
     }
 }
 
 void DAG::DisplayRunnablesPtr(){
+
+    cout << "Display Start" << endl;
     cout << runnables.size() << " " << runnables.capacity() << endl;
     for (const auto &runnable : runnables) {
         cout << "Runnable ID : " <<  runnable->GetId() << " ,  ";
         cout << "Execution Time : " << runnable->GetExecutionTime() << " , ";
+        cout << "Precedence : " << runnable->GetPrecedence() << " , ";
         if (runnable->GetStatus() == 0) cout << "INPUT , ";
         else if (runnable->GetStatus() == 1) cout << "OUTPUT , ";
         else if (runnable->GetStatus() == 2) cout << "MIDDLE , ";
