@@ -115,6 +115,10 @@ void DAG::AddTask(Task& task) {
     this->SetParamters();
 }*/
 
+void DAG::DoTaskMapping() {
+    
+}
+
 void DAG::Simulate() {
     std::cin >> option >> std::endl;
 
@@ -148,26 +152,22 @@ int DAG::GetMaxCycle() {
     return static_cast<int>(this->GetHyperPeriod() / minPeriod);
 }
 
-void DAG::SimulateImplicitTask() {
-    int maxCycle = this->GetMaxCycle(); 
+void DAG::SimulateTaskImplicitTask() {
+    int maxCycle = this->GetMaxCycle();
     int taskSize = this->GetNumberOfTasks();
     int runnableSize = this->GetNumberOfRunnables();
 
-    int* runnablePriority = new int[runnableSize];
     double* taskPeriods = new double[taskSize];
     double* taskOffsets = new double[taskSize];
     double* taskExecutionTimes = new double[taskSize];
-    double* taskReleaseTable = new double[taskSize * (maxCycle + 1)];
     double* taskStartTable = new double[taskSize * (maxCycle + 1)];
     double* taskEndTable = new double[taskSize * (maxCycle + 1)];
     double* taskReactionTime = new double[this->GetNumberOfOutputRunnables() * maxCycle * this->GetNumberOfInputRunnables()];
     double* taskDataAge = new double[this->GetNumberOfOutputRunnables() * maxCycle * this->GetNumberOfInputRunnables()];
 
-    std::memset(runnablePriority, -1, sizeof(int) * runnableSize);
     std::memset(taskPeriods, -1.0, sizeof(double) * taskSize);
     std::memset(taskOffsets, -1.0, sizeof(double) * taskSize);
     std::memset(taskExecutionTimes, -1.0, sizeof(double) * taskSize);
-    std::memset(taskReleaseTable, -1.0, sizeof(double) * taskSize * maxCycle);
     std::memset(taskStartTable, -1.0, sizeof(double) * taskSize * maxCycle);
     std::memset(taskEndTable, -1.0, sizeof(double) * taskSize * maxCycle);
     std::memset(taskReactionTime, -1.0, sizeof(double) * maxCycle);
@@ -176,8 +176,12 @@ void DAG::SimulateImplicitTask() {
     // command set
     this->GetTaskInfo(taskSize, taskPeriods, taskOffsets, taskExecutionTimes);
     this->GetExecutionTable(taskPeriods, taskOffsets, taskExecutionTimes, taskSize, maxCycle, taskStartTable, taskEndTable);
+
+
+
     this->GetReactionTime(taskStartTable, taskEndTable, taskSize, maxCycle, taskReactionTime);
     this->GetDataAge(taskStartTable, taskEndTable, taskSize, maxCycle, taskDataAge);
+
 
     delete[] taskDataAge;
     delete[] taskReactionTime;
@@ -637,7 +641,7 @@ void DAG::SetArrivalTable(double* readTable, double* writeTable, int inputRunnab
     // 2 : Second Cycle
     // ..
     // --------------------------------------------------------------------------------------------------------------
-    // arrivalTime : [maxCycle X InputRunnable size X OutputRunnable size]     Output
+    // arrivalTable : [maxCycle X InputRunnable size X OutputRunnable size]     Output
     // --------------------------------------------------------------------------------------------------------------
     // ## The order of Runnable is based on their IDs
     // 1 : First Cycle
