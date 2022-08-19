@@ -103,15 +103,16 @@ void RUNNABLE::DisplayRunnable() {
 
 void RUNNABLE::SetPrecedence(int precedence) { // Set Runnable's precedence. 
     this->precedence = precedence;
+    cout << "Set Precedence complete!" << endl;
 }
 
 void RUNNABLE::SetStatus(int status) {
     if (this->status < status) this->status = status;
 }
-
+/*
 void RUNNABLE::PointOutputRunnable() {
     return outputRunnables;
-}
+}*/
 
 std::shared_ptr<RUNNABLE> RUNNABLE::GetSharedPtr() {
     return shared_from_this();

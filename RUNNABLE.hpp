@@ -28,13 +28,14 @@ public:
     int GetStatus();
     int GetOutputRunnable();
     int GetInputRunnable();
+    const std::vector<std::shared_ptr<RUNNABLE>>& getoutput() const {return outputRunnables;}
 
     void LinkInputRunnable(const std::weak_ptr<RUNNABLE> inputRunnable);
     void LinkOutputRunnable(const std::shared_ptr<RUNNABLE> outputRunnable);
     void DisplayRunnable();
     void SetPrecedence(int precedence);
     void SetStatus(int status);
-    void PointOutputRunnable();
+    //void PointOutputRunnable();
 
     std::shared_ptr<RUNNABLE> GetSharedPtr();
 };

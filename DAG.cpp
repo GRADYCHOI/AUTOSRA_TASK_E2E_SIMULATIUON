@@ -56,6 +56,7 @@ void DAG::GenerateRunnables(int num) {
         cout << "Runnable ID : " << runnable->GetId() << ", Execution Time : " << runnable->GetExecutionTime() << endl;
     }
     RandomEdge();
+    SetRunnablePrecedence();
     DisplayRunnablesPtr();
 }
 
@@ -71,7 +72,6 @@ void DAG::RandomEdge() {
             }
         }
     }
-    SetRunnablePrecedence();
 }
 
 void CheckPrecedence(std::shared_ptr<RUNNABLE> runnable, int precedence) {
@@ -79,7 +79,7 @@ void CheckPrecedence(std::shared_ptr<RUNNABLE> runnable, int precedence) {
     if (runnable->GetInputRunnable() == 0) runnable->SetPrecedence(precedence);
     else {
         if (runnable->GetOutputRunnable() == 0) runnable->SetPrecedence(precedence);            
-        for (auto &OutputRunnable : runnable->outputRunnables) {
+        for (auto &OutputRunnable : runnable->getoutput()) {
             CheckPrecedence(OutputRunnable, precedence);
 
         }
