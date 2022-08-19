@@ -103,7 +103,6 @@ void RUNNABLE::DisplayRunnable() {
 
 void RUNNABLE::SetPrecedence(int precedence) { // Set Runnable's precedence. 
     this->precedence = precedence;
-    cout << "Set Precedence complete!" << endl;
 }
 
 void RUNNABLE::SetStatus(int status) {

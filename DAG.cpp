@@ -74,11 +74,18 @@ void DAG::RandomEdge() {
     }
 }
 
-void CheckPrecedence(std::shared_ptr<RUNNABLE> runnable, int precedence) {
+int CheckPrecedence(std::shared_ptr<RUNNABLE> runnable, int precedence) {
     precedence++;
-    if (runnable->GetInputRunnable() == 0) runnable->SetPrecedence(precedence);
+    if (runnable->GetInputRunnable() == 0) {
+         runnable->SetPrecedence(precedence);
+         cout << "input runnable complete" << endl;
+         return 0;
+    }
+    if (runnable->GetOutputRunnable() == 0) { //이미 precedence가 셋팅되어있으면 안하는식으로 수정
+        runnable->SetPrecedence(precedence);            
+        cout << runnable->GetId() <<" output runnable complete" << endl;
+    }
     else {
-        if (runnable->GetOutputRunnable() == 0) runnable->SetPrecedence(precedence);            
         for (auto &OutputRunnable : runnable->getoutput()) {
             CheckPrecedence(OutputRunnable, precedence);
 
@@ -98,7 +105,7 @@ void DAG::SetRunnablePrecedence() {
     for (auto &runnable : runnables) {
         int precedence = 0;
         CheckPrecedence(runnable, precedence);
-        cout << endl;
+        cout << precedence << endl;
     }
 }
 
