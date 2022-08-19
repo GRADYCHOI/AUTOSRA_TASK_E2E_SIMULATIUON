@@ -49,6 +49,7 @@ void DAG::GenerateRunnables(int num, int in, int out) {
         AddRunnablePtr(runnalbe);
     }
 }
+
 void DAG::RandomEdge() { //Runnable edge random generation
 
 }
@@ -115,8 +116,27 @@ void DAG::AddTask(Task& task) {
     this->SetParamters();
 }*/
 
+void DAG::GenerateTasks(int numberOfTasks) {
+    double tmpPeriod = -1.0;
+    double tmpOffset = -1.0;
+
+    for (int taskIndex = 0; taskIndex < numberOfTasks; taskIndex++) {
+        std::cout << taskIndex << " -th Task Period : ";
+        std::cin >> tmpPeriod;
+        std::cout << taskIndex << " -th Task Offset : ";
+        std::cin >> tmpOffset;
+        shared_ptr<TASK> task(new TASK(taskIndex, tmpPeriod, tmpOffset));
+        this->tasks.push_back(task);
+        std::cout << "Task ID : " << task->GetId() << ", Period : " << task->GetPeriod() << std::endl;
+    }
+}
+
 void DAG::DoTaskMapping() {
-    
+    int numberOfRunnables = this->GetNumberOfRunnables();
+
+    for (int RunnableIndex = 0; runnableIndex < numberOfRunnables; runnableIndex++) {
+        
+    }
 }
 
 void DAG::Simulate() {
