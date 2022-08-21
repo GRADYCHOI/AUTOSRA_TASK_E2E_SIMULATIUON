@@ -15,29 +15,31 @@ private:
     std::vector<std::shared_ptr<RUNNABLE>> outputRunnables;
 
     void SetStatus();
-
-    void AddInputRunnable(const std::weak_ptr<RUNNABLE>& inputRunnable);
-    void AddOutputRunnable(const std::shared_ptr<RUNNABLE>& outputRunnable);
+    void AddInputRunnable(const std::weak_ptr<RUNNABLE> inputRunnable);
+    void AddOutputRunnable(const std::shared_ptr<RUNNABLE> outputRunnable);
 
 public:
-    RUNNABLE(int id, double time, int status);
+    RUNNABLE(int id, double time);
     ~RUNNABLE();
 
-    int GetId();
-    double GetExecutionTime();
-    int GetPrecedence();
-    int GetStatus();
-    int GetNumberOfInputRunnables();
+    int GetId() const;
+    double GetExecutionTime() const;
+    int GetPrecedence() const;
+    int GetStatus() const;
     int GetNumberOfOutputRunnables();
-    int GetInputRunnableId(int index);
-    int GetOutputRunnableId(int index);
-    //void AddInputRunnable(const std::shared_ptr<RUNNABLE> &inputRunnable);
-    //void AddOutputRunnable(const std::shared_ptr<RUNNABLE> &outputRunnable);
+    int GetNumberOfInputRunnables();
 
-    void LinkInputRunnable(const std::weak_ptr<RUNNABLE>& inputRunnable);
-    void LinkOutputRunnable(const std::shared_ptr<RUNNABLE>& outputRunnable);
+    const std::shared_ptr<Runnable> GetOutputRunnable(int index) const;
+    const std::vector<std::shared_ptr<RUNNABLE>>& GetOutputRunanbles() const;
 
-    void SetPrecedence();
+    void LinkInputRunnable(const std::weak_ptr<RUNNABLE> inputRunnable);
+    void LinkOutputRunnable(const std::shared_ptr<RUNNABLE> outputRunnable);
+
+    void DisplayRunnable();
+    void SetPrecedence(int precedence);
+    
+    void SetStatus(int status);
+    //void PointOutputRunnable();
 
     std::shared_ptr<RUNNABLE> GetSharedPtr();
 };

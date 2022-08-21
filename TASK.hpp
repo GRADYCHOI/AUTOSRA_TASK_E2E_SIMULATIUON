@@ -12,15 +12,12 @@ private:
     int id = -1;
     double period = -1;
     double offset = -1;
-    double executionTime = 0;
 
-    int numberOfRunnables = 0;
     int priority = -1;
 
     std::vector<std::shared_ptr<RUNNABLE>> runnables;
 
     void SetExecutionTime();
-    void SetNumberOfRunnables();
 
 public:
     TASK(int id, double period, double offset);
@@ -28,14 +25,18 @@ public:
 
     void SetPriority(int priority);
 
-    double GetPeriod();
-    double GetOffset();
+    int GetId() const;
+    double GetPeriod() const;
+    double GetOffset() const;
+    
     double GetExecutionTime();
+    int GetPriority() const;
     int GetNumberOfRunnables();
-    int GetPriority();
-    std::shared_ptr<Runnable> GetRunnable(int index);
 
-    void AddRunnable(const std::shared_ptr<RUNNABLE>& runnable);
+    const std::shared_ptr<Runnable> GetRunnable(int index) const;
+    const std::vector<std::shared_ptr<Runnable>>& GetRunnables() const;
+
+    void AddRunnable(const std::shared_ptr<RUNNABLE> runnable);
 };
 
 #endif
