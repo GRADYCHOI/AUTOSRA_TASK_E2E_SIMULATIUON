@@ -42,6 +42,11 @@ public:
     void AddRunnables();
     void AddTask();
     void CheckPrecedence(std::shared_ptr<RUNNABLE> runnable, int precedence);
+    void SetInputRunnableList();
+    void SetOutputRunnableList();
+
+    int GetNumberOfInputRunnables();
+    int GetNumberOfOutputRunnables();
 
     //void AddTask(Task task);
 
