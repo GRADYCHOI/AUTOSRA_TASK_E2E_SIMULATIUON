@@ -37,22 +37,75 @@ public:
     DAG();
     ~DAG();
 
-    void GenerateRunnables(int num, int in, int out);
-    void RandomEdge();
-    void AddRunnablePtr(const std::shared_ptr<RUNNABLE>& runnable);
-    void DisplayRunnablesPtr();
-
     int GetNumberOfTasks();
     int GetNumberOfRunnables();
     double GetHyperPeriod() const;
-    double GetReactionTime();
-    double GetDataAge();
-    void AddRunnables();
-    void AddTask();
 
-    //void AddTask(Task task);
+    void SetInputRunnableList();
+    void SetOutputRunnableList();
+
+    int GetNumberOfInputRunnables();
+    int GetNumberOfOutputRunnables();
+
+    void GenerateRunnables(int numumberOfRunnables);
+    void GenerateTasks(int numberOfTasks);
+    void SetRandomEdge();
+
+    void AddRunnablePtr(const std::shared_ptr<RUNNABLE>& runnable);
+    void AddTaskPtr(const std::shared_ptr<Task>& task);
+
+    void SetRunnablePrecedence();
+    void CheckPrecedence(std::shared_ptr<RUNNABLE> runnable, int precedence);
+    
+    void SetTaskPriority();
+    void SetRunnablePriority(int index);
+    void SetRunnablePriorities();
+    void ExpandRunnablePriorities(std::vector<std::vector<int>> incompleteRunnablePriority, int pointer, int maxSize);
+
+    bool CompareTaskPeriod(pair<int, double> a, pair<int, double> b);
+    bool CompareRunnablePrecedence(pair<int, int> a, pair<int, int> b);
+
+    int GetNumberOfSequenceCase();
+
+    void DoRandomTaskMapping();
+    bool CheckMappable();
+    void ClearTaskMapping();
+    double GetUtilization();
+
+    void SimulateImplicitRunnable();
+    void SimulateTaskImplicitTask();
+
+    int GetMaxCycle();
+
+    void GetTaskPeriods(double* periods);
+    void GetTaskOffsets(double* offsets);
+    void GetTaskExecutionTimes(double* executions);
+
+    void GetRunnablePeriods(double* periods);
+    void GetRunnableOffsets(double* offsets);
+    void GetRunnableExecutionTimes(double* executions);
+
+    void GetTaskInfo(double* periods, double* offsets, double* executions);
+    void GetRunnableInfo(double* periods, double* offsets, double* executions);
+
+    void GetExecutionTable(double* periods, double* offsets, double* executions, int size, int maxCycle, double* startTable, double* endTable);
+
+    void GetReadTable(double* startTable, int size, int maxCycle, double* readTable);
+    void GetReleaseTimeReadTable(double* periods, double* offsets, int size, int maxCycle, double* readTable);
+
+    void GetWriteTable(double* endTable, int size, int maxCycle, double* writeTable);
+    void GetReleaseTimeWriteTable(double* periods, double* offsets, int size, int maxCycle, double* writeTable);
+    void GetNextJobWriteTable(double* startTable, int size, int maxCycle, double* writeTable);
+
+    void SetArrivalTable(double* readTable, double* writeTable, int inputRunnableIndex, int inputCycle, int hyperPeriodCount, int thisRunnableId, int thisCycle, int maxCycle, double* arrivalTable);
+    void GetArrivalTable(double* readTable, double* writeTable, int maxCycle, double* arrivalTable);
+
+    void GetReactionTime(double* arrivalTable, double* readTable, int maxCycle, double* reactionTime)
+    void GetDataAge(double* arrivalTable, double* writeTable, int maxCycle, double* dataAge);
 
     void Simulate();
+
+    void DisplayRunnables();
 };
 
 #endif
