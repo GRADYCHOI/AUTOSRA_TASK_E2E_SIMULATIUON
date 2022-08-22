@@ -150,7 +150,7 @@ int DAG::GetNumberOfTasks() {
 }
 
 int DAG::GetNumberOfRunnables() {
-    return this->numOfRunnables;
+    return this->runnables.size();
 }
 
 double DAG::GetHyperPeriod() {

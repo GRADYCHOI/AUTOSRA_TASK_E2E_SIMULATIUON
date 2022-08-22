@@ -40,6 +40,7 @@ public:
     double GetDataAge();
     void AddRunnables();
     void AddTask();
+    void CheckPrecedence(std::shared_ptr<RUNNABLE> runnable, int precedence);
 
     //void AddTask(Task task);
 
