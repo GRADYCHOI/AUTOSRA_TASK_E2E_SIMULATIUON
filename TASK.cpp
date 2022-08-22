@@ -46,7 +46,7 @@ int TASK::GetNumberOfRunnables() {
     return (int)this->runnables.size();
 }
 
-const std::shared_ptr<Runnable> RUNNABLE::GetRunnable(int index) const {
+const std::shared_ptr<RUNNABLE> RUNNABLE::GetRunnable(int index) const {
     return this->runnables[index];
 }
 

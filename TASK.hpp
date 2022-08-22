@@ -30,8 +30,8 @@ public:
     double GetExecutionTime();
     int GetNumberOfRunnables();
 
-    const std::shared_ptr<Runnable> GetRunnable(int index) const;
-    const std::vector<std::shared_ptr<Runnable>>& GetRunnables() const;
+    const std::shared_ptr<RUNNABLE> GetRunnable(int index) const;
+    const std::vector<std::shared_ptr<RUNNABLE>>& GetRunnables() const;
 
     void AddRunnable(const std::shared_ptr<RUNNABLE> runnable);
     void ClearMapping();

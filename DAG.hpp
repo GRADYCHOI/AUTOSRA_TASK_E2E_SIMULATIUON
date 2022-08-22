@@ -56,3 +56,7 @@ public:
 };
 
 #endif
+
+
+
+// g++ main.cpp DAG.cpp TASK.cpp RUNNABLE.cpp -o main -Wall

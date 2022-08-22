@@ -51,7 +51,7 @@ int RUNNABLE::GetNumberOfInputRunnables() {
     return (int)this->inputRunnables.size();
 }
 
-const std::shared_ptr<Runnable> RUNNABLE::GetOutputRunnable(int index) const {
+const std::shared_ptr<RUNNABLE> RUNNABLE::GetOutputRunnable(int index) const {
     return this->outputRunnables[index];
 }
 
