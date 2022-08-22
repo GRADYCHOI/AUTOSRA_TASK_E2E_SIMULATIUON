@@ -24,12 +24,12 @@ DAG::~DAG() {
 }
 
 void DAG::SetHyperPeriod() {
-    if (this->GetNumberOfRunnables > 0) {
-        double tmpPeriod = this->task[0]->GetPeriod();
+    if (this->GetNumberOfRunnables() > 0) {
+        double tmpPeriod = this->tasks[0]->GetPeriod();
         int numberOfTasks = this->GetNumberOfTasks();
 
         for(int tmpCount = 1; tmpCount < numberOfTasks; tmpCount++) {
-            tmpPeriod = LCM(tmpPeriod, this->task[tmpCount]->GetPeriod());
+            tmpPeriod = LCM(tmpPeriod, this->tasks[tmpCount]->GetPeriod());
         }
 
         this->hyperPeriod = tmpPeriod;
@@ -55,7 +55,7 @@ void DAG::GenerateRunnables(int numumberOfRunnables) {
     //DisplayRunnablesPtr();
 }
 
-void DAG::SetRandomEdge() { //Runnable edge random generation
+void DAG::RandomEdge() { //Runnable edge random generation
     int rate = -1;
     int numberOfRunnables = this->GetNumberOfRunnables();
 
@@ -65,7 +65,7 @@ void DAG::SetRandomEdge() { //Runnable edge random generation
     for (int runnableIndex = 0; runnableIndex < numberOfRunnables; runnableIndex++) {
         for (int tmpRunnableIndex = runnableIndex+1; tmpRunnableIndex < numberOfRunnables; tmpRunnableIndex++) {
             if ((rand() % 100) < rate) {
-                this->runnables[j]->LinkOutputRunnable(this->runnables[k]->GetSharedPtr());
+                this->runnables[runnableIndex]->LinkOutputRunnable(this->runnables[tmpRunnableIndex]->GetSharedPtr());
             }
         }
     }
@@ -117,7 +117,7 @@ int DAG::GetNumberOfTasks() {
 }
 
 int DAG::GetNumberOfRunnables() {
-    return (int)this->runnnables.size();
+    return (int)this->runnables.size();
 }
 
 double DAG::GetHyperPeriod() const {

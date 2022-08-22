@@ -16,6 +16,7 @@ private:
     std::vector<std::shared_ptr<RUNNABLE>> runnables;
 
     void SetExecutionTime();
+    void SetNumberOfRunnables();
 
 public:
     TASK(int id, double period, double offset);
