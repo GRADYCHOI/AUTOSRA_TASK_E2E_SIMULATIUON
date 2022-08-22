@@ -72,16 +72,21 @@ void DAG::SetRandomEdge() { //Runnable edge random generation
 }
 
 void DAG::CheckPrecedence(std::shared_ptr<RUNNABLE> runnable, int precedence) {
-    this->runnablePrecedence[runnable->GetId()] = (this->runnablePrecedence[runnable->GetId()] > precedence) ? this->runnablePrecedence[runnable->GetId()] : precedence;
+    int runnableId = runnable->GetId();
+    this->runnablePrecedence[runnableId] = (this->runnablePrecedence[runnableId] > precedence) ? this->runnablePrecedence[runnableId] : precedence;
 
     if (runnable->GetStatus() != 1) { // Output Runnable
-        for (auto &OutputRunnable : runnable->GetOutputRunnables()) {
-            this->CheckPrecedence(OutputRunnable, ++precedence);
+        for (auto &outputRunnable : runnable->GetOutputRunnables()) {
+            this->CheckPrecedence(outputRunnable, ++precedence);
         }
     }
 }
 
 void DAG::SetRunnablePrecedence() {
+    // runnablePrecedence initialize
+    std::vector<int> tmpRunnablePrecedence(this->GetNumberOfRunnables(), -1);
+    tmpRunnablePrecedence.swap(this->runnablePrecedence);
+
     int numberOfInputRunnables = this->GetNumberOfInputRunnables();
 
     for (int inputRunnableIndex = 0; inputRunnableIndex < numberOfInputRunnables; inputRunnableIndex++) {
