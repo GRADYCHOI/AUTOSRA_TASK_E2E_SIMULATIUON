@@ -78,7 +78,7 @@ void DAG::CheckPrecedence(std::shared_ptr<RUNNABLE> runnable, int precedence) {
     this->runnablePrecedence[runnableId] = (this->runnablePrecedence[runnableId] > precedence) ? this->runnablePrecedence[runnableId] : precedence;
 
     if (runnable->GetStatus() != 1) { // Output Runnable
-        for (auto &outputRunnable : runnable->GetOutputRunnables()) {
+        for (auto &outputRunnable : runnable->GetOutputRunnable()) {
             this->CheckPrecedence(outputRunnable, ++precedence);
         }
     }
@@ -151,6 +151,9 @@ int DAG::GetNumberOfTasks() {
 
 int DAG::GetNumberOfRunnables() {
     return this->runnables.size();
+}
+int DAG::GetNumberOfInputRunnables() {
+    return this->in
 }
 
 double DAG::GetHyperPeriod() {
