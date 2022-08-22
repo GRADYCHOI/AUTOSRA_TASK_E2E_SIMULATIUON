@@ -135,7 +135,7 @@ void DAG::DisplayRunnablesPtr(){
     for (const auto &runnable : runnables) {
         cout << "Runnable ID : " <<  runnable->GetId() << " ,  ";
         cout << "Execution Time : " << runnable->GetExecutionTime() << " , ";
-        cout << "Precedence : " << runnable->GetPrecedence() << " , ";
+        cout << "Precedence : " << runnablePrecedence[runnable->GetId()] << " , ";
         if (runnable->GetStatus() == 0) cout << "INPUT , ";
         else if (runnable->GetStatus() == 1) cout << "OUTPUT , ";
         else if (runnable->GetStatus() == 2) cout << "MIDDLE , ";
