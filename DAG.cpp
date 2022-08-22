@@ -104,6 +104,7 @@ void DAG::SetRunnablePrecedence() {
     
     for (auto &runnable : runnables) {
         int precedence = 0;
+        if runnable->Get
         CheckPrecedence(runnable, precedence);
         cout << precedence << endl;
     }
