@@ -30,7 +30,7 @@ public:
     int GetNumberOfInputRunnables();
 
     const std::shared_ptr<Runnable> GetOutputRunnable(int index) const;
-    const std::vector<std::shared_ptr<RUNNABLE>>& GetOutputRunanbles() const;
+    const std::vector<std::shared_ptr<RUNNABLE>>& GetOutputRunnables() const;
 
     void LinkInputRunnable(const std::weak_ptr<RUNNABLE> inputRunnable);
     void LinkOutputRunnable(const std::shared_ptr<RUNNABLE> outputRunnable);
