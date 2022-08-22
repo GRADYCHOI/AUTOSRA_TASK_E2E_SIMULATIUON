@@ -71,38 +71,34 @@ void DAG::SetRandomEdge() { //Runnable edge random generation
     }
 }
 
-/* 뭔가 이상함..
-
 int DAG::CheckPrecedence(std::shared_ptr<RUNNABLE> runnable, int precedence) {
     precedence++;
 
     if (runnable->GetInputRunnable() == 0) {
-         runnable->SetPrecedence(precedence);
-         cout << "input runnable complete" << endl;
-         return 0;
+        runnable->SetPrecedence(precedence);
+        std::cout << runnable->GetId() <<"-th Runnable : input runnable complete" << std::endl;
+        return 0;
     }
+
     if (runnable->GetOutputRunnable() == 0) { //이미 precedence가 셋팅되어있으면 안하는식으로 수정
         runnable->SetPrecedence(precedence);            
-        cout << runnable->GetId() <<" output runnable complete" << endl;
-    }
-    else {
-        for (auto &OutputRunnable : runnable->getoutput()) {
-            CheckPrecedence(OutputRunnable, precedence);
-
+        std::cout << runnable->GetId() <<"-th Runnable : output runnable complete" << std::endl;
+    } else {
+        for (auto &OutputRunnable : runnable->GetOutputRunnables()) {
+            this->CheckPrecedence(OutputRunnable, precedence);
         }
     }
+    
     runnable->SetPrecedence(precedence);
 }
 
 void DAG::SetRunnablePrecedence() {
-    for (auto &runnable : runnables) {
+    for (auto &runnable : this->runnables) {
         int precedence = -1;
-        CheckPrecedence(runnable, precedence);
-        cout << precedence << endl;
+        this->CheckPrecedence(runnable, precedence);
+        //std::cout << precedence << std::endl;
     }
 }
-
-*/
 
 void DAG::DisplayRunnables(){
     std::cout << "[Debugging] Display Start" << std::endl;
