@@ -8,6 +8,7 @@
 #include <memory>
 #include <cmath>
 #include <limits.h>
+#include <cstring>
 
 
 class DAG
@@ -52,18 +53,20 @@ public:
     void SetRandomEdge();
 
     void AddRunnablePtr(const std::shared_ptr<RUNNABLE>& runnable);
-    void AddTaskPtr(const std::shared_ptr<Task>& task);
+    void AddTaskPtr(const std::shared_ptr<TASK>& task);
+    void RandomEdge(); 
 
     void SetRunnablePrecedence();
     void CheckPrecedence(std::shared_ptr<RUNNABLE> runnable, int precedence);
+    void GetRunnablePrecedence();
     
     void SetTaskPriority();
     void SetRunnablePriority(int index);
     void SetRunnablePriorities();
     void ExpandRunnablePriorities(std::vector<std::vector<int>> incompleteRunnablePriority, int pointer, int maxSize);
 
-    bool CompareTaskPeriod(pair<int, double> a, pair<int, double> b);
-    bool CompareRunnablePrecedence(pair<int, int> a, pair<int, int> b);
+    bool CompareTaskPeriod(std::pair<int, double> a, std::pair<int, double> b);
+    bool CompareRunnablePrecedence(std::pair<int, int> a, std::pair<int, int> b);
 
     int GetNumberOfSequenceCase();
 
@@ -100,7 +103,7 @@ public:
     void SetArrivalTable(double* readTable, double* writeTable, int inputRunnableIndex, int inputCycle, int hyperPeriodCount, int thisRunnableId, int thisCycle, int maxCycle, double* arrivalTable);
     void GetArrivalTable(double* readTable, double* writeTable, int maxCycle, double* arrivalTable);
 
-    void GetReactionTime(double* arrivalTable, double* readTable, int maxCycle, double* reactionTime)
+    void GetReactionTime(double* arrivalTable, double* readTable, int maxCycle, double* reactionTime);
     void GetDataAge(double* arrivalTable, double* writeTable, int maxCycle, double* dataAge);
 
     void Simulate();

@@ -98,7 +98,7 @@ void RUNNABLE::LinkOutputRunnable(const std::shared_ptr<RUNNABLE> outputRunnable
     }
 }
 
-void RUNNABLE::DisplayOutputRunnables() {
+void RUNNABLE::DisplayRunnable() {
     for (const auto &runnable : this->outputRunnables) {
         std::cout << runnable->GetId() << " ";
     } 

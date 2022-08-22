@@ -36,6 +36,7 @@ public:
     void LinkOutputRunnable(const std::shared_ptr<RUNNABLE> outputRunnable);
 
     void DisplayRunnable();
+    void SetPrecedence(int precedence);
     
     void SetStatus(int status);
 
