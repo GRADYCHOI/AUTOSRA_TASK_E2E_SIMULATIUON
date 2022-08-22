@@ -13,8 +13,6 @@ private:
     double period = -1;
     double offset = -1;
 
-    int priority = -1;
-
     std::vector<std::shared_ptr<RUNNABLE>> runnables;
 
     void SetExecutionTime();
@@ -30,13 +28,13 @@ public:
     double GetOffset() const;
     
     double GetExecutionTime();
-    int GetPriority() const;
     int GetNumberOfRunnables();
 
     const std::shared_ptr<Runnable> GetRunnable(int index) const;
     const std::vector<std::shared_ptr<Runnable>>& GetRunnables() const;
 
     void AddRunnable(const std::shared_ptr<RUNNABLE> runnable);
+    void ClearMapping();
 };
 
 #endif

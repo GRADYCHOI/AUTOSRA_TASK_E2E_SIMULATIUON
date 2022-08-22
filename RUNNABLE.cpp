@@ -39,15 +39,10 @@ double RUNNABLE::GetExecutionTime() const {
     return this->executionTime;
 }
 
-int RUNNABLE::GetPrecedence() const {
-    return this->precedence;
-}
-
 int RUNNABLE::GetStatus() const {
     return this->status;
 }
 
-// Please Check : is it can compile?
 int RUNNABLE::GetNumberOfOutputRunnables() {
     return (int)this->outputRunnables.size();
 }
@@ -118,11 +113,6 @@ void RUNNABLE::SetStatus(int status) {
         this->status = status;
     }
 }
-
-/*
-void RUNNABLE::PointOutputRunnable() {
-    return outputRunnables;
-}*/
 
 std::shared_ptr<RUNNABLE> RUNNABLE::GetSharedPtr() {
     return shared_from_this();

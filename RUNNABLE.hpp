@@ -9,8 +9,8 @@ class RUNNABLE : public std::enable_shared_from_this<RUNNABLE>
 private:
     int id;
     double executionTime = -1;
-    int precedence = -1;
     int status = -1; // 0 = input runnable, 1 = output runnable, 2 = middle runnable
+
     std::vector<std::weak_ptr<RUNNABLE>> inputRunnables;
     std::vector<std::shared_ptr<RUNNABLE>> outputRunnables;
 
@@ -24,8 +24,8 @@ public:
 
     int GetId() const;
     double GetExecutionTime() const;
-    int GetPrecedence() const;
     int GetStatus() const;
+
     int GetNumberOfOutputRunnables();
     int GetNumberOfInputRunnables();
 
@@ -36,10 +36,8 @@ public:
     void LinkOutputRunnable(const std::shared_ptr<RUNNABLE> outputRunnable);
 
     void DisplayRunnable();
-    void SetPrecedence(int precedence);
     
     void SetStatus(int status);
-    //void PointOutputRunnable();
 
     std::shared_ptr<RUNNABLE> GetSharedPtr();
 };

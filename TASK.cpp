@@ -11,17 +11,6 @@ TASK::~TASK() {
     std::cout << "Delete TASK ID : " << this->id << std::endl;
 }
 
-void TASK::SetExecutionTime() {
-    double tmpExecutionTime = 0;
-    int numberOfRunnables = this->GetNumberOfRunnables();
-
-    for (int count = 0; 0 < numberOfRunnables; count++) {
-        tmpExecutionTime += this->runnables[count]->GetExecutionTime();
-    }
-
-    this->executionTime = tmpExecutionTime;
-}
-
 void TASK::SetPriority(int priority) {
     this->priority = priority;
 }
@@ -38,9 +27,15 @@ double TASK::GetOffset() const {
     return this->offset;
 }
 
-// TODO: Import code from DAG.cpp
-double TASK::GetExecutionTime() const {
-    return -1.0;
+double TASK::GetExecutionTime() {
+    double tmpExecutionTime = 0.0;
+    int numberOfRunnables = this->GetNumberOfRunnables();
+
+    for (int count = 0; 0 < numberOfRunnables; count++) {
+        tmpExecutionTime += this->runnables[count]->GetExecutionTime();
+    }
+
+    return tmpExecutionTime;
 }
 
 int TASK::GetPriority() const {
@@ -76,4 +71,9 @@ void TASK::AddRunnable(const std::shared_ptr<RUNNABLE> runnable) {
         this->SetNumberOfRunnables();
         this->SetExecutionTime();
     }
+}
+
+void TASK::ClearMapping() {
+    std::vector<std::shared_ptr<RUNNABLE>> tmpRunnables;
+    tmpRunnables.swap(this->runnables);
 }
