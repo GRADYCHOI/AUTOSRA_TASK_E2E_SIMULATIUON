@@ -73,36 +73,63 @@ void DAG::RandomEdge() {
         }
     }
 }
+/*
+void DAG::CheckPrecedence(std::shared_ptr<RUNNABLE> runnable, int precedence) {
+    int runnableId = runnable->GetId();
+    this->runnablePrecedence[runnableId] = (this->runnablePrecedence[runnableId] > precedence) ? this->runnablePrecedence[runnableId] : precedence;
 
-int CheckPrecedence(std::shared_ptr<RUNNABLE> runnable, int precedence) {
-    precedence++;
-    if (runnable->GetStatus() == 0) {
-         runnable->SetPrecedence(precedence);
-         cout << "input runnable complete" << endl;
-         return 0;
+    if (runnable->GetStatus() != 1) { // Output Runnable
+        for (auto &outputRunnable : runnable->getoutput()) {
+            this->CheckPrecedence(outputRunnable, ++precedence);
+        }
     }
-    else if (runnable->GetStatus() == 1) {
+}
+
+void DAG::SetRunnablePrecedence() {
+    // runnablePrecedence initialize
+    std::vector<int> tmpRunnablePrecedence(this->GetNumberOfRunnables(), -1);
+    tmpRunnablePrecedence.swap(this->runnablePrecedence);
+
+    int numberOfInputRunnables = this->GetNumberOfInputRunnables();
+
+    for (int inputRunnableIndex = 0; inputRunnableIndex < numberOfInputRunnables; inputRunnableIndex++) {
+        this->CheckPrecedence(this->runnables[this->inputRunnables[inputRunnableIndex]], 0);
+    }
+}*/
+int CheckPrecedence(std::shared_ptr<RUNNABLE> runnable, int precedence) {
+    if (runnable->GetPrecedence() < precedence) runnable->SetPrecedence(precedence);
+
+    if (runnable->GetStatus() == 2) {
+        for (auto &outputrunnable : runnable->getoutput()) CheckPrecedence(outputrunnable, ++precedence);
+    }
+    /*if (runnable->GetStatus() == 2) {
+        if (runnable->GetPrecedence() < precedence) {
+            runnable->SetPrecedence(precedence);
+            for (auto &outputrunnable : runnable->getoutput()) CheckPrecedence(outputrunnable, ++precedence);
+        }
+    }
+    else { 
         if (runnable->GetPrecedence() < precedence) {
             runnable->SetPrecedence(precedence);
             cout << "output runnable complete" << endl;
-        } 
-    }
-    else {
-        for (auto &OutputRunnable : runnable->getoutput()) {
-            runnable->SetPrecedence(precedence);
-            CheckPrecedence(OutputRunnable, precedence); // output runnable precedence가 지금  precedence보다 낮으면 실행하도록 바꾸라!
         }
-    }
+    }*/
+    
     cout  << runnable->GetId() << "last" << precedence << endl;
     //runnable->SetPrecedence(precedence);
     return 0;
 }
 
 void DAG::SetRunnablePrecedence() {
-    
     for (auto &runnable : runnables) {
-        int precedence = 0;
-        CheckPrecedence(runnable, precedence);
+        if (runnable->GetStatus() == 0) {
+            int precedence = 1;
+            runnable->SetPrecedence(precedence);
+            cout << "Input runnable precedence complete" << endl;
+            for (auto &outputrunnable : runnable->getoutput()) {
+                CheckPrecedence(outputrunnable, ++precedence);
+            }
+        }
     }
 }
 
@@ -113,7 +140,7 @@ void DAG::DisplayRunnablesPtr(){
     for (const auto &runnable : runnables) {
         cout << "Runnable ID : " <<  runnable->GetId() << " ,  ";
         cout << "Execution Time : " << runnable->GetExecutionTime() << " , ";
-        cout << "Precedence : " << runnable->GetPrecedence() << " , ";
+        cout << "Precedence : " << runnablePrecedence[runnable->GetId()] << " , ";
         if (runnable->GetStatus() == 0) cout << "INPUT , ";
         else if (runnable->GetStatus() == 1) cout << "OUTPUT , ";
         else if (runnable->GetStatus() == 2) cout << "MIDDLE , ";
@@ -128,8 +155,42 @@ int DAG::GetNumberOfTasks() {
 }
 
 int DAG::GetNumberOfRunnables() {
-    return this->numOfRunnables;
+    return this->runnables.size();
 }
+
+void DAG::SetInputRunnableList() {
+    // vector capacity control : swap technique
+    std::vector<int> tmpList;
+
+    for (auto &runnable : this->runnables) {
+        if (runnable->GetStatus() == 0) {
+            tmpList.push_back(runnable->GetId());
+        }
+    }
+
+    tmpList.swap(this->inputRunnables);
+}
+
+void DAG::SetOutputRunnableList() {
+    std::vector<int> tmpList;
+
+    for (auto &runnable : this->runnables) {
+        if (runnable->GetStatus() == 1) {
+            tmpList.push_back(runnable->GetId());
+        }
+    }
+
+    tmpList.swap(this->outputRunnables);
+}
+
+int DAG::GetNumberOfInputRunnables() {
+    return (int)this->inputRunnables.size();
+}
+
+int DAG::GetNumberOfOutputRunnables() {
+    return (int)this->outputRunnables.size();
+}
+
 
 double DAG::GetHyperPeriod() {
     return this->hyperPeriod;

@@ -20,6 +20,10 @@ private:
     
     std::vector<std::shared_ptr<TASK>> task;
     std::vector<std::shared_ptr<RUNNABLE>> runnables;
+    std::vector<int> runnablePrecedence;
+     // Sorted by ID
+    std::vector<int> inputRunnables;
+    std::vector<int> outputRunnables;
  
     void SetParameters();
     void SetNumberOfTasks();
@@ -40,6 +44,12 @@ public:
     double GetDataAge();
     void AddRunnables();
     void AddTask();
+    void CheckPrecedence(std::shared_ptr<RUNNABLE> runnable, int precedence);
+    void SetInputRunnableList();
+    void SetOutputRunnableList();
+
+    int GetNumberOfInputRunnables();
+    int GetNumberOfOutputRunnables();
 
     //void AddTask(Task task);
 
