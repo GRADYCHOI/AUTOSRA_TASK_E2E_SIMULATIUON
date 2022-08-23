@@ -34,6 +34,8 @@ public:
     double GetExecutionTime();
     int GetNumberOfRunnables();
     int GetPriority();
+    const std::shared_ptr<RUNNABLE> GetRunnable(int index) const;
+    const std::vector<std::shared_ptr<RUNNABLE>> GetRunnables() const;
 
     void AddRunnable(const std::shared_ptr<RUNNABLE>& runnable);
 };
