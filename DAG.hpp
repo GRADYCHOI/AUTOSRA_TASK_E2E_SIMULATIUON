@@ -48,17 +48,10 @@ public:
     int CheckPrecedence(std::shared_ptr<RUNNABLE> runnable, int precedence);
     void AddTaskPtr(const std::shared_ptr<TASK>& task);
     void GenerateTasks(int numberOfTasks);
+    void SetTasksPriority();
 
-    void SetTaskPriority();
-    void SetRunnablePriority(int index);
-
-    void SetRunnablePriorities();
-    void ExpandRunnablePriorities(std::vector<std::vector<int>> incompleteRunnablePriority, int pointer, int maxSize);
-
-    int GetNumberOfSequenceCase();
     void DoRandomTaskMapping();
     bool CheckMappable();
-    void ClearTaskMapping();
     double GetUtilization();
     
 

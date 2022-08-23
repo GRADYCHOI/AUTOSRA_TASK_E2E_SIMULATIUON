@@ -6,7 +6,7 @@
 #include "RUNNABLE.hpp"
 
 
-class TASK : public std::enable_shared_from_this<RUNNABLE>
+class TASK 
 {
 private:
     int id = -1;
