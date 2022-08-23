@@ -19,6 +19,7 @@ private:
     double dataAge = -1.0;
     
     std::vector<std::shared_ptr<TASK>> tasks;
+    std::vector<std::shared_ptr<TASK>> tasks2;
     std::vector<std::shared_ptr<RUNNABLE>> runnables;
     std::vector<int> runnablePrecedence;
     // Sorted by Priority

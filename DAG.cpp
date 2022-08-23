@@ -62,7 +62,8 @@ void DAG::GenerateRunnables(int num) {
     cout << "Enter Number of Tasks : ";
     cin >> tasksnum;
     GenerateTasks(tasksnum);
-    DoRandomTaskMapping();
+    SetTasksPriority();
+    //DoRandomTaskMapping();
 }
 
 void DAG::RandomEdge() { 
@@ -116,7 +117,7 @@ void DAG::DisplayRunnablesPtr(){
 }
 
 int DAG::GetNumberOfTasks() {
-    return this->numOfTasks;
+    return this->tasks.size();
 }
 
 int DAG::GetNumberOfRunnables() {
@@ -148,8 +149,9 @@ void DAG::GenerateTasks(int numberOfTasks) {
     double tmpPeriod = -1.0;
     double tmpOffset = -1.0;
     this->numOfTasks = numOfTasks;
+    bool flag = true;
 
-    while (true) {
+    while (flag) {
         for (int taskIndex = 0; taskIndex < numberOfTasks; taskIndex++) {
             std::cout << taskIndex << " -th Task Period : ";
             std::cin >> tmpPeriod;
@@ -163,23 +165,30 @@ void DAG::GenerateTasks(int numberOfTasks) {
         }
         if (CheckMappable()) {
             cout << "This Mappable!" << endl;
-            break;
+            flag = false;
         }
         else cout << "Increse Tasks Period!" << endl;
     }
 }
-
+/*
 void DAG::SetTasksPriority() {
-    std::shared_ptr<TASK> tmpTasks = tasks;
-    for (int i = 0; i < this->numOfTasks; i++){
-        for (int j = 0; j < this->numOfTasks; j++) {
-            for (int k = 0; k < this->numOfTasks; k++) {
-
-            }
+    for (int i = 0; i < this->GetNumberOfTasks(); i++){
+        int min = 0;
+        min = tasks[i]->GetId();
+        cout << "1" << endl;;
+        for (int j = 0; j < this->GetNumberOfTasks(); j++) {
+            cout << "2" << endl;
+            if (i == j) continue;
+            if (tasks[j]->GetPeriod() < tasks[min]->GetPeriod()) min = tasks[j]->GetId();
         }
+        this->tasks2.push_back(tasks[min]);
+        tasks.erase(tasks.begin() + (min - 1));
         //taskPriority.push_back(tasks[i]);
+        cout << "3" << endl;
     }
-}
+
+    for (auto &task : tasks2) cout << task->GetId();
+}*/
 
 void DAG::DoRandomTaskMapping() {
     /*
