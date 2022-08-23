@@ -73,29 +73,6 @@ void DAG::RandomEdge() {
         }
     }
 }
-/*
-void DAG::CheckPrecedence(std::shared_ptr<RUNNABLE> runnable, int precedence) {
-    int runnableId = runnable->GetId();
-    this->runnablePrecedence[runnableId] = (this->runnablePrecedence[runnableId] > precedence) ? this->runnablePrecedence[runnableId] : precedence;
-
-    if (runnable->GetStatus() != 1) { // Output Runnable
-        for (auto &outputRunnable : runnable->getoutput()) {
-            this->CheckPrecedence(outputRunnable, ++precedence);
-        }
-    }
-}
-
-void DAG::SetRunnablePrecedence() {
-    // runnablePrecedence initialize
-    std::vector<int> tmpRunnablePrecedence(this->GetNumberOfRunnables(), -1);
-    tmpRunnablePrecedence.swap(this->runnablePrecedence);
-
-    int numberOfInputRunnables = this->GetNumberOfInputRunnables();
-
-    for (int inputRunnableIndex = 0; inputRunnableIndex < numberOfInputRunnables; inputRunnableIndex++) {
-        this->CheckPrecedence(this->runnables[this->inputRunnables[inputRunnableIndex]], 0);
-    }
-}*/
 
 int DAG::CheckPrecedence(std::shared_ptr<RUNNABLE> runnable, int precedence) {
     precedence++;
@@ -110,7 +87,7 @@ void DAG::SetRunnablePrecedence() {
             int precedence = 1;
             runnable->SetPrecedence(precedence);
             for (auto &outputrunnable : runnable->getoutput()) {
-                cout << runnable->GetId() << " Input runnable's output runnable : " << outputrunnable->GetId() << endl;
+                //cout << runnable->GetId() << " Input runnable's output runnable : " << outputrunnable->GetId() << endl;
                 CheckPrecedence(outputrunnable, precedence);
             }
         }
@@ -118,7 +95,6 @@ void DAG::SetRunnablePrecedence() {
 }
 
 void DAG::DisplayRunnablesPtr(){
-
     cout << "Display Start" << endl;
     cout << runnables.size() << " " << runnables.capacity() << endl;
     for (const auto &runnable : runnables) {

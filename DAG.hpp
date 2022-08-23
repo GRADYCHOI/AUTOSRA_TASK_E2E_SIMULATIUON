@@ -21,8 +21,6 @@ private:
     std::vector<std::shared_ptr<TASK>> task;
     std::vector<std::shared_ptr<RUNNABLE>> runnables;
     std::vector<int> runnablePrecedence;
-     // Sorted by ID
-    
  
     void SetParameters();
     void SetNumberOfTasks();
