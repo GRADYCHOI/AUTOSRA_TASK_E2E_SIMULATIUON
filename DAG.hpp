@@ -19,7 +19,6 @@ private:
     double dataAge = -1.0;
     
     std::vector<std::shared_ptr<TASK>> tasks;
-    std::vector<std::shared_ptr<TASK>> tasks2;
     std::vector<std::shared_ptr<RUNNABLE>> runnables;
     std::vector<int> runnablePrecedence;
     // Sorted by Priority
@@ -49,8 +48,11 @@ public:
     int CheckPrecedence(std::shared_ptr<RUNNABLE> runnable, int precedence);
     void AddTaskPtr(const std::shared_ptr<TASK>& task);
     void GenerateTasks(int numberOfTasks);
-    void SetTasksPriority();
-
+    void SetTaskPriority();
+    void SetRunnablePriority();
+    void SetRunnablePriorities();
+    void ExpandRunnablePriorities(std::vector<std::vector<int>> incompleteRunnablePriority, int pointer, int maxSize);
+    void GetNumberOfSequenceCase();
     void DoRandomTaskMapping();
     bool CheckMappable();
     double GetUtilization();

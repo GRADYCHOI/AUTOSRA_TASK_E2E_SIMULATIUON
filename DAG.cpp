@@ -62,7 +62,7 @@ void DAG::GenerateRunnables(int num) {
     cout << "Enter Number of Tasks : ";
     cin >> tasksnum;
     GenerateTasks(tasksnum);
-    SetTasksPriority();
+    SetTaskPriority();
     //DoRandomTaskMapping();
 }
 
@@ -169,6 +169,89 @@ void DAG::GenerateTasks(int numberOfTasks) {
         }
         else cout << "Increse Tasks Period!" << endl;
     }
+}
+void DAG::SetTaskPriority() {
+    std::vector<std::pair<int, double>> tmpTaskArray; // ID, Period
+
+    for (auto &task : this->tasks) {
+        tmpTaskArray.push_back(std::make_pair(task->GetId(), task->GetPeriod()));
+    }
+
+    std::sort(tmpTaskArray.begin(), tmpTaskArray.end(), &this->CompareTaskPeriod);
+
+    for (auto &tmpTask : tmpTaskArray) {
+        taskPriority.push_back(tmpTask.first);
+    }
+}
+
+void DAG::SetRunnablePriority(int index) {
+    std::vector<int> tmpRunnablePriority = this->runnablePriorities[index];
+    tmpRunnablePriority.swap(this->runnablePriority);
+}
+
+void DAG::SetRunnablePriorities() {
+    int numberOfRunnables = this->GetNumberOfRunnables();
+    std::vector<std::vector<int>> abstractedRunnablePriorities;
+    abstractedRunnablePriorities.reserve(numberOfRunnables);
+
+    // Set Abstracted Runnable Priority Table
+    for (auto &task : this->tasks) { // TODO : Task Priority에 따라 정렬
+        int tmpPrecedence = -1;
+        std::vector<std::pair<int, int>> tmpRunnableArray; // ID, Precedence
+
+        for (auto &runnable : task->GetRunnables()) {
+            tmpRunnableArray.push_back(std::make_pair(runnable->GetId(), this->runnablePrecedence[runnable->GetId()]));
+        }
+
+        std::sort(tmpRunnableArray.begin(), tmpRunnableArray.end(), &this->CompareRunnablePrecedence);
+
+        for (auto &tmpRunnable : tmpRunnableArray) {
+            if (tmpPrecedence != tmpRunnable.second) {
+                abstractedRunnablePriorities[abstractedRunnablePriorities.size()].push_back(tmpRunnable.first);
+                tmpPrecedence = tmpRunnable.second;
+            } else {
+                abstractedRunnablePriorities[(abstractedRunnablePriorities.size() - 1)].push_back(tmpRunnable.first);
+            }
+        }
+    }
+
+    // Set Expanded Runnable Priority Table
+    for (int runnableIndex = 0; runnableIndex < numberOfRunnables; runnableIndex++) {
+        this->ExpandRunnablePriorities(abstractedRunnablePriorities, 0, numberOfRunnables);
+    }
+}
+
+void DAG::ExpandRunnablePriorities(std::vector<std::vector<int>> incompleteRunnablePriority, int pointer, int maxSize) {
+    if (pointer == maxSize) {
+        std::vector<int> tmpList;
+
+        for (int runnableIndex = 0; runnableIndex < maxSize; runnableIndex++) {
+            tmpList.push_back(incompleteRunnablePriority[runnableIndex][0]);
+        }
+
+        this->runnablePriorities.push_back(tmpList);
+    } else {
+        int numberOfSamePriority = incompleteRunnablePriority[pointer].size();
+
+        if (numberOfSamePriority > 1) {
+            for (int samePriorityRunnableIndex = 0; samePriorityRunnableIndex < numberOfSamePriority; samePriorityRunnableIndex++) {
+                std::vector<std::vector<int>> tmpRunnablePriority = incompleteRunnablePriority;
+                std::vector<int> tmpRunnable;
+
+                tmpRunnable.push_back(tmpRunnablePriority[pointer][samePriorityRunnableIndex]);
+                tmpRunnablePriority[pointer].erase(tmpRunnablePriority[pointer].begin() + samePriorityRunnableIndex);
+                tmpRunnablePriority.insert(tmpRunnablePriority.begin() + pointer, tmpRunnable);
+                
+                this->ExpandRunnablePriorities(tmpRunnablePriority, ++pointer, maxSize);
+            }
+        } else {
+            this->ExpandRunnablePriorities(incompleteRunnablePriority, ++pointer, maxSize);
+        }
+    }
+}
+
+int DAG::GetNumberOfSequenceCase() {
+    return (int)runnablePriorities.size();
 }
 /*
 void DAG::SetTasksPriority() {
