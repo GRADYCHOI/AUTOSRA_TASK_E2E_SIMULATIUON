@@ -96,27 +96,11 @@ void DAG::SetRunnablePrecedence() {
         this->CheckPrecedence(this->runnables[this->inputRunnables[inputRunnableIndex]], 0);
     }
 }*/
-int CheckPrecedence(std::shared_ptr<RUNNABLE> runnable, int precedence) {
-    if (runnable->GetPrecedence() < precedence) runnable->SetPrecedence(precedence);
 
-    if (runnable->GetStatus() == 2) {
-        for (auto &outputrunnable : runnable->getoutput()) CheckPrecedence(outputrunnable, ++precedence);
-    }
-    /*if (runnable->GetStatus() == 2) {
-        if (runnable->GetPrecedence() < precedence) {
-            runnable->SetPrecedence(precedence);
-            for (auto &outputrunnable : runnable->getoutput()) CheckPrecedence(outputrunnable, ++precedence);
-        }
-    }
-    else { 
-        if (runnable->GetPrecedence() < precedence) {
-            runnable->SetPrecedence(precedence);
-            cout << "output runnable complete" << endl;
-        }
-    }*/
-    
-    cout  << runnable->GetId() << "last" << precedence << endl;
-    //runnable->SetPrecedence(precedence);
+int DAG::CheckPrecedence(std::shared_ptr<RUNNABLE> runnable, int precedence) {
+    precedence++;
+    if (runnable->GetPrecedence() < precedence) runnable->SetPrecedence(precedence);
+    if (runnable->GetStatus() == 2) for (auto &outputrunnable : runnable->getoutput()) CheckPrecedence(outputrunnable, precedence);
     return 0;
 }
 
@@ -125,9 +109,9 @@ void DAG::SetRunnablePrecedence() {
         if (runnable->GetStatus() == 0) {
             int precedence = 1;
             runnable->SetPrecedence(precedence);
-            cout << "Input runnable precedence complete" << endl;
             for (auto &outputrunnable : runnable->getoutput()) {
-                CheckPrecedence(outputrunnable, ++precedence);
+                cout << runnable->GetId() << " Input runnable's output runnable : " << outputrunnable->GetId() << endl;
+                CheckPrecedence(outputrunnable, precedence);
             }
         }
     }
@@ -140,7 +124,7 @@ void DAG::DisplayRunnablesPtr(){
     for (const auto &runnable : runnables) {
         cout << "Runnable ID : " <<  runnable->GetId() << " ,  ";
         cout << "Execution Time : " << runnable->GetExecutionTime() << " , ";
-        cout << "Precedence : " << runnablePrecedence[runnable->GetId()] << " , ";
+        cout << "Precedence : " << runnable->GetPrecedence() << " , ";
         if (runnable->GetStatus() == 0) cout << "INPUT , ";
         else if (runnable->GetStatus() == 1) cout << "OUTPUT , ";
         else if (runnable->GetStatus() == 2) cout << "MIDDLE , ";
@@ -157,40 +141,6 @@ int DAG::GetNumberOfTasks() {
 int DAG::GetNumberOfRunnables() {
     return this->runnables.size();
 }
-
-void DAG::SetInputRunnableList() {
-    // vector capacity control : swap technique
-    std::vector<int> tmpList;
-
-    for (auto &runnable : this->runnables) {
-        if (runnable->GetStatus() == 0) {
-            tmpList.push_back(runnable->GetId());
-        }
-    }
-
-    tmpList.swap(this->inputRunnables);
-}
-
-void DAG::SetOutputRunnableList() {
-    std::vector<int> tmpList;
-
-    for (auto &runnable : this->runnables) {
-        if (runnable->GetStatus() == 1) {
-            tmpList.push_back(runnable->GetId());
-        }
-    }
-
-    tmpList.swap(this->outputRunnables);
-}
-
-int DAG::GetNumberOfInputRunnables() {
-    return (int)this->inputRunnables.size();
-}
-
-int DAG::GetNumberOfOutputRunnables() {
-    return (int)this->outputRunnables.size();
-}
-
 
 double DAG::GetHyperPeriod() {
     return this->hyperPeriod;
