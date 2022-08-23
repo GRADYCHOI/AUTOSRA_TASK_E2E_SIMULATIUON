@@ -98,14 +98,10 @@ void RUNNABLE::LinkOutputRunnable(const std::shared_ptr<RUNNABLE> outputRunnable
     }
 }
 
-void RUNNABLE::DisplayRunnable() {
+void RUNNABLE::DisplayOutputRunnables() {
     for (const auto &runnable : this->outputRunnables) {
         std::cout << runnable->GetId() << " ";
-    } 
-}
-
-void RUNNABLE::SetPrecedence(int precedence) { // Set Runnable's precedence. 
-    this->precedence = precedence;
+    }
 }
 
 void RUNNABLE::SetStatus(int status) {

@@ -58,15 +58,15 @@ public:
 
     void SetRunnablePrecedence();
     void CheckPrecedence(std::shared_ptr<RUNNABLE> runnable, int precedence);
-    void GetRunnablePrecedence();
+    int GetRunnablePrecedence(int index);
     
     void SetTaskPriority();
     void SetRunnablePriority(int index);
     void SetRunnablePriorities();
     void ExpandRunnablePriorities(std::vector<std::vector<int>> incompleteRunnablePriority, int pointer, int maxSize);
 
-    bool CompareTaskPeriod(std::pair<int, double> a, std::pair<int, double> b);
-    bool CompareRunnablePrecedence(std::pair<int, int> a, std::pair<int, int> b);
+    static bool CompareTaskPeriod(std::pair<int, double> a, std::pair<int, double> b) { return a.second < b.second; }
+    static bool CompareRunnablePrecedence(std::pair<int, int> a, std::pair<int, int> b) { return a.second < b.second; }
 
     int GetNumberOfSequenceCase();
 

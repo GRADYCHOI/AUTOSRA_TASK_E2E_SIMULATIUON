@@ -11,10 +11,6 @@ TASK::~TASK() {
     std::cout << "Delete TASK ID : " << this->id << std::endl;
 }
 
-void TASK::SetPriority(int priority) {
-    this->priority = priority;
-}
-
 int TASK::GetId() const {
     return this->id;
 }
@@ -38,19 +34,15 @@ double TASK::GetExecutionTime() {
     return tmpExecutionTime;
 }
 
-int TASK::GetPriority() const {
-    return this->priority;
-}
-
 int TASK::GetNumberOfRunnables() {
     return (int)this->runnables.size();
 }
 
-const std::shared_ptr<RUNNABLE> RUNNABLE::GetRunnable(int index) const {
+const std::shared_ptr<RUNNABLE> TASK::GetRunnable(int index) const {
     return this->runnables[index];
 }
 
-const std::vector<std::shared_ptr<RUNNABLE>>& RUNNABLE::GetRunanbles() const {
+const std::vector<std::shared_ptr<RUNNABLE>>& TASK::GetRunnables() const {
     return this->runnables;
 }
 
