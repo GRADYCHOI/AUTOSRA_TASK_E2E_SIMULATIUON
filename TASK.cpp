@@ -45,6 +45,10 @@ int TASK::GetNumberOfRunnables() {
     return this->numberOfRunnables;
 }
 
+int TASK::GetId() {
+    return this->id;
+}
+
 int TASK::GetPriority() {
     return this->priority;
 }

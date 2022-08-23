@@ -26,6 +26,7 @@ public:
     TASK(int id, double period, double offset);
     ~TASK();
 
+    int GetId();
     void SetPriority(int priority);
 
     double GetPeriod();

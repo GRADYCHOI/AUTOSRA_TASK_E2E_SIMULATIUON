@@ -30,22 +30,22 @@ void DAG::SetHyperPeriod() {
     double tmpPeriod = 0.0;
 
     for(int count = 0; count < this->numOfTasks; count++) {
-        if (tmpPeriod < this->task[count]->GetPeriod()) {
-            this->hyperPeriod = lcm(this->hyperPeriod, this->task[count]->GetPeriod());
-            tmpPeriod = this->task[count]->GetPeriod();
+        if (tmpPeriod < this->tasks[count]->GetPeriod()) {
+            this->hyperPeriod = lcm(this->hyperPeriod, this->tasks[count]->GetPeriod());
+            tmpPeriod = this->tasks[count]->GetPeriod();
         }
     }
 }
 
 void DAG::SetNumberOfTasks() {
-    this->numOfTasks = this->task.size();
+    this->numOfTasks = this->tasks.size();
 }
 
 void DAG::SetNumberOfRunnables() {
     this->numOfRunnables = 0;
 
     for (int count = 0; count < this->numOfTasks; count++) {
-        this->numOfRunnables += this->task[count]->GetNumberOfRunnables();
+        this->numOfRunnables += this->tasks[count]->GetNumberOfRunnables();
     }
 }
 
@@ -135,6 +135,192 @@ void DAG::AddTask(Task& task) {
 
     this->SetParamters();
 }*/
+void DAG::AddTaskPtr(const std::shared_ptr<TASK>& task) {
+    this->tasks.push_back(task);
+}
+
+void DAG::GenerateTasks(int numberOfTasks) {
+    double tmpPeriod = -1.0;
+    double tmpOffset = -1.0;
+
+    for (int taskIndex = 0; taskIndex < numberOfTasks; taskIndex++) {
+        std::cout << taskIndex << " -th Task Period : ";
+        std::cin >> tmpPeriod;
+        std::cout << taskIndex << " -th Task Offset : ";
+        std::cin >> tmpOffset;
+
+        shared_ptr<TASK> task(new TASK(taskIndex, tmpPeriod, tmpOffset));
+        this->AddTaskPtr(task);
+
+        std::cout << "Task ID : " << task->GetId() << ", Period : " << task->GetPeriod() << std::endl;
+    }
+}
+
+void DAG::SetTaskPriority() {
+    std::vector<std::pair<int, double>> tmpTaskArray; // ID, Period
+
+    for (auto &task : this->tasks) {
+        tmpTaskArray.push_back(std::make_pair(task->GetId(), task->GetPeriod()));
+    }
+
+    std::sort(tmpTaskArray.begin(), tmpTaskArray.end(), &this->CompareTaskPeriod);
+
+    for (auto &tmpTask : tmpTaskArray) {
+        taskPriority.push_back(tmpTask.first);
+    }
+}
+
+void DAG::SetRunnablePriority(int index) {
+    std::vector<int> tmpRunnablePriority = this->runnablePriorities[index];
+    tmpRunnablePriority.swap(this->runnablePriority);
+}
+
+void DAG::SetRunnablePriorities() {
+    int numberOfRunnables = this->GetNumberOfRunnables();
+    std::vector<std::vector<int>> abstractedRunnablePriorities;
+    abstractedRunnablePriorities.reserve(numberOfRunnables);
+
+    // Set Abstracted Runnable Priority Table
+    for (auto &task : this->tasks) { // TODO : Task Priority에 따라 정렬
+        int tmpPrecedence = -1;
+        std::vector<std::pair<int, int>> tmpRunnableArray; // ID, Precedence
+
+        for (auto &runnable : task->GetRunnables()) {
+            tmpRunnableArray.push_back(std::make_pair(runnable->GetId(), this->runnablePrecedence[runnable->GetId()]));
+        }
+
+        std::sort(tmpRunnableArray.begin(), tmpRunnableArray.end(), &this->CompareRunnablePrecedence);
+
+        for (auto &tmpRunnable : tmpRunnableArray) {
+            if (tmpPrecedence != tmpRunnable.second) {
+                abstractedRunnablePriorities[abstractedRunnablePriorities.size()].push_back(tmpRunnable.first);
+                tmpPrecedence = tmpRunnable.second;
+            } else {
+                abstractedRunnablePriorities[(abstractedRunnablePriorities.size() - 1)].push_back(tmpRunnable.first);
+            }
+        }
+    }
+
+    // Set Expanded Runnable Priority Table
+    for (int runnableIndex = 0; runnableIndex < numberOfRunnables; runnableIndex++) {
+        this->ExpandRunnablePriorities(abstractedRunnablePriorities, 0, numberOfRunnables);
+    }
+}
+
+void DAG::ExpandRunnablePriorities(std::vector<std::vector<int>> incompleteRunnablePriority, int pointer, int maxSize) {
+    if (pointer == maxSize) {
+        std::vector<int> tmpList;
+
+        for (int runnableIndex = 0; runnableIndex < maxSize; runnableIndex++) {
+            tmpList.push_back(incompleteRunnablePriority[runnableIndex][0]);
+        }
+
+        this->runnablePriorities.push_back(tmpList);
+    } else {
+        int numberOfSamePriority = incompleteRunnablePriority[pointer].size();
+
+        if (numberOfSamePriority > 1) {
+            for (int samePriorityRunnableIndex = 0; samePriorityRunnableIndex < numberOfSamePriority; samePriorityRunnableIndex++) {
+                std::vector<std::vector<int>> tmpRunnablePriority = incompleteRunnablePriority;
+                std::vector<int> tmpRunnable;
+
+                tmpRunnable.push_back(tmpRunnablePriority[pointer][samePriorityRunnableIndex]);
+                tmpRunnablePriority[pointer].erase(tmpRunnablePriority[pointer].begin() + samePriorityRunnableIndex);
+                tmpRunnablePriority.insert(tmpRunnablePriority.begin() + pointer, tmpRunnable);
+                
+                this->ExpandRunnablePriorities(tmpRunnablePriority, ++pointer, maxSize);
+            }
+        } else {
+            this->ExpandRunnablePriorities(incompleteRunnablePriority, ++pointer, maxSize);
+        }
+    }
+}
+
+int DAG::GetNumberOfSequenceCase() {
+    return (int)runnablePriorities.size();
+}
+
+// 매우 불안정한 버전
+void DAG::DoRandomTaskMapping() {
+    /*
+    if (this->CheckMappable()) {
+        for (auto &runnable : this->runnables) {
+            bool mappingFlag = false;
+            while (!mappingFlag) {
+                for (auto &task : this->tasks) {
+                    if ((this->GetUtilization() + (runnable->GetExecutionTime() / task->GetPeriod())) > 0.6) continue;
+
+                    if ((std::rand() % 100) < 20) {
+                        task->AddRunnable(runnable);
+                        mappingFlag = true;
+                        break;
+                    }
+                }
+
+                if (!mappingFlag) {
+                    if (this->GetUtilization() > 0.6) {
+                        this->ClearTaskMapping();
+                        this->DoRandomTaskMapping();
+                        break;
+                    }
+                }
+            }
+        }
+    } else {
+        std::cout << "This Dag Can't Mapped within Utilization" << std::endl;
+    }
+    while(this->CheckMappable()) {
+        for (auto &runnable : runnables) {
+            bool mappingFlag = false;
+            while(!mappingFlag) {
+                for (auto &task : tasks) {
+                    if (task)
+                }
+            }
+        }
+
+
+
+    }*/
+    for (auto &runnable : runnables) {
+        this->tasks[taskPriority[0]]->AddRunnable(runnable);
+    }
+
+}
+
+bool DAG::CheckMappable() {
+    double sumOfExecutionTimes = 0.0;
+    double maxPeriod = 0.0;
+
+    for (auto &runnable : this->runnables) {
+        sumOfExecutionTimes += runnable->GetExecutionTime();
+    }
+
+    for (auto &task : this->tasks) {
+        if (maxPeriod < task->GetPeriod()) {
+            maxPeriod = task->GetPeriod();
+        }
+    }
+
+    return ((sumOfExecutionTimes / maxPeriod) < 0.5) ? true : false;
+}
+
+void DAG::ClearTaskMapping() {
+    for (auto &task : this->tasks) {
+        task->ClearMapping();
+    }
+}
+
+double DAG::GetUtilization() {
+    double tmpUtilization = 0.0;
+
+    for (auto &task : this->tasks) {
+        tmpUtilization += (task->GetExecutionTime() / task->GetPeriod());
+    }
+
+    return tmpUtilization;
+}
+
 
 void DAG::Simulate() {
 
