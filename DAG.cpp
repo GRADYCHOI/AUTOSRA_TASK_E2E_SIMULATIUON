@@ -111,7 +111,7 @@ void DAG::DisplayRunnables(){
     }
 }
 
-int DAG::GetRunnablePrecedence(int index) {   // 만들자!
+int DAG::GetRunnablePrecedence(int index) {
     return this->runnablePrecedence[index];
 }
 
@@ -200,14 +200,13 @@ void DAG::SetRunnablePriority(int index) {
     tmpRunnablePriority.swap(this->runnablePriority);
 }
 
-// TODO: Precedence에 맞춰 runnablePriorities 설정
 void DAG::SetRunnablePriorities() {
     int numberOfRunnables = this->GetNumberOfRunnables();
     std::vector<std::vector<int>> abstractedRunnablePriorities;
     abstractedRunnablePriorities.reserve(numberOfRunnables);
 
     // Set Abstracted Runnable Priority Table
-    for (auto &task : this->tasks) {
+    for (auto &task : this->tasks) { // TODO : Task Priority에 따라 정렬
         int tmpPrecedence = -1;
         std::vector<std::pair<int, int>> tmpRunnableArray; // ID, Precedence
 
@@ -241,7 +240,7 @@ void DAG::ExpandRunnablePriorities(std::vector<std::vector<int>> incompleteRunna
             tmpList.push_back(incompleteRunnablePriority[runnableIndex][0]);
         }
 
-        runnablePriorities.push_back(tmpList);
+        this->runnablePriorities.push_back(tmpList);
     } else {
         int numberOfSamePriority = incompleteRunnablePriority[pointer].size();
 
@@ -370,14 +369,16 @@ int DAG::GetMaxCycle() {
 void DAG::SimulateTaskImplicitTask() {
     int maxCycle = this->GetMaxCycle();
     int taskSize = this->GetNumberOfTasks();
+    int runnableSize = this->GetNumberOfTasks();
 
-    double* taskPeriods = new double[taskSize];
-    double* taskOffsets = new double[taskSize];
-    double* taskExecutionTimes = new double[taskSize];
+    double* taskPeriods = new double[taskSize * 2];
+    double* taskOffsets = new double[taskSize * 2];
+    double* taskExecutionTimes = new double[taskSize * 2];
     double* taskStartTable = new double[taskSize * (maxCycle + 1)];
     double* taskEndTable = new double[taskSize * (maxCycle + 1)];
-    double* taskReactionTime = new double[this->GetNumberOfOutputRunnables() * maxCycle * this->GetNumberOfInputRunnables()];
-    double* taskDataAge = new double[this->GetNumberOfOutputRunnables() * maxCycle * this->GetNumberOfInputRunnables()];
+    double* readTable = new double[runnableSize * maxCycle];
+    double* writeTable = new double[runnableSize * maxCycle];
+    double* arrivalTable = new double[this->GetNumberOfInputRunnables() * this->GetNumberOfOutputRunnables() * maxCycle];
 
     memset(taskPeriods, -1.0, sizeof(double) * taskSize);
     memset(taskOffsets, -1.0, sizeof(double) * taskSize);
@@ -388,10 +389,15 @@ void DAG::SimulateTaskImplicitTask() {
     memset(taskDataAge, -1.0, sizeof(double) * maxCycle);
 
     // command set
+    this->GetTaskInfo(taskPeriods, taskOffsets, taskExecutionTimes);
+    this->GetExecutionTable(taskPeriods, taskOffsets, taskExecutionTimes, taskSize, maxCycle, taskStartTable, taskEndTable);
+    this->GetReadTable(taskStartTable, taskSize, maxCycle, taskReadTable);
+    this->GetWriteTable(taskEndTable, taskSize, maxCycle, taskWriteTable);
+    this->GetArrivalTable(taskReactionTime, taskWriteTable, maxCycle, arrivalTable);
 
-
-    delete[] taskDataAge;
-    delete[] taskReactionTime;
+    delete[] arrivalTable;
+    delete[] writeTable;
+    delete[] readTable;
     delete[] taskEndTable;
     delete[] taskStartTable;
     delete[] taskExecutionTimes;
@@ -850,7 +856,7 @@ void DAG::SetArrivalTable(double* readTable, double* writeTable, int inputRunnab
     // --------------------------------------------------------------------------------------------------------------
 
     if (this->runnables[thisRunnableId]->GetStatus() == 1) {
-        arrivalTable[(find(this->outputRunnables.begin(), this->outputRunnables.end(), thisRunnableId) - this->outputRunnables.begin()) * this->GetNumberOfInputRunnables() * maxCycle + inputRunnableIndex * maxCycle + inputCycle] = writeTable[thisRunnableId * maxCycle + thisCycle] + this->GetHyperPeriod() * hyperPeriodCount;
+        arrivalTable[(find(this->outputRunnables.begin(), this->outputRunnables.end(), thisRunnableId) - this->outputRunnables.begin()) * this->GetNumberOfInputRunnables() * maxCycle + inputRunnableIndex * maxCycle + inputCycle] = writeTable[thisRunnableId * maxCycle + thisCycle] + this->GetHyperPeriod() * hyperPeriodCount; // TODO : 입력을 endTable로 변경
     } else {
         for (int tmpCount = 0; tmpCount < this->runnables[thisRunnableId]->GetNumberOfOutputRunnables(); tmpCount++) {
             int tmpCycle = 0;

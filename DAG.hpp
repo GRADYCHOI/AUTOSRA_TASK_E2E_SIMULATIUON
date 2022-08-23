@@ -17,7 +17,7 @@ private:
     double hyperPeriod = -1.0;
     
     // Sorted by ID
-    std::vector<std::shared_ptr<TASK>> tasks;  // Tasks로 바꿔야 함
+    std::vector<std::shared_ptr<TASK>> tasks;
     std::vector<std::shared_ptr<RUNNABLE>> runnables;
 
     // Sorted by ID
