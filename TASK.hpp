@@ -6,7 +6,7 @@
 #include "RUNNABLE.hpp"
 
 
-class TASK : public std::enable_shared_from_this<RUNNABLE>
+class TASK
 {
 private:
     int id = -1;
@@ -14,9 +14,6 @@ private:
     double offset = -1;
 
     std::vector<std::shared_ptr<RUNNABLE>> runnables;
-
-    void SetExecutionTime();
-    void SetNumberOfRunnables();
 
 public:
     TASK(int id, double period, double offset);
@@ -32,7 +29,7 @@ public:
     int GetNumberOfRunnables();
 
     const std::shared_ptr<RUNNABLE> GetRunnable(int index) const;
-    const std::vector<std::shared_ptr<RUNNABLE>>& GetRunnables() const;
+    const std::vector<std::shared_ptr<RUNNABLE>> GetRunnables() const;
 
     void AddRunnable(const std::shared_ptr<RUNNABLE> runnable);
     void ClearMapping();

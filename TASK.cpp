@@ -42,7 +42,7 @@ const std::shared_ptr<RUNNABLE> TASK::GetRunnable(int index) const {
     return this->runnables[index];
 }
 
-const std::vector<std::shared_ptr<RUNNABLE>>& TASK::GetRunnables() const {
+const std::vector<std::shared_ptr<RUNNABLE>> TASK::GetRunnables() const {
     return this->runnables;
 }
 
@@ -59,9 +59,6 @@ void TASK::AddRunnable(const std::shared_ptr<RUNNABLE> runnable) {
 
     if (!searchFlag) {
         this->runnables.push_back(runnable);
-
-        this->SetNumberOfRunnables();
-        this->SetExecutionTime();
     }
 }
 

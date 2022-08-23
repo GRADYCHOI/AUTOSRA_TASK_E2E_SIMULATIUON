@@ -55,7 +55,7 @@ const std::shared_ptr<RUNNABLE> RUNNABLE::GetOutputRunnable(int index) const {
     return this->outputRunnables[index];
 }
 
-const std::vector<std::shared_ptr<RUNNABLE>>& RUNNABLE::GetOutputRunnables() const {
+const std::vector<std::shared_ptr<RUNNABLE>> RUNNABLE::GetOutputRunnables() const {
     return this->outputRunnables;
 }
 
