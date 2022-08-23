@@ -52,7 +52,12 @@ public:
     void SetRunnablePriority();
     void SetRunnablePriorities();
     void ExpandRunnablePriorities(std::vector<std::vector<int>> incompleteRunnablePriority, int pointer, int maxSize);
-    void GetNumberOfSequenceCase();
+    
+    int GetNumberOfSequenceCase();
+    void SetRunnablePriority(int index);
+
+    static bool CompareTaskPeriod(std::pair<int, double> a, std::pair<int, double> b) { return a.second < b.second; }
+    static bool CompareRunnablePrecedence(std::pair<int, int> a, std::pair<int, int> b) { return a.second < b.second; }
     void DoRandomTaskMapping();
     bool CheckMappable();
     double GetUtilization();

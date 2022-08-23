@@ -182,6 +182,8 @@ void DAG::SetTaskPriority() {
     for (auto &tmpTask : tmpTaskArray) {
         taskPriority.push_back(tmpTask.first);
     }
+
+    //for (auto &task : taskPriority) cout << task << endl;
 }
 
 void DAG::SetRunnablePriority(int index) {
