@@ -50,11 +50,10 @@ public:
 
     void GenerateRunnables(int numumberOfRunnables);
     void GenerateTasks(int numberOfTasks);
-    void SetRandomEdge();
+    void RandomEdge(); 
 
     void AddRunnablePtr(const std::shared_ptr<RUNNABLE>& runnable);
     void AddTaskPtr(const std::shared_ptr<TASK>& task);
-    void RandomEdge(); 
 
     void SetRunnablePrecedence();
     void CheckPrecedence(std::shared_ptr<RUNNABLE> runnable, int precedence);
