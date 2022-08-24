@@ -44,9 +44,15 @@ void DAG::GenerateRunnables(int numumberOfRunnables) {
     std::cout << "Generate Runnables Start" << std::endl;
 
     for (int runnableIndex = 0; runnableIndex < numumberOfRunnables; runnableIndex++) {
-        this->runnables.push_back(std::make_shard<RUNNABLE>(runnableIndex, (double)((std::rand() % 100) / 1000)));
-        std::cout << "Runnable ID : " << this->runnables[runnableIndex]->GetId() << ", Execution Time : " << this->runnables[runnableIndex]->GetExecutionTime() << std::endl;
+        std::shared_ptr<RUNNABLE> tmpRunnable(new RUNNABLE(runnableIndex, (double)((std::rand() % 100) / 1000)));
+        std::cout << "Runnable ID : " << tmpRunnable->GetId() << ", Execution Time : " << tmpRunnable->GetExecutionTime() << std::endl;
+
+        this->AddRunnablePtr(tmpRunnable);
     }
+
+    //RandomEdge();
+    //SetRunnablePrecedence();
+    //DisplayRunnablesPtr();
 }
 
 void DAG::RandomEdge() { //Runnable edge random generation
