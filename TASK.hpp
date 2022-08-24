@@ -6,7 +6,7 @@
 #include "RUNNABLE.hpp"
 
 
-class TASK 
+class TASK : public std::enable_shared_from_this<TASK>
 {
 private:
     int id = -1;
@@ -37,7 +37,7 @@ public:
     const std::shared_ptr<RUNNABLE> GetRunnable(int index) const;
     const std::vector<std::shared_ptr<RUNNABLE>> GetRunnables() const;
 
-    void AddRunnable(const std::shared_ptr<RUNNABLE>& runnable);
+    void AddRunnable(const std::shared_ptr<RUNNABLE> runnable);
 };
 
 #endif

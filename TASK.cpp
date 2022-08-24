@@ -14,7 +14,7 @@ TASK::~TASK() {
 void TASK::SetExecutionTime() {
     double tmpExecutionTime = 0;
 
-    for (int count = 0; 0 < this->runnables.size(); count++) {
+    for (int count = 0; count < this->runnables.size(); count++) {
         tmpExecutionTime += this->runnables[count]->GetExecutionTime();
     }
 
@@ -60,10 +60,10 @@ const std::vector<std::shared_ptr<RUNNABLE>> TASK::GetRunnables() const {
     return this->runnables;
 }
 
-void TASK::AddRunnable(const std::shared_ptr<RUNNABLE>& runnable) {
+void TASK::AddRunnable(const std::shared_ptr<RUNNABLE> runnable) {
     bool searchFlag = false;
     
-    for (int count = 0; 0 < this->runnables.size(); count++) {
+    for (int count = 0; count < (int)this->runnables.size(); count++) {
         if (this->runnables[count]->GetId() == runnable->GetId()) {
             searchFlag = true;
             break;

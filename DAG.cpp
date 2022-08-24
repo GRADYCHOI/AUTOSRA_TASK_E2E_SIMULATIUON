@@ -63,7 +63,7 @@ void DAG::GenerateRunnables(int num) {
     cin >> tasksnum;
     GenerateTasks(tasksnum);
     SetTaskPriority();
-    //DoRandomTaskMapping();
+    DoRandomTaskMapping();
 }
 
 void DAG::RandomEdge() { 
@@ -177,13 +177,13 @@ void DAG::SetTaskPriority() {
         tmpTaskArray.push_back(std::make_pair(task->GetId(), task->GetPeriod()));
     }
 
-    std::sort(tmpTaskArray.begin(), tmpTaskArray.end(), &this->CompareTaskPeriod);
+    std::sort(tmpTaskArray.begin(), tmpTaskArray.end(), [](std::pair<int, double> a, std::pair<int, double> b) { return a.second < b.second; });
 
     for (auto &tmpTask : tmpTaskArray) {
         taskPriority.push_back(tmpTask.first);
     }
 
-    //for (auto &task : taskPriority) cout << task << endl;
+    for (auto &task : taskPriority) cout << task << endl;
 }
 
 void DAG::SetRunnablePriority(int index) {
