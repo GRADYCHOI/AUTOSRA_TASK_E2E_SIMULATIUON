@@ -385,15 +385,15 @@ void DAG::SimulateTaskImplicitTask() {
     memset(taskExecutionTimes, -1.0, sizeof(double) * taskSize);
     memset(taskStartTable, -1.0, sizeof(double) * taskSize * maxCycle);
     memset(taskEndTable, -1.0, sizeof(double) * taskSize * maxCycle);
-    memset(taskReactionTime, -1.0, sizeof(double) * maxCycle);
-    memset(taskDataAge, -1.0, sizeof(double) * maxCycle);
+    //memset(taskReactionTime, -1.0, sizeof(double) * maxCycle);
+    //memset(taskDataAge, -1.0, sizeof(double) * maxCycle);
 
     // command set
     this->GetTaskInfo(taskPeriods, taskOffsets, taskExecutionTimes);
     this->GetExecutionTable(taskPeriods, taskOffsets, taskExecutionTimes, taskSize, maxCycle, taskStartTable, taskEndTable);
-    this->GetReadTable(taskStartTable, taskSize, maxCycle, taskReadTable);
-    this->GetWriteTable(taskEndTable, taskSize, maxCycle, taskWriteTable);
-    this->GetArrivalTable(taskReactionTime, taskWriteTable, maxCycle, arrivalTable);
+    this->GetReadTable(taskStartTable, taskSize, maxCycle, readTable);
+    this->GetWriteTable(taskEndTable, taskSize, maxCycle, writeTable);
+    this->GetArrivalTable(readTable, writeTable, maxCycle, arrivalTable);
 
     delete[] arrivalTable;
     delete[] writeTable;

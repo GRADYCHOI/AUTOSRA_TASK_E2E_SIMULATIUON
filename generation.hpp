@@ -7,7 +7,6 @@
 
 void GenerateRunnables(int numumberOfRunnables);
 void GenerateTasks(int numberOfTasks);
-void SetRandomEdge();
 void RandomEdge();
 
 #endif

@@ -3,6 +3,7 @@
 #define __SIMULATION_HPP__
 
 #include "DAG.hpp"
+#include "communication.hpp"
 #include <algorithm>
 #include <vector>
 #include <memory>
@@ -11,22 +12,38 @@
 #include <cstring>
 
 
-void GetTaskInfo(double* periods, double* offsets, double* executions);
-void GetRunnableInfo(double* periods, double* offsets, double* executions);
+class Simulation {
+private:
+    Communication * communication;
+    DAG * dag;
 
-void GetExecutionTable(double* periods, double* offsets, double* executions, int size, int maxCycle, double* startTable, double* endTable);
+    int dagMaxCycle;
 
-void GetReadTable(double* startTable, int size, int maxCycle, double* readTable);
-void GetReleaseTimeReadTable(double* periods, double* offsets, int size, int maxCycle, double* readTable);
+    void SetArrivalTable(double* readTable, double* writeTable, int inputRunnableIndex, int inputCycle, int hyperPeriodCount, int thisRunnableId, int thisCycle, int maxCycle, double* arrivalTable);
 
-void GetWriteTable(double* endTable, int size, int maxCycle, double* writeTable);
-void GetReleaseTimeWriteTable(double* periods, double* offsets, int size, int maxCycle, double* writeTable);
-void GetNextJobWriteTable(double* startTable, int size, int maxCycle, double* writeTable);
+public:
+    Simulation();
+    ~Simulation() { delete dag; delete communication; }
 
-void SetArrivalTable(double* readTable, double* writeTable, int inputRunnableIndex, int inputCycle, int hyperPeriodCount, int thisRunnableId, int thisCycle, int maxCycle, double* arrivalTable);
-void GetArrivalTable(double* readTable, double* writeTable, int maxCycle, double* arrivalTable);
+    void SetDag(DAG *newDag) { dag = newDag; }
 
-void GetReactionTime(double* arrivalTable, double* readTable, int maxCycle, double* reactionTime);
-void GetDataAge(double* arrivalTable, double* writeTable, int maxCycle, double* dataAge);
+    void Simulate();
+
+    void SaveData();
+
+    void GetRunnableInformations(double* runnableInformations);
+
+    void GetExecutionTable(double* runnableInformations, int size, int maxCycle, double* startTable, double* endTable);
+
+    void SetCommunication(Communication *newCommunication) { communication = newCommunication; }
+    void GetCommunicationTable(double* runnableInformations, double* startTable, double* endTable, int numberOfRunnables, int maxCycle, double* readTable, double* writeTable) {
+        communication->GetCommunicationTable(runnableInformations, startTable, endTable, numberOfRunnables, maxCycle, readTable, writeTable);
+    }
+
+    void GetArrivalTable(double* readTable, double* writeTable, int maxCycle, double* arrivalTable);
+
+    void GetReactionTime(double* arrivalTable, double* readTable, int maxCycle, double* reactionTime);
+    void GetDataAge(double* arrivalTable, double* writeTable, int maxCycle, double* dataAge);
+};
 
 #endif
