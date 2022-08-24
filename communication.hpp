@@ -1,4 +1,6 @@
 #include "DAG.hpp"
+#include "readmemory.hpp"
+#include "writememory.hpp"
 
 
 class Communication {

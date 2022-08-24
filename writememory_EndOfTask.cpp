@@ -38,10 +38,10 @@ public:
         // ..
         // --------------------------------------------------------------------------------------------------------------
 
-        memcpy(writeTable, endTable, sizeof(double) * numberOfRunnables * maxCycle);
         std::vector<std::pair<int, int>> runnablePriority(numberOfRunnables);
         std::vector<int> sameTaskMappedRunnables;
         int taskIndex = -1;
+        double* writeTime = new double[maxCycle];
 
         for (int runnableIndex = 0; runnableIndex < numberOfRunnables; runnableIndex++) {
             runnablePriority[runnableIndex] = std::make_pair(runnableIndex, (int)runnableInformations[runnableIndex * 5 + 1]);
@@ -51,6 +51,8 @@ public:
 
         for (auto &runnableId : runnablePriority) {
             if (taskIndex != runnableInformations[(runnableId.first) * 5]) {
+                memcpy(writeTime, endTable + (sameTaskMappedRunnables.back() * maxCycle), sizeof(double) * maxCycle);
+
                 for (auto &index : sameTaskMappedRunnables) {
                     memcpy(writeTable + (index * maxCycle), writeTime, sizeof(double) * maxCycle);
                 }
@@ -59,7 +61,15 @@ public:
                 taskIndex = runnableInformations[(runnableId.first) * 5];
             } else {
                 sameTaskMappedRunnables.push_back(runnableId.first);
-            }           
+            }
         }
+
+        // Memcpy last Task's Runnables
+        memcpy(writeTime, endTable + (sameTaskMappedRunnables.back() * maxCycle), sizeof(double) * maxCycle);
+        for (auto &index : sameTaskMappedRunnables) {
+            memcpy(writeTable + (index * maxCycle), writeTime, sizeof(double) * maxCycle);
+        }
+
+        delete[] writeTime;
     }
 };
