@@ -148,7 +148,6 @@ void DAG::AddTaskPtr(const std::shared_ptr<TASK>& task) {
 void DAG::GenerateTasks(int numberOfTasks) {
     double tmpPeriod = -1.0;
     double tmpOffset = -1.0;
-    this->numOfTasks = numOfTasks;
     bool flag = true;
 
     while (flag) {
@@ -167,7 +166,11 @@ void DAG::GenerateTasks(int numberOfTasks) {
             cout << "This Mappable!" << endl;
             flag = false;
         }
-        else cout << "Increse Tasks Period!" << endl;
+        else {
+            cout << "Increse Tasks Period!" << endl;
+            this->tasks.clear();
+            std::vector<std::shared_ptr<TASK>>().swap(this->tasks);
+        }
     }
 }
 void DAG::SetTaskPriority() {
@@ -255,25 +258,6 @@ void DAG::ExpandRunnablePriorities(std::vector<std::vector<int>> incompleteRunna
 int DAG::GetNumberOfSequenceCase() {
     return (int)runnablePriorities.size();
 }
-/*
-void DAG::SetTasksPriority() {
-    for (int i = 0; i < this->GetNumberOfTasks(); i++){
-        int min = 0;
-        min = tasks[i]->GetId();
-        cout << "1" << endl;;
-        for (int j = 0; j < this->GetNumberOfTasks(); j++) {
-            cout << "2" << endl;
-            if (i == j) continue;
-            if (tasks[j]->GetPeriod() < tasks[min]->GetPeriod()) min = tasks[j]->GetId();
-        }
-        this->tasks2.push_back(tasks[min]);
-        tasks.erase(tasks.begin() + (min - 1));
-        //taskPriority.push_back(tasks[i]);
-        cout << "3" << endl;
-    }
-
-    for (auto &task : tasks2) cout << task->GetId();
-}*/
 
 void DAG::DoRandomTaskMapping() {
     /*
@@ -303,20 +287,20 @@ void DAG::DoRandomTaskMapping() {
     } else {
         std::cout << "This Dag Can't Mapped within Utilization" << std::endl;
     }
-    while(this->CheckMappable()) {
-        for (auto &runnable : runnables) {
-            bool mappingFlag = false;
-            while(!mappingFlag) {
-                for (auto &task : tasks) {
-                    if (task)
-                }
-            }
-        }
-    }*/
+    */
     for (auto &runnable : runnables) {
         this->tasks[taskPriority[0]]->AddRunnable(runnable);
     }
-
+    /*for (auto &runnable : runnables) {
+        for (auto &task : tasks) {
+            if (std::rand() % this->GetNumberOfTasks() )
+        }
+    }*/
+    for (auto &task : tasks) {
+        for (auto &runnable : runnables) {
+            if (std::rand() % this->GetNumberOfTasks() == task->GetId()) cout << "!";
+        }
+    }
 }
 
 bool DAG::CheckMappable() {
