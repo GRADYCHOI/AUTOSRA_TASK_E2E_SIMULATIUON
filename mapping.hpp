@@ -1,3 +1,7 @@
+#ifndef __MAPPING__HPP__
+
+#define __MAPPING__HPP__
+
 #include "DAG.hpp"
 
 
@@ -6,5 +10,7 @@ public:
     Mapping();
     ~Mapping();
 
-    virtual void DoMapping(DAG * dag) = 0;
+    virtual void DoMapping() = 0;
 };
+
+#endif

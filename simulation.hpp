@@ -30,9 +30,9 @@ private:
     int numberOfInputRunnables;
     int numberOfOutputRunnables;
 
-    std::unique_ptr<RunnableInformation> runnableInformations;
-    std::unique_ptr<ExecutionInformation> runnableExecutions;
-    std::unique_ptr<CommunicationInformation> runnableCommunications;
+    std::unique_ptr<RunnableInformation[]> runnableInformations;
+    std::unique_ptr<ExecutionInformation[]> runnableExecutions;
+    std::unique_ptr<CommunicationInformation[]> runnableCommunications;
     std::map<std::pair<int, int>, std::vector<ExecutionInformation>> processExecutions;
 
     void Initialize();
@@ -41,7 +41,7 @@ private:
     void SetArrivalTable(double* readTable, double* writeTable, int inputRunnableIndex, int inputCycle, int hyperPeriodCount, int thisRunnableId, int thisCycle, int maxCycle, double* arrivalTable);
 
 public:
-    Simulation(DAG *newDag) { dag = newDag;}
+    Simulation(std::unique_ptr<DAG> newDag) { dag = std::move(newDag);}
     ~Simulation();
 
     void Simulate();
@@ -56,7 +56,7 @@ public:
     void GetReactionTime();
     void GetDataAge();
 
-    void SetCommunication(Communication *newCommunication) { communication = newCommunication; }
+    void SetCommunication(std::unique_ptr<Communication> newCommunication) { communication = std::move(newCommunication); }
 
     void SaveData();
 };

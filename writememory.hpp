@@ -1,3 +1,7 @@
+#ifndef __WRITEMEMORY__HPP__
+
+#define __WRITEMEMORY__HPP__
+
 #include "DAG.hpp"
 #include "simulation_types.hpp"
 
@@ -40,3 +44,5 @@ public:
         // ..
         // --------------------------------------------------------------------------------------------------------------
 };
+
+#endif

@@ -3,7 +3,6 @@
 
 class RandomMapping : public Mapping {
 public:
-    void DoMapping(DAG * dag) {
-
+    void DoMapping() {
     }
 };

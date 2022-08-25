@@ -1,6 +1,9 @@
+#ifndef __SIMULATION_TYPES__HPP__
+
+#define __SIMULATION_TYPES__HPP__
+
 struct RunnableInformation {
     int taskId;
-    int priority;
     double period;
     double offset;
     double executionTime;
@@ -15,3 +18,5 @@ struct CommunicationInformation {
     double readTime;
     double writeTime;
 };
+
+#endif

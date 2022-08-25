@@ -8,23 +8,26 @@ void Simulation::Initialize() {
     this->numberOfInputRunnables = this->dag->GetNumberOfInputRunnables();
     this->numberOfOutputRunnables = this->dag->GetNumberOfOutputRunnables();
 
-    this->runnableInformations = new struct RunnableInformation[this->numberOfRunnables];
-    this->runnableExecutions = new struct ExecutionInformation[this->numberOfRunnables * maxCycle];
-    this->runnableCommunications = new struct CommunicationInformation[this->numberOfRunnables * maxCycle];
-    this->processExecutions = new ExecutionInformation[this->numberOfInputRunnables * this->numberOfOutputRunnables * maxCycle];
+    std::unique_ptr<RunnableInformation[]> tmpRunnableInformations(new RunnableInformation[this->numberOfRunnables]);
+    this->runnableInformations = std::move(tmpRunnableInformations);
+
+    std::unique_ptr<ExecutionInformation[]> tmpRunnableExecutions(new ExecutionInformation[this->numberOfRunnables * maxCycle]);
+    this->runnableExecutions = std::move(tmpRunnableExecutions);
+
+    std::unique_ptr<CommunicationInformation[]> tmpRunnableCommunications(new CommunicationInformation[this->numberOfRunnables * maxCycle]);
+    this->runnableCommunications = std::move(tmpRunnableCommunications);
 
     this->ClearTables();
 }
 
 void Simulation::ClearTables() {
-    struct RunnableInformation initialRunnableInformation = {-1, -1, -1.0, -1.0, -1.0};
-    struct ExecutionInformation initialExecutionInformation = {-1.0, -1.0};
-    struct CommunicationInformation initialCommunicationInformation = {-1.0, =1.0};
+    RunnableInformation initialRunnableInformation = {-1, -1.0, -1.0, -1.0};
+    ExecutionInformation initialExecutionInformation = {-1.0, -1.0};
+    CommunicationInformation initialCommunicationInformation = {-1.0, -1.0};
 
-    memcpy(runnalbeInformations, &initialRunnableInformation, sizeof(struct RunnableInformation) * this->numberOfRunnables);
-    memset(runnableExecutions, &initialExecutionInformation, sizeof(struct ExecutionInformation) * this->numberOfRunnables * maxCycle);
-    memset(runnableCommunications, &initialCommunicationInformation, sizeof(struct CommunicationInformation) * this->numberOfRunnables * maxCycle);
-    memset(processExecutions, &initialExecutionInformation, sizeof(struct ExecutionInformation) * this->numberOfInputRunnables * this->numberOfOutputRunnables * maxCycle);
+    memcpy(this->runnableInformations.get(), &initialRunnableInformation, sizeof(struct RunnableInformation) * this->numberOfRunnables);
+    memcpy(this->runnableExecutions.get(), &initialExecutionInformation, sizeof(struct ExecutionInformation) * this->numberOfRunnables * maxCycle);
+    memcpy(this->runnableCommunications.get(), &initialCommunicationInformation, sizeof(struct CommunicationInformation) * this->numberOfRunnables * maxCycle);
 }
 
 void Simulation::Simulate() {
@@ -47,11 +50,10 @@ void Simulation::SetRunnableInformations() {
         for (auto &runnable : task->GetRunnables()) {
             int runnableId = runnable->GetId();
 
-            this->runnalbeInformations[runnableId].taskId = task->GetId();
-            this->runnalbeInformations[runnableId].priority = this->dag->GetPriority(runnableId);
-            this->runnalbeInformations[runnableId].period = task->GetPeriod();
-            this->runnalbeInformations[runnableId].offset = task->GetOffset();
-            this->runnalbeInformations[runnableId].executionTime = runnable->GetExecutionTime();
+            this->runnableInformations[runnableId].taskId = task->GetId();
+            this->runnableInformations[runnableId].period = task->GetPeriod();
+            this->runnableInformations[runnableId].offset = task->GetOffset();
+            this->runnableInformations[runnableId].executionTime = runnable->GetExecutionTime();
         }
     }
 }
@@ -72,12 +74,12 @@ void Simulation::SetRunnableExecutions() {
     // ..
     // --------------------------------------------------------------------------------------------------------------
 
-    double* emptyTimes = new double[static_cast<int>this->GetHyperPeriod()];
-    memset(emptyTimes, 1.0, sizeof(double) * static_cast<int>this->GetHyperPeriod());
+    double* emptyTimes = new double[static_cast<int>(this->hyperPeriod)];
+    memset(emptyTimes, 1.0, sizeof(double) * static_cast<int>(this->hyperPeriod));
 
-    for (auto &runnable : this->dag->GetHighPriorityRunnables()) {
+    for (auto &runnable : this->dag->GetOrderOfPriorityRunnables()) {
         int runnableId = runnable->GetId();
-        int runnableMaxCycle = static_cast<int>(this->GetHyperPeriod()) / this->runnableInformations[runnableId].period;
+        int runnableMaxCycle = static_cast<int>(this->hyperPeriod) / this->runnableInformations[runnableId].period;
 
         for (int cycle = 0; cycle < runnableMaxCycle; cycle++) {
             double releaseTime = this->runnableInformations[runnableId].period * cycle + this->runnableInformations[runnableId].offset;
@@ -100,12 +102,12 @@ void Simulation::SetRunnableExecutions() {
 
             while (executionTime) {
                 if (emptyTimes[integerReleaseTime] < executionTime) {
-                    execution -= emptyTimes[integerReleaseTime];
+                    executionTime -= emptyTimes[integerReleaseTime];
                     emptyTimes[integerReleaseTime] = 0.0;
 
                     integerReleaseTime += 1;
                 } else {
-                    this->runnableExecutions[runnableId * this->maxCycle + cycle].endTime = static_cast<double>integerReleaseTime + executionTime;
+                    this->runnableExecutions[runnableId * this->maxCycle + cycle].endTime = static_cast<double>(integerReleaseTime) + executionTime;
                     emptyTimes[integerReleaseTime] -= executionTime;
                     executionTime = 0.0;
                 }
@@ -119,7 +121,7 @@ void Simulation::SetRunnableExecutions() {
 void Simulation::SetProcessExecutions() {
     for (int inputRunnableIndex = 0; inputRunnableIndex < this->numberOfInputRunnables; inputRunnableIndex++) {
         for (int cycle = 0; cycle < this->maxCycle; cycle++) {
-            this->TraceProcess(inputRunnableIndex, cycle, this->inputRunnableIndex, cycle, 0);
+            this->TraceProcess(inputRunnableIndex, cycle, inputRunnableIndex, cycle, 0);
         }
     }
 }
@@ -149,11 +151,11 @@ void Simulation::TraceProcess(int inputRunnableId, int inputCycle, int thisRunna
     // --------------------------------------------------------------------------------------------------------------
 
     if (this->dag->GetRunnable(thisRunnableId)->GetStatus() == 1) {
-        if (this->processExecutions.find(std::make_pair(inputRunnableId, thisRunnableId))) {
-            std::vector<ExecutionInformation> tmpVector = { {this->runnableExecutions[inputRunnableId * this->maxCycle + inputCycle].startTime, this->runnableExecutions[outputRunnableId * this->maxCycle + thisCycle].endTime + thisHyperPeriodCount * this->hyperPeriod} };
-            this->processExecutions.insert(std::make_pair(std::make_pair(inputRunnableId, thisRunnableId)), tmpVector);
+        if (this->processExecutions.find(std::make_pair(inputRunnableId, thisRunnableId)) != this->processExecutions.end()) {
+            std::vector<ExecutionInformation> tmpVector = { {this->runnableExecutions[inputRunnableId * this->maxCycle + inputCycle].startTime, this->runnableExecutions[thisRunnableId * this->maxCycle + thisCycle].endTime + thisHyperPeriodCount * this->hyperPeriod} };
+            this->processExecutions.insert(std::make_pair(std::make_pair(inputRunnableId, thisRunnableId), tmpVector));
         } else {
-            ExecutionInformation tmpInfo = {this->runnableExecutions[inputRunnableId * this->maxCycle + inputCycle].startTime, this->runnableExecutions[outputRunnableId * this->maxCycle + thisCycle].endTime + thisHyperPeriodCount * this->hyperPeriod};
+            ExecutionInformation tmpInfo = {this->runnableExecutions[inputRunnableId * this->maxCycle + inputCycle].startTime, this->runnableExecutions[thisRunnableId * this->maxCycle + thisCycle].endTime + thisHyperPeriodCount * this->hyperPeriod};
             this->processExecutions[std::make_pair(inputRunnableId, thisRunnableId)].push_back(tmpInfo);
         }
     } else {
@@ -165,19 +167,19 @@ void Simulation::TraceProcess(int inputRunnableId, int inputCycle, int thisRunna
             int outputRunnableReadTime = this->runnableExecutions[outputRunnableId * this->maxCycle + tmpCycle].endTime;
 
             // If thisRunnable has hyperPeriod Count, outputRunnable have same hyperPeriod start.
-            while ((writeTable[thisRunnableId * maxCycle + thisCycle]) > outputRunnableReadTime) {
+            while ((this->runnableExecutions[thisRunnableId * maxCycle + thisCycle].startTime) > outputRunnableReadTime) {
                 tmpCycle++;
 
-                if (tmpCycle == maxCycle || readTable[outputRunnableId * maxCycle + tmpCycle] == -1.0) {
-                    outputRunnableReadTime = readTable[outputRunnableId * maxCycle] + this->hyperPeriod;
+                if (tmpCycle == maxCycle || this->runnableExecutions[outputRunnableId * maxCycle + tmpCycle].endTime == -1.0) {
+                    outputRunnableReadTime = this->runnableExecutions[outputRunnableId * maxCycle].endTime + this->hyperPeriod;
                     tmpCycle = 0;
                     hyperPeriodCount++;
                 } else {
-                    outputRunnableReadTime = readTable[outputRunnableId * maxCycle + tmpCycle];
+                    outputRunnableReadTime = this->runnableExecutions[outputRunnableId * maxCycle + tmpCycle].endTime;
                 }
             }
 
-            this->TraceProcess(inputRunnableIndex, inputCycle, outputRunnableId, tmpCycle, hyperPeriodCount);
+            this->TraceProcess(inputRunnableId, inputCycle, outputRunnableId, tmpCycle, hyperPeriodCount);
         }
     }
 }

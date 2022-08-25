@@ -4,7 +4,7 @@
 
 class StartOfRunnableRead : public ReadMemory {
 public:
-    GetReadTable(double* runnableInformations, double* startTable, double* endTable, int numberOfRunnables, int maxCycle, double* readTable) {
+    void GetReadTable(double* runnableInformations, double* startTable, double* endTable, int numberOfRunnables, int maxCycle, double* readTable) {
         // --------------------------------------------------------------------------------------------------------------
         // runnableInformations : [5 X numberOfRunnables]     Input
         // --------------------------------------------------------------------------------------------------------------

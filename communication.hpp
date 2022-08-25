@@ -1,3 +1,7 @@
+#ifndef __COMMUNICATION__HPP__
+
+#define __COMMUNICATION__HPP__
+
 #include "DAG.hpp"
 #include "readmemory.hpp"
 #include "writememory.hpp"
@@ -8,8 +12,8 @@ public:
     ReadMemory * readMemory;
     WriteMemory * writeMemory;
 
-    virtual Communication();
-    ~Communication() { delete writeMemory; delete readMemory; }
+    Communication();
+    virtual ~Communication();
 
     void GetReadTable(double* runnableInformations, double* startTable, double* endTable, int numberOfRunnables, int maxCycle, double* readTable) { 
         this->readMemory.GetReadTable(runnableInformations, startTable, endTable, numberOfRunnables, maxCycle, readTable);
@@ -62,3 +66,5 @@ public:
     // ..
     // --------------------------------------------------------------------------------------------------------------
 };
+
+#endif

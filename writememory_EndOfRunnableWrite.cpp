@@ -4,7 +4,7 @@
 
 class StartOfRunnableWrite : public WriteMemory {
 public:
-    void GetWriteTable(double* runnableInformations, double* startTable, double* endTable, int numberOfRunnables, int maxCycle, double* writeTable) = 0;
+    void GetWriteTable(double* runnableInformations, double* startTable, double* endTable, int numberOfRunnables, int maxCycle, double* writeTable) {
         // --------------------------------------------------------------------------------------------------------------
         // runnableInformations : [5 X numberOfRunnables]     Input
         // --------------------------------------------------------------------------------------------------------------
@@ -38,4 +38,5 @@ public:
         // --------------------------------------------------------------------------------------------------------------
 
         memcpy(writeTable, endTable, sizeof(double) * numberOfRunnables * maxCycle);
+    }
 };
