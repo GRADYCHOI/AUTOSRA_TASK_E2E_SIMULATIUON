@@ -122,8 +122,10 @@ void Simulation::SetRunnableExecutions() {
 }
 
 void Simulation::SetProcessExecutions() {
-    for (int inputRunnableIndex = 0; inputRunnableIndex < this->numberOfInputRunnables; inputRunnableIndex++) {
-        for (int cycle = 0; cycle < this->maxCycle; cycle++) {
+    for (auto &runnable : this->dag->GetInputRunnables()) {
+        int eachMaxCycle = this->hyperPeriod / this->runnableInformations[runnable->GetId()].period;
+
+        for (int cycle = 0; cycle < eachMaxCycle; cycle++) {
             this->TraceProcess(inputRunnableIndex, cycle, inputRunnableIndex, cycle, 0);
         }
     }
