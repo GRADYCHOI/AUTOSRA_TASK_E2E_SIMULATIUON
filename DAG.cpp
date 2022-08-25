@@ -185,8 +185,6 @@ void DAG::SetTaskPriority() {
     for (auto &tmpTask : tmpTaskArray) {
         taskPriority.push_back(tmpTask.first);
     }
-
-    for (auto &task : taskPriority) cout << task << endl;
 }
 
 void DAG::SetRunnablePriority(int index) {
@@ -263,6 +261,9 @@ void DAG::DoRandomTaskMapping() {
     for (auto &runnable : runnables) {
         tasks[std::rand() % (int)this->GetNumberOfTasks()]->AddRunnable(runnable);
     }
+    double Util = 0.0;
+    for (auto &task : tasks) Util += task->GetExecutionTime() / task->GetPeriod();
+    cout << "Utilization : " << Util << endl;
 }
 
 bool DAG::CheckMappable() {
