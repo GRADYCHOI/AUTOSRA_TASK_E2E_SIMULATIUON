@@ -260,46 +260,8 @@ int DAG::GetNumberOfSequenceCase() {
 }
 
 void DAG::DoRandomTaskMapping() {
-    /*
-    if (this->CheckMappable()) {
-        for (auto &runnable : this->runnables) {
-            bool mappingFlag = false;
-            while (!mappingFlag) {
-                for (auto &task : this->tasks) {
-                    if ((this->GetUtilization() + (runnable->GetExecutionTime() / task->GetPeriod())) > 0.6) continue;
-
-                    if ((std::rand() % 100) < 20) {
-                        task->AddRunnable(runnable);
-                        mappingFlag = true;
-                        break;
-                    }
-                }
-
-                if (!mappingFlag) {
-                    if (this->GetUtilization() > 0.6) {
-                        this->ClearTaskMapping();
-                        this->DoRandomTaskMapping();
-                        break;
-                    }
-                }
-            }
-        }
-    } else {
-        std::cout << "This Dag Can't Mapped within Utilization" << std::endl;
-    }
-    */
     for (auto &runnable : runnables) {
-        this->tasks[taskPriority[0]]->AddRunnable(runnable);
-    }
-    /*for (auto &runnable : runnables) {
-        for (auto &task : tasks) {
-            if (std::rand() % this->GetNumberOfTasks() )
-        }
-    }*/
-    for (auto &task : tasks) {
-        for (auto &runnable : runnables) {
-            if (std::rand() % this->GetNumberOfTasks() == task->GetId()) cout << "!";
-        }
+        tasks[std::rand() % (int)this->GetNumberOfTasks()]->AddRunnable(runnable);
     }
 }
 

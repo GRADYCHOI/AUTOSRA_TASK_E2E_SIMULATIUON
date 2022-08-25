@@ -14,7 +14,7 @@ TASK::~TASK() {
 void TASK::SetExecutionTime() {
     double tmpExecutionTime = 0;
 
-    for (int count = 0; count < this->runnables.size(); count++) {
+    for (int count = 0; count < (int)this->runnables.size(); count++) {
         tmpExecutionTime += this->runnables[count]->GetExecutionTime();
     }
 
