@@ -13,7 +13,9 @@
 
 class DAG
 { 
-private: 
+private:
+    std::unique_ptr<Mapping> mapping;
+
     // Sorted by ID
     std::vector<std::shared_ptr<TASK>> tasks;
     std::vector<std::shared_ptr<RUNNABLE>> runnables;
@@ -66,6 +68,9 @@ public:
     void GenerateTasks(int numberOfTasks);
 
     // Mapping
+    void SetMapping(std::unique_ptr<Mapping> strategy) { mapping = strategy; }
+    void DoMapping() { mapping->DoMapping(this); }
+
     void DoRandomTaskMapping();
     bool CheckMappable();
     void ClearTaskMapping();
