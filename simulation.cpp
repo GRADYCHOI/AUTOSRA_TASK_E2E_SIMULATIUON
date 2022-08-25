@@ -164,8 +164,8 @@ void Simulation::TraceProcess(int inputRunnableId, int inputCycle, int thisRunna
             double hyperPeriodCount = 0;
             int outputRunnableReadTime = this->runnableExecutions[outputRunnableId * this->maxCycle + tmpCycle].endTime;
 
-            // TODO : regard hyperPeriod
-            while ((writeTable[thisRunnableId * maxCycle + thisCycle] + this->hyperPeriod * thisHyperPeriodCount) > outputRunnableReadTime) {
+            // If thisRunnable has hyperPeriod Count, outputRunnable have same hyperPeriod start.
+            while ((writeTable[thisRunnableId * maxCycle + thisCycle]) > outputRunnableReadTime) {
                 tmpCycle++;
 
                 if (tmpCycle == maxCycle || readTable[outputRunnableId * maxCycle + tmpCycle] == -1.0) {
@@ -173,7 +173,7 @@ void Simulation::TraceProcess(int inputRunnableId, int inputCycle, int thisRunna
                     tmpCycle = 0;
                     hyperPeriodCount++;
                 } else {
-                    outputRunnableReadTime = readTable[outputRunnableId * maxCycle + tmpCycle] + (this->hyperPeriod * hyperPeriodCount);
+                    outputRunnableReadTime = readTable[outputRunnableId * maxCycle + tmpCycle];
                 }
             }
 
