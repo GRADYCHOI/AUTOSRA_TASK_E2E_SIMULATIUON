@@ -75,7 +75,7 @@ void Simulation::SetRunnableExecutions() {
     double* emptyTimes = new double[static_cast<int>this->GetHyperPeriod()];
     memset(emptyTimes, 1.0, sizeof(double) * static_cast<int>this->GetHyperPeriod());
 
-    for (auto &runnable : this->dag->GetRunnables()) {
+    for (auto &runnable : this->dag->GetHighPriorityRunnables()) {
         int runnableId = runnable->GetId();
         int runnableMaxCycle = static_cast<int>(this->GetHyperPeriod()) / this->runnableInformations[runnableId].period;
 
@@ -119,21 +119,50 @@ void Simulation::SetRunnableExecutions() {
 void Simulation::SetProcessExecutions() {
     for (int inputRunnableIndex = 0; inputRunnableIndex < this->numberOfInputRunnables; inputRunnableIndex++) {
         for (int cycle = 0; cycle < this->maxCycle; cycle++) {
-            this->SetArrivalTable(inputRunnableIndex, cycle, 0, inputRunnableIndex, cycle);
+            this->TraceProcess(inputRunnableIndex, cycle, this->inputRunnableIndex, cycle, 0);
         }
     }
 }
 
-void Simulation::TraceProcess(int inputRunnableIndex, int inputCycle, int thisRunnableId, int thisCycle, int thisHyperPeriodCount) {
+void Simulation::TraceProcess(int inputRunnableId, int inputCycle, int thisRunnableId, int thisCycle, int thisHyperPeriodCount) {
+    // --------------------------------------------------------------------------------------------------------------
+    // runnableExecutions : [maxCycle X numberOfRunnables]     Input
+    // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable is based on their IDs
+    // 1 : First Cycle's ExecutionInformation (startTime, endTime)
+    // 2 : Second Cycle's ExecutionInformation (startTime, endTime)
+    // ..
+    // --------------------------------------------------------------------------------------------------------------
+    // runnableCommunications : [maxCycle X numberOfRunnables]     Input
+    // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable is based on their IDs
+    // 1 : First Cycle's CommunicationInformation (readTime, writeTime)
+    // 2 : Second Cycle's CommunicationnInformation (readTime, writeTime)
+    // ..
+    // --------------------------------------------------------------------------------------------------------------
+    // processExecutions : [maxCycle X (InputRunnable, OutputRunnable) pair]     Output
+    // --------------------------------------------------------------------------------------------------------------
+    // ## The order of Runnable is based on their IDs
+    // 1 : First Cycle's ExecutionTimeInformation (startTime, writeTime)
+    // 2 : Second Cycle's ExecutionTimeInformation (startTime, writeTime)
+    // ..
+    // --------------------------------------------------------------------------------------------------------------
+
     if (this->dag->GetRunnable(thisRunnableId)->GetStatus() == 1) {
-        this->processExecutions[this->dag->GetOutputRunnableIndex(thisRunnableId) * this->numberOfInputRunnables * maxCycle + inputRunnableIndex * maxCycle + inputCycle] = this->runnableExecutions[thisRunnableId * maxCycle + thisCycle] + this->hyperPeriod * hyperPeriodCount;
+        if (this->processExecutions.find(std::make_pair(inputRunnableId, thisRunnableId))) {
+            std::vector<ExecutionInformation> tmpVector = { {this->runnableExecutions[inputRunnableId * this->maxCycle + inputCycle].startTime, this->runnableExecutions[outputRunnableId * this->maxCycle + thisCycle].endTime + thisHyperPeriodCount * this->hyperPeriod} };
+            this->processExecutions.insert(std::make_pair(std::make_pair(inputRunnableId, thisRunnableId)), tmpVector);
+        } else {
+            ExecutionInformation tmpInfo = {this->runnableExecutions[inputRunnableId * this->maxCycle + inputCycle].startTime, this->runnableExecutions[outputRunnableId * this->maxCycle + thisCycle].endTime + thisHyperPeriodCount * this->hyperPeriod};
+            this->processExecutions[std::make_pair(inputRunnableId, thisRunnableId)].push_back(tmpInfo);
+        }
     } else {
         for (auto &outputRunnable : this->dag->GetRunnable(thisRunnableId)->GetOutputRunnables()) {
             int outputRunnableId = outputRunnable->GetId();
 
             int tmpCycle = 0;
             double hyperPeriodCount = 0;
-            int outputRunnableReadTime = readTable[outputRunnableId * maxCycle + tmpCycle];
+            int outputRunnableReadTime = this->runnableExecutions[outputRunnableId * this->maxCycle + tmpCycle].endTime;
 
             // TODO : regard hyperPeriod
             while ((writeTable[thisRunnableId * maxCycle + thisCycle] + this->hyperPeriod * thisHyperPeriodCount) > outputRunnableReadTime) {
@@ -148,7 +177,7 @@ void Simulation::TraceProcess(int inputRunnableIndex, int inputCycle, int thisRu
                 }
             }
 
-            this->SetArrivalTable(readTable, writeTable, inputRunnableIndex, hyperPeriodCount, inputCycle, outputRunnableId, tmpCycle, maxCycle, arrivalTable);
+            this->TraceProcess(inputRunnableIndex, inputCycle, outputRunnableId, tmpCycle, hyperPeriodCount);
         }
     }
 }

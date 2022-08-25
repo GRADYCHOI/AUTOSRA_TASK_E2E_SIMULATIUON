@@ -1,4 +1,5 @@
 #include "DAG.hpp"
+#include "simulation_types.hpp"
 
 
 class ReadMemory {

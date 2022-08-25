@@ -11,11 +11,16 @@
 #include <cmath>
 #include <limits.h>
 #include <cstring>
+#include <map>
 
 
 class Simulation {
 private:
-    DAG * dag;
+    std::unique_ptr<DAG> dag;
+
+    // Command Method Pattern
+    friend class Communication;
+    std::unique_ptr<Communication> communication;
 
     int maxCycle;
     double hyperPeriod;
@@ -25,14 +30,10 @@ private:
     int numberOfInputRunnables;
     int numberOfOutputRunnables;
 
-    struct RunnableInformation* runnableInformations;
-    struct ExecutionInformation* runnableExecutions;
-    struct CommunicationInformation* runnableCommunications;
-    struct ExecutionInformation* processExecutions;
-
-    // Command Method Pattern
-    friend class Communication;
-    Communication * communication;
+    std::unique_ptr<RunnableInformation> runnableInformations;
+    std::unique_ptr<ExecutionInformation> runnableExecutions;
+    std::unique_ptr<CommunicationInformation> runnableCommunications;
+    std::map<std::pair<int, int>, std::vector<ExecutionInformation>> processExecutions;
 
     void Initialize();
     void ClearTables();
@@ -41,16 +42,7 @@ private:
 
 public:
     Simulation(DAG *newDag) { dag = newDag;}
-    ~Simulation() { 
-        delete dag;
-
-        delete[] runnableInformations;
-        delete[] runnableExecutions;
-        delete[] runnableCommunications;
-        delete[] processExecutions;
-
-        delete communication;
-    }
+    ~Simulation();
 
     void Simulate();
 

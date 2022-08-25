@@ -13,16 +13,14 @@
 
 class DAG
 { 
-private:
-    double hyperPeriod = -1.0;
-    
+private: 
     // Sorted by ID
     std::vector<std::shared_ptr<TASK>> tasks;
     std::vector<std::shared_ptr<RUNNABLE>> runnables;
 
     // Sorted by ID
-    std::vector<int> inputRunnables;
-    std::vector<int> outputRunnables;
+    std::vector<std::shared_ptr<RUNNABLE>> inputRunnables;
+    std::vector<std::shared_ptr<RUNNABLE>> outputRunnables;
 
     // Sorted by Priority
     std::vector<int> taskPriority;
@@ -31,82 +29,64 @@ private:
 
     // Sorted by ID (Because of duplicate numbers)
     std::vector<int> runnablePrecedence;
- 
-    void SetHyperPeriod();
 
 public:
     DAG();
     ~DAG();
 
-    int GetNumberOfTasks();
-    int GetNumberOfRunnables();
-    double GetHyperPeriod() const;
+    std::shared_ptr<TASK> GetTask(const int index) const { return tasks[index]; }
+    std::shared_ptr<RUNNABLE> GetRunnable(const int index) const { return runables[index]; }
+    std::vector<std::shared_ptr<TASK>> GetTasks() const { return tasks; }
+    std::vector<std::shared_ptr<RUNNABLE>> GetRunnables() const { return runables; }
 
+    std::vector<std::shared_ptr<TASK>> GetOrderOfPriorityTasks();
+    std::vector<std::shared_ptr<RUNNABLE>> GetOrderOfPriorityRunnables();
+
+    std::vector<std::shared_ptr<RUNNABLE>> GetInputRunnables() const { return inputRunnables; }
+    std::vector<std::shared_ptr<RUNNABLE>> GetOutputRunnables() const { return outputRunnables; }
+
+    int GetNumberOfInputRunnables() { static_cast<int>inputRunnables.size(); }
+    int GetNumberOfOutputRunnables() { static_cast<int>outputRunnables.size(); }
+
+    int GetNumberOfTasks() { static_cast<int>tasks.size(); }
+    int GetNumberOfRunnables() { static_cast<int>runnables.size(); }
+
+    int GetMaxCycle();
+    double GetHyperPeriod();
+
+    // Save Input/Output Runnable list
     void SetInputRunnableList();
     void SetOutputRunnableList();
 
-    int GetNumberOfInputRunnables();
-    int GetNumberOfOutputRunnables();
-
+    // Generate Runnables
     void GenerateRunnables(int numumberOfRunnables);
-    void GenerateTasks(int numberOfTasks);
     void RandomEdge(); 
 
-    void AddRunnablePtr(const std::shared_ptr<RUNNABLE>& runnable);
-    void AddTaskPtr(const std::shared_ptr<TASK>& task);
+    // Generate Tasks
+    void GenerateTasks(int numberOfTasks);
 
-    void SetRunnablePrecedence();
-    void CheckPrecedence(std::shared_ptr<RUNNABLE> runnable, int precedence);
-    int GetRunnablePrecedence(int index);
-    
-    void SetTaskPriority();
-    void SetRunnablePriority(int index);
-    void SetRunnablePriorities();
-    void ExpandRunnablePriorities(std::vector<std::vector<int>> incompleteRunnablePriority, int pointer, int maxSize);
-
-    static bool CompareTaskPeriod(std::pair<int, double> a, std::pair<int, double> b) { return a.second < b.second; }
-    static bool CompareRunnablePrecedence(std::pair<int, int> a, std::pair<int, int> b) { return a.second < b.second; }
-
-    int GetNumberOfSequenceCase();
-
+    // Mapping
     void DoRandomTaskMapping();
     bool CheckMappable();
     void ClearTaskMapping();
     double GetUtilization();
 
-    void SimulateImplicitRunnable();
-    void SimulateTaskImplicitTask();
+    // Set Precedence
+    void CheckPrecedence(std::shared_ptr<RUNNABLE> runnable, int precedence);
+    void SetRunnablePrecedence();
 
-    int GetMaxCycle();
+    // Get Priority
+    void SetTaskPriority();
+    void SetRunnablePriority(int index);
+    void SetRunnablePriorities();
+    void ExpandRunnablePriorities(std::vector<std::vector<int>> incompleteRunnablePriority, int iterator, int maxSize);
+    void SetRunnablePrecedence();
+    void CheckPrecedence(std::shared_ptr<RUNNABLE> runnable, int precedence);
 
-    void GetTaskPeriods(double* periods);
-    void GetTaskOffsets(double* offsets);
-    void GetTaskExecutionTimes(double* executions);
+    // Sequence Case
+    int GetNumberOfSequenceCase() { return static_cast<int>runnablePriorities.size(); }
 
-    void GetRunnablePeriods(double* periods);
-    void GetRunnableOffsets(double* offsets);
-    void GetRunnableExecutionTimes(double* executions);
-
-    void GetTaskInfo(double* periods, double* offsets, double* executions);
-    void GetRunnableInfo(double* periods, double* offsets, double* executions);
-
-    void GetExecutionTable(double* periods, double* offsets, double* executions, int size, int maxCycle, double* startTable, double* endTable);
-
-    void GetReadTable(double* startTable, int size, int maxCycle, double* readTable);
-    void GetReleaseTimeReadTable(double* periods, double* offsets, int size, int maxCycle, double* readTable);
-
-    void GetWriteTable(double* endTable, int size, int maxCycle, double* writeTable);
-    void GetReleaseTimeWriteTable(double* periods, double* offsets, int size, int maxCycle, double* writeTable);
-    void GetNextJobWriteTable(double* startTable, int size, int maxCycle, double* writeTable);
-
-    void SetArrivalTable(double* readTable, double* writeTable, int inputRunnableIndex, int inputCycle, int hyperPeriodCount, int thisRunnableId, int thisCycle, int maxCycle, double* arrivalTable);
-    void GetArrivalTable(double* readTable, double* writeTable, int maxCycle, double* arrivalTable);
-
-    void GetReactionTime(double* arrivalTable, double* readTable, int maxCycle, double* reactionTime);
-    void GetDataAge(double* arrivalTable, double* writeTable, int maxCycle, double* dataAge);
-
-    void Simulate();
-
+    // Debugging
     void DisplayRunnables();
 };
 

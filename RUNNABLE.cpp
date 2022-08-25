@@ -3,8 +3,9 @@
 
 using namespace std;
 
-RUNNABLE::RUNNABLE(int id, double executionTime) {
+RUNNABLE::RUNNABLE(int id, int realId, double executionTime) {
     this->id = id;
+    this->realId = realId;
     this->executionTime = executionTime;
     if (executionTime == 0) this->executionTime = 0.001;
 }
