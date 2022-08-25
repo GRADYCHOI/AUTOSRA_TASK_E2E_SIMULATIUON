@@ -77,7 +77,6 @@ public:
     void SetMapping(std::unique_ptr<Mapping> newMapping) { mapping = std::move(newMapping); }
     void DoMapping() { mapping->DoMapping(tasks, runnables); }
 
-    void DoRandomTaskMapping();
     bool CheckMappable();
     void ClearTaskMapping();
     double GetUtilization();

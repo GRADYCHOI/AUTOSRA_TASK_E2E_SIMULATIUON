@@ -38,8 +38,6 @@ private:
     void Initialize();
     void ClearTables();
 
-    void SetArrivalTable(double* readTable, double* writeTable, int inputRunnableIndex, int inputCycle, int hyperPeriodCount, int thisRunnableId, int thisCycle, int maxCycle, double* arrivalTable);
-
 public:
     Simulation(std::unique_ptr<DAG> newDag) { dag = std::move(newDag);}
     ~Simulation();
