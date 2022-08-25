@@ -127,6 +127,10 @@ void DAG::GenerateRunnables(int numberOfRunnables) {
         this->runnables.push_back(std::make_shared<RUNNABLE>(runnableIndex, runnableIndex, (double)((std::rand() % 100) / 1000)));
         std::cout << "Runnable ID : " << this->runnables[runnableIndex]->GetId() << ", Execution Time : " << this->runnables[runnableIndex]->GetExecutionTime() << std::endl;
     }
+
+    this->RandomEdge();
+    this->SetInputRunnableList();
+    this->SetOutputRunnableList();
 }
 
 void DAG::RandomEdge() { //Runnable edge random generation
@@ -157,36 +161,6 @@ void DAG::GenerateTasks(int numberOfTasks) {
         this->tasks.push_back(std::make_shared<TASK>(taskIndex, tmpPeriod, tmpOffset));
 
         std::cout << "Task ID : " << tasks[taskIndex]->GetId() << ", Period : " << tasks[taskIndex]->GetPeriod() << std::endl;
-    }
-}
-
-// 매우 불안정한 버전
-void DAG::DoRandomTaskMapping() {
-    if (this->CheckMappable()) {
-        for (auto &runnable : this->runnables) {
-            bool mappingFlag = false;
-            while (!mappingFlag) {
-                for (auto &task : this->tasks) {
-                    if ((this->GetUtilization() + (runnable->GetExecutionTime() / task->GetPeriod())) > 0.6) continue;
-
-                    if ((std::rand() % 100) < 20) {
-                        task->AddRunnable(runnable);
-                        mappingFlag = true;
-                        break;
-                    }
-                }
-
-                if (!mappingFlag) {
-                    if (this->GetUtilization() > 0.6) {
-                        this->ClearTaskMapping();
-                        this->DoRandomTaskMapping();
-                        break;
-                    }
-                }
-            }
-        }
-    } else {
-        std::cout << "This Dag Can't Mapped within Utilization" << std::endl;
     }
 }
 

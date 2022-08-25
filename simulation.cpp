@@ -31,7 +31,12 @@ void Simulation::ClearTables() {
 }
 
 void Simulation::Simulate() {
-
+    SetRunnableInformations();
+    SetRunnableExecutions();
+    SetRunnableCommunications();
+    SetProcessExecutions();
+    GetReactionTime();
+    GetDataAge();
 }
 
 void Simulation::SaveData() {
@@ -126,7 +131,7 @@ void Simulation::SetProcessExecutions() {
         int eachMaxCycle = this->hyperPeriod / this->runnableInformations[runnable->GetId()].period;
 
         for (int cycle = 0; cycle < eachMaxCycle; cycle++) {
-            this->TraceProcess(inputRunnableIndex, cycle, inputRunnableIndex, cycle, 0);
+            this->TraceProcess(runnable->GetId(), cycle, runnable->GetId(), cycle, 0);
         }
     }
 }
