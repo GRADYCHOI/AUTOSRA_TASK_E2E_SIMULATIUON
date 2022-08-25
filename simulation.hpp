@@ -49,7 +49,7 @@ public:
     void SetRunnableInformations();
     void SetRunnableExecutions();
     void SetRunnableCommunications() {
-        communication->GetCommunicationTable(this->runnableInformations, this->runnableExecutions, this->numberOfRunnables, this->maxCycle, this->runnableCommunications);
+        communication->GetCommunicationTable(this->runnableInformations.get(), this->runnableExecutions.get(), this->numberOfRunnables, this->maxCycle, this->runnableCommunications.get());
     }
     void SetProcessExecutions();
     void TraceProcess(int inputRunnableIndex, int inputCycle, int thisRunnableId, int thisCycle, int hyperPeriodCount);

@@ -4,6 +4,7 @@
 
 struct RunnableInformation {
     int taskId;
+    int priority;
     double period;
     double offset;
     double executionTime;

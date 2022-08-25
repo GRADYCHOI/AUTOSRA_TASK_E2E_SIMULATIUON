@@ -44,8 +44,8 @@ public:
     std::vector<std::shared_ptr<TASK>> GetTasks() const { return tasks; }
     std::vector<std::shared_ptr<RUNNABLE>> GetRunnables() const { return runnables; }
 
-    int GetRunnablePriority(const int index) const { return runnablePriority[index]; }
-    int GetTaskPriority(const int index) const { return taskPriority[index]; }
+    std::vector<int> GetRunnablePriority();
+    std::vector<int> GetTaskPriority();
 
     std::vector<std::shared_ptr<TASK>> GetOrderOfPriorityTasks();
     std::vector<std::shared_ptr<RUNNABLE>> GetOrderOfPriorityRunnables();
@@ -75,7 +75,7 @@ public:
 
     // Mapping
     void SetMapping(std::unique_ptr<Mapping> newMapping) { mapping = std::move(newMapping); }
-    void DoMapping() { mapping->DoMapping(); }
+    void DoMapping() { mapping->DoMapping(tasks, runnables); }
 
     void DoRandomTaskMapping();
     bool CheckMappable();

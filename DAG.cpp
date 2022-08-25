@@ -23,6 +23,44 @@ DAG::~DAG() {
     runnables.clear();
 }
 
+std::vector<int> DAG::GetRunnablePriority() {
+    std::vector<std::pair<int, int>> tmpVector;
+    std::vector<int> result;
+    int index = 0;
+
+    for (auto &runnableId : this->runnablePriority) {
+        tmpVector.push_back(std::make_pair(index, runnableId));
+        index++;
+    }
+
+    std::sort(tmpVector.begin(), tmpVector.end(), [](std::pair<int, int> a, std::pair<int, int> b) { return a.second < b.second; });
+
+    for (auto &priorityMap : tmpVector) {
+        result.push_back(priorityMap.first);
+    }
+
+    return result;
+}
+
+std::vector<int> DAG::GetTaskPriority() {
+    std::vector<std::pair<int, int>> tmpVector;
+    std::vector<int> result;
+    int index = 0;
+
+    for (auto &taskId : this->taskPriority) {
+        tmpVector.push_back(std::make_pair(index, taskId));
+        index++;
+    }
+
+    std::sort(tmpVector.begin(), tmpVector.end(), [](std::pair<int, int> a, std::pair<int, int> b) { return a.second < b.second; });
+
+    for (auto &priorityMap : tmpVector) {
+        result.push_back(priorityMap.first);
+    }
+
+    return result;
+}
+
 std::vector<std::shared_ptr<TASK>> DAG::GetOrderOfPriorityTasks() {
     std::vector<std::shared_ptr<TASK>> orderOfPriorityTasks;
 

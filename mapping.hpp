@@ -2,15 +2,16 @@
 
 #define __MAPPING__HPP__
 
-#include "DAG.hpp"
+#include "RUNNABLE.hpp"
+#include "TASK.hpp"
 
 
 class Mapping {
 public:
     Mapping();
-    ~Mapping();
+    virtual ~Mapping() = default;
 
-    virtual void DoMapping() = 0;
+    virtual void DoMapping(std::vector<std::shared_ptr<TASK>>& tasks, std::vector<std::shared_ptr<RUNNABLE>>& runnables) = 0;
 };
 
 #endif

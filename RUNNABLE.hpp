@@ -1,3 +1,7 @@
+#ifndef __RUNNABLE__HPP__
+
+#define __RUNNABLE__HPP__
+
 #include <iostream>
 #include <stdlib.h>
 #include <vector>
@@ -44,3 +48,5 @@ public:
 
     std::shared_ptr<RUNNABLE> GetSharedPtr();
 };
+
+#endif

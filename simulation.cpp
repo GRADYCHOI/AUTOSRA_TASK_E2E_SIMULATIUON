@@ -21,7 +21,7 @@ void Simulation::Initialize() {
 }
 
 void Simulation::ClearTables() {
-    RunnableInformation initialRunnableInformation = {-1, -1.0, -1.0, -1.0};
+    RunnableInformation initialRunnableInformation = {-1, -1, -1.0, -1.0, -1.0};
     ExecutionInformation initialExecutionInformation = {-1.0, -1.0};
     CommunicationInformation initialCommunicationInformation = {-1.0, -1.0};
 
@@ -46,11 +46,14 @@ void Simulation::SetRunnableInformations() {
     // 1 : RunnableInformation (taskId, priority, period, offset, executionTime)
     // --------------------------------------------------------------------------------------------------------------
 
+    std::vector<int> runnablePriority = this->dag->GetRunnablePriority();
+
     for (auto &task : this->dag->GetTasks()) {
         for (auto &runnable : task->GetRunnables()) {
             int runnableId = runnable->GetId();
 
             this->runnableInformations[runnableId].taskId = task->GetId();
+            this->runnableInformations[runnableId].priority = runnablePriority[runnableId];
             this->runnableInformations[runnableId].period = task->GetPeriod();
             this->runnableInformations[runnableId].offset = task->GetOffset();
             this->runnableInformations[runnableId].executionTime = runnable->GetExecutionTime();
@@ -139,7 +142,7 @@ void Simulation::TraceProcess(int inputRunnableId, int inputCycle, int thisRunna
     // --------------------------------------------------------------------------------------------------------------
     // ## The order of Runnable is based on their IDs
     // 1 : First Cycle's CommunicationInformation (readTime, writeTime)
-    // 2 : Second Cycle's CommunicationnInformation (readTime, writeTime)
+    // 2 : Second Cycle's CommunicationInformation (readTime, writeTime)
     // ..
     // --------------------------------------------------------------------------------------------------------------
     // processExecutions : [maxCycle X (InputRunnable, OutputRunnable) pair]     Output
