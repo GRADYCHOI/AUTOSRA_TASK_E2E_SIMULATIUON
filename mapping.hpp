@@ -8,7 +8,7 @@
 
 class Mapping {
 public:
-    Mapping();
+    Mapping() = default;
     virtual ~Mapping() = default;
 
     virtual void DoMapping(std::vector<std::shared_ptr<TASK>>& tasks, std::vector<std::shared_ptr<RUNNABLE>>& runnables) = 0;

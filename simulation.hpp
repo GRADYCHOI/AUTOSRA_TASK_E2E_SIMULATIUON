@@ -40,7 +40,7 @@ private:
 
 public:
     Simulation(std::unique_ptr<DAG>&& newDag) { dag = std::move(newDag);}
-    ~Simulation();
+    ~Simulation() = default;
 
     void Simulate();
 

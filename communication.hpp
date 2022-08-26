@@ -8,7 +8,7 @@
 
 class Communication {
 public:
-    Communication();
+    Communication() = default;
     virtual ~Communication() = default;
 
     virtual void GetCommunicationTable(RunnableInformation* runnableInformations, ExecutionInformation* runnableExecutions, int numberOfRunnables, int maxCycle, CommunicationInformation* runnableCommunications) = 0;
