@@ -124,8 +124,9 @@ void DAG::GenerateRunnables(int numberOfRunnables) {
     std::cout << "Generate Runnables Start" << std::endl;
 
     for (int runnableIndex = 0; runnableIndex < numberOfRunnables; runnableIndex++) {
-        this->runnables.push_back(std::make_shared<RUNNABLE>(runnableIndex, runnableIndex, (double)((std::rand() % 100) / 1000)));
-        std::cout << "Runnable ID : " << this->runnables[runnableIndex]->GetId() << ", Execution Time : " << this->runnables[runnableIndex]->GetExecutionTime() << std::endl;
+        std::shared_ptr<RUNNABLE> runnable(new RUNNABLE(runnableIndex, runnableIndex, (double)(std::rand() % 100) / 1000));
+        this->runnables.push_back(runnable);
+        std::cout << "Runnable ID : " << runnable->GetId() << ", Execution Time : " << runnable->GetExecutionTime() << std::endl;
     }
 
     this->RandomEdge();
@@ -151,16 +152,27 @@ void DAG::RandomEdge() { //Runnable edge random generation
 void DAG::GenerateTasks(int numberOfTasks) {
     double tmpPeriod = -1.0;
     double tmpOffset = -1.0;
+    bool flag = true;
 
-    for (int taskIndex = 0; taskIndex < numberOfTasks; taskIndex++) {
-        std::cout << taskIndex << " -th Task Period : ";
-        std::cin >> tmpPeriod;
-        std::cout << taskIndex << " -th Task Offset : ";
-        std::cin >> tmpOffset;
-
-        this->tasks.push_back(std::make_shared<TASK>(taskIndex, tmpPeriod, tmpOffset));
-
-        std::cout << "Task ID : " << tasks[taskIndex]->GetId() << ", Period : " << tasks[taskIndex]->GetPeriod() << std::endl;
+    while(flag) {
+        for (int taskIndex = 0; taskIndex < numberOfTasks; taskIndex++) {
+            std::cout << taskIndex << " -th Task Period : ";
+            std::cin >> tmpPeriod;
+            std::cout << taskIndex << " -th Task Offset : ";
+            std::cin >> tmpOffset;
+            std::shared_ptr<TASK> task(new TASK(taskIndex, tmpPeriod, tmpOffset));
+            this->tasks.push_back(task);
+            std::cout << "Task ID : " << tasks[taskIndex]->GetId() << ", Period : " << tasks[taskIndex]->GetPeriod() << std::endl;
+        }
+        if (CheckMappable()) {
+            std::cout << "This Mappable!" << std::endl;
+            flag = false;
+        }
+        else {
+            std::cout << "Increse Tasks Period!" << std::endl;
+            this->tasks.clear();
+            std::vector<std::shared_ptr<TASK>>().swap(this->tasks);
+        }
     }
 }
 
