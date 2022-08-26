@@ -4,14 +4,20 @@
 
 #include "RUNNABLE.hpp"
 #include "TASK.hpp"
+#include <cstdlib>
 
 
 class Mapping {
 public:
-    Mapping() = default;
-    virtual ~Mapping() = default;
+    Mapping() {}
+    virtual ~Mapping() {}
 
     virtual void DoMapping(std::vector<std::shared_ptr<TASK>>& tasks, std::vector<std::shared_ptr<RUNNABLE>>& runnables) = 0;
+};
+
+class RandomMapping : public Mapping {
+public:
+    void DoMapping(std::vector<std::shared_ptr<TASK>>& tasks, std::vector<std::shared_ptr<RUNNABLE>>& runnables);
 };
 
 #endif

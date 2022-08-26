@@ -10,12 +10,6 @@
 #include "DAG.hpp"
 #include "simulation.hpp"
 
-#include "mapping_RandomMapping.cpp"
-#include "communication_RunnableImplicit.cpp"
-#include "communication_TaskImplicit.cpp"
-#include "communication_LET.cpp"
-
-
 int main() {
     bool dag_file = false;
     int numberOfRunnables = 0;

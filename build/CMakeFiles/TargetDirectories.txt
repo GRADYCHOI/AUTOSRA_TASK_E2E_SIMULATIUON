@@ -1,8 +1,0 @@
-/home/avees/AUTOSRA_TASK_E2E_SIMULATIUON/build/CMakeFiles/rebuild_cache.dir
-/home/avees/AUTOSRA_TASK_E2E_SIMULATIUON/build/CMakeFiles/edit_cache.dir
-/home/avees/AUTOSRA_TASK_E2E_SIMULATIUON/build/app/CMakeFiles/rebuild_cache.dir
-/home/avees/AUTOSRA_TASK_E2E_SIMULATIUON/build/app/CMakeFiles/DAG_Simulation.dir
-/home/avees/AUTOSRA_TASK_E2E_SIMULATIUON/build/app/CMakeFiles/edit_cache.dir
-/home/avees/AUTOSRA_TASK_E2E_SIMULATIUON/build/lib/CMakeFiles/rebuild_cache.dir
-/home/avees/AUTOSRA_TASK_E2E_SIMULATIUON/build/lib/CMakeFiles/simulation.dir
-/home/avees/AUTOSRA_TASK_E2E_SIMULATIUON/build/lib/CMakeFiles/edit_cache.dir
