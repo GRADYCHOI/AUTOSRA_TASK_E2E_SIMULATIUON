@@ -214,7 +214,6 @@ void Simulation::GetReactionTime() {
 }
 
 void Simulation::GetDataAge() {
-    /*
     double WorstDataAge = 0.0;
     double WorstReactionTime = 0.0;
     std::pair<int, int> WorstPair;
@@ -234,5 +233,4 @@ void Simulation::GetDataAge() {
             }
         }
     }
-    */
 }
