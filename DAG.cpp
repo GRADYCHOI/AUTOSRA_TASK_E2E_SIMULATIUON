@@ -262,20 +262,25 @@ void DAG::SetRunnablePriorities() {
             }
         }
     }
+    std::cout << "Second Checkpoint 1" << std::endl;
 
     // Set Expanded Runnable Priority Table
     this->ExpandRunnablePriorities(abstractedRunnablePriorities, 0, this->GetNumberOfRunnables());
+    std::cout << "Second Checkpoint 5" << std::endl;
 }
 
 void DAG::ExpandRunnablePriorities(std::vector<std::vector<int>> incompleteRunnablePriority, int iterator, int maxSize) {
     if (iterator == maxSize) {
+        std::cout << "Second Checkpoint 2" << std::endl;
         std::vector<int> tmpList;
 
         for (auto &tmpRunnablePriority : incompleteRunnablePriority) {
             tmpList.push_back(tmpRunnablePriority[0]);
         }
+        std::cout << "Second Checkpoint 3" << std::endl;
 
         this->runnablePriorities.push_back(tmpList);
+        std::cout << "Second Checkpoint 4" << std::endl;
     } else {
         if (incompleteRunnablePriority[iterator].size() > 1) {
             for (auto &samePrecedenceRunnableId : incompleteRunnablePriority[iterator]) {
@@ -285,10 +290,10 @@ void DAG::ExpandRunnablePriorities(std::vector<std::vector<int>> incompleteRunna
                 incompleteRunnablePriority[iterator].erase(std::find(incompleteRunnablePriority[iterator].begin(), incompleteRunnablePriority[iterator].end(), samePrecedenceRunnableId));
                 incompleteRunnablePriority.insert(incompleteRunnablePriority.begin() + iterator, tmpRunnable);
                 
-                this->ExpandRunnablePriorities(incompleteRunnablePriority, ++iterator, maxSize);
+                this->ExpandRunnablePriorities(incompleteRunnablePriority, (iterator + 1), maxSize);
             }
         } else {
-            this->ExpandRunnablePriorities(incompleteRunnablePriority, ++iterator, maxSize);
+            this->ExpandRunnablePriorities(incompleteRunnablePriority, (iterator + 1), maxSize);
         }
     }
 }

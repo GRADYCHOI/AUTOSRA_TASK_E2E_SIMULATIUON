@@ -56,7 +56,9 @@ int main() {
     dag->DoMapping();
     dag->SetRunnablePrecedence();
     dag->SetTaskPriority();
+    std::cout << "Checkpoint 1" << std::endl;
     dag->SetRunnablePriorities();
+    std::cout << "Checkpoint 2" << std::endl;
 
     for (int numberOfCase = 0; numberOfCase < dag->GetNumberOfSequenceCase(); numberOfCase++) {
         dag->SetRunnablePriority(numberOfCase);

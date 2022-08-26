@@ -75,7 +75,7 @@ public:
 
     // Mapping
     void SetMapping(std::unique_ptr<Mapping>&& newMapping) { mapping = std::move(newMapping); }
-    void DoMapping() { mapping->DoMapping(tasks, runnables); }
+    void DoMapping() { std::cout << "Second Checkpoint 1" << std::endl; mapping->DoMapping(tasks, runnables); }
 
     bool CheckMappable();
     void ClearTaskMapping();
