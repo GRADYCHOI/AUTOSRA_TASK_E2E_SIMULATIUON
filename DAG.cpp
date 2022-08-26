@@ -164,6 +164,7 @@ void DAG::GenerateTasks(int numberOfTasks) {
             this->tasks.push_back(task);
             std::cout << "Task ID : " << tasks[taskIndex]->GetId() << ", Period : " << tasks[taskIndex]->GetPeriod() << std::endl;
         }
+
         if (CheckMappable()) {
             std::cout << "This Mappable!" << std::endl;
             flag = false;
@@ -211,19 +212,21 @@ double DAG::GetUtilization() {
 
 // TODO : 인 형 확인
 void DAG::CheckPrecedence(std::shared_ptr<RUNNABLE> runnable, int precedence) {
+    std::cout << "ID : " << runnable->GetId() << ", Precedence : " << precedence << std::endl;
+
     int runnableId = runnable->GetId();
     this->runnablePrecedence[runnableId] = (this->runnablePrecedence[runnableId] > precedence) ? this->runnablePrecedence[runnableId] : precedence;
 
     if (runnable->GetStatus() != 1) { // Output Runnable
         for (auto &outputRunnable : runnable->GetOutputRunnables()) {
-            this->CheckPrecedence(outputRunnable, ++precedence);
+            this->CheckPrecedence(outputRunnable, (precedence + 1));
         }
     }
 }
 
 void DAG::SetRunnablePrecedence() {
     // runnablePrecedence initialize
-    std::vector<int> tmpRunnablePrecedence(this->GetNumberOfRunnables(), -1);
+    std::vector<int> tmpRunnablePrecedence(this->GetNumberOfRunnables(), 0);
     tmpRunnablePrecedence.swap(this->runnablePrecedence);
 
     for (auto &inputRunnable : this->inputRunnables) {
@@ -241,7 +244,7 @@ void DAG::SetTaskPriority() {
     std::sort(tmpTaskArray.begin(), tmpTaskArray.end(), [](std::pair<int, double> a, std::pair<int, double> b) { return a.second < b.second; });
 
     for (auto &tmpTask : tmpTaskArray) {
-        taskPriority.push_back(tmpTask.first);
+        this->taskPriority.push_back(tmpTask.first);
     }
 }
 
@@ -266,7 +269,7 @@ void DAG::SetRunnablePriorities() {
 
         for (auto &tmpRunnable : tmpRunnableArray) {
             if (tmpPrecedence != tmpRunnable.second) {
-                std::vector<int> tmpVector{tmpRunnable.first};
+                std::vector<int> tmpVector = {tmpRunnable.first};
                 abstractedRunnablePriorities.push_back(tmpVector);
                 tmpPrecedence = tmpRunnable.second;
             } else {
@@ -274,28 +277,21 @@ void DAG::SetRunnablePriorities() {
             }
         }
     }
-    std::cout << "Second Checkpoint 1" << std::endl;
 
     // Set Expanded Runnable Priority Table
     this->ExpandRunnablePriorities(abstractedRunnablePriorities, 0, this->GetNumberOfRunnables());
-    std::cout << "Second Checkpoint 5" << std::endl;
 }
 
 void DAG::ExpandRunnablePriorities(std::vector<std::vector<int>>& incompleteRunnablePriority, int iterator, int maxSize) {
     if (iterator == maxSize) {
-        std::cout << "Second Checkpoint 2" << std::endl;
         std::vector<int> tmpList;
 
         for (auto &tmpRunnablePriority : incompleteRunnablePriority) {
             tmpList.push_back(tmpRunnablePriority[0]);
         }
-        std::cout << "Second Checkpoint 3" << std::endl;
-
         this->runnablePriorities.push_back(tmpList);
-        std::cout << "Second Checkpoint 4" << std::endl;
     } else {
         if (incompleteRunnablePriority[iterator].size() > 1) {
-            std::cout << "Second Checkpoint tmp" << std::endl;
             std::vector<int> tmpRunnable;
 
             tmpRunnable.push_back(incompleteRunnablePriority[iterator][0]);

@@ -15,7 +15,7 @@ private:
 
     int realId;
     double executionTime = -1.0;
-    int status = -1; // 0 = input runnable, 1 = output runnable, 2 = middle runnable
+    int status = 0; // 0 = input runnable, 1 = output runnable, 2 = middle runnable
 
     std::vector<std::weak_ptr<RUNNABLE>> inputRunnables;
     std::vector<std::shared_ptr<RUNNABLE>> outputRunnables;
