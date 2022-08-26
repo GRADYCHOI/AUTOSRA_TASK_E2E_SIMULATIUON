@@ -16,6 +16,7 @@
 #include "communication_TaskImplicit.cpp"
 
 int main() {
+    srand(time(NULL));
     bool dag_file = false;
     int numberOfRunnables = 0;
     int numberOfTasks = 0;

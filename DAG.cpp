@@ -122,9 +122,10 @@ void DAG::SetOutputRunnableList() {
 
 void DAG::GenerateRunnables(int numberOfRunnables) {
     std::cout << "Generate Runnables Start" << std::endl;
+    std::srand(time(NULL));
 
     for (int runnableIndex = 0; runnableIndex < numberOfRunnables; runnableIndex++) {
-        this->runnables.push_back(std::make_shared<RUNNABLE>(runnableIndex, runnableIndex, (double)((std::rand() % 100) / 1000)));
+        this->runnables.push_back(std::make_shared<RUNNABLE>(runnableIndex, runnableIndex, (double)(std::rand() % 100 / 1000)));
         std::cout << "Runnable ID : " << this->runnables[runnableIndex]->GetId() << ", Execution Time : " << this->runnables[runnableIndex]->GetExecutionTime() << std::endl;
     }
 
@@ -161,7 +162,6 @@ void DAG::GenerateTasks(int numberOfTasks) {
         this->tasks.push_back(std::make_shared<TASK>(taskIndex, tmpPeriod, tmpOffset));
 
         std::cout << "Task ID : " << tasks[taskIndex]->GetId() << ", Period : " << tasks[taskIndex]->GetPeriod() << std::endl;
-        std::cout << "debug2";
     }
 }
 

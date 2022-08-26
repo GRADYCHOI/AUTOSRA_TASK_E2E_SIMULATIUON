@@ -10,6 +10,8 @@
 #include <cmath>
 #include <limits.h>
 #include <cstring>
+#include <time.h>
+#include <stdlib.h>
 
 
 class DAG
