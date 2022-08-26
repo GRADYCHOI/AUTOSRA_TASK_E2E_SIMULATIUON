@@ -152,16 +152,30 @@ void DAG::RandomEdge() { //Runnable edge random generation
 void DAG::GenerateTasks(int numberOfTasks) {
     double tmpPeriod = -1.0;
     double tmpOffset = -1.0;
+    bool flag = true;
 
-    for (int taskIndex = 0; taskIndex < numberOfTasks; taskIndex++) {
-        std::cout << taskIndex << " -th Task Period : ";
-        std::cin >> tmpPeriod;
-        std::cout << taskIndex << " -th Task Offset : ";
-        std::cin >> tmpOffset;
+    while(flag) {
+        for (int taskIndex = 0; taskIndex < numberOfTasks; taskIndex++) {
+            std::cout << taskIndex << " -th Task Period : ";
+            std::cin >> tmpPeriod;
+            std::cout << taskIndex << " -th Task Offset : ";
+            std::cin >> tmpOffset;
 
-        this->tasks.push_back(std::make_shared<TASK>(taskIndex, tmpPeriod, tmpOffset));
+            std::shared_ptr<TASK> task(new TASK(taskIndex, tmpPeriod, tmpOffset));
+            this->tasks.push_back(task);
+            //this->tasks.push_back(std::make_shared<TASK>(taskIndex, tmpPeriod, tmpOffset));
 
-        std::cout << "Task ID : " << tasks[taskIndex]->GetId() << ", Period : " << tasks[taskIndex]->GetPeriod() << std::endl;
+            std::cout << "Task ID : " << tasks[taskIndex]->GetId() << ", Period : " << tasks[taskIndex]->GetPeriod() << std::endl;
+        }
+        if (CheckMappable()) {
+            std::cout << "This Mappable!" << std::endl;
+            flag = false;
+        }
+        else {
+            std::cout << "Increse Tasks Period!" << std::endl;
+            this->tasks.clear();
+            std::vector<std::shared_ptr<TASK>>().swap(this->tasks);
+        }
     }
 }
 
