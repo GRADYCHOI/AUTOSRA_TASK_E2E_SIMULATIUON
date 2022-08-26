@@ -34,7 +34,6 @@ int main() {
         std::cout << "Number of Tasks : ";
         std::cin >> numberOfTasks;
         dag->GenerateTasks(numberOfTasks);
-        std::cout << "debug1";
     }
 
     switch (mappingStrategy) {
@@ -59,6 +58,7 @@ int main() {
     dag->SetRunnablePrecedence();
     dag->SetTaskPriority();
     dag->SetRunnablePriorities();
+    std::cout << "debug4" << std::endl;
 
     for (int numberOfCase = 0; numberOfCase < dag->GetNumberOfSequenceCase(); numberOfCase++) {
         dag->SetRunnablePriority(numberOfCase);

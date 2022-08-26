@@ -160,11 +160,8 @@ void DAG::GenerateTasks(int numberOfTasks) {
             std::cin >> tmpPeriod;
             std::cout << taskIndex << " -th Task Offset : ";
             std::cin >> tmpOffset;
-
             std::shared_ptr<TASK> task(new TASK(taskIndex, tmpPeriod, tmpOffset));
             this->tasks.push_back(task);
-            //this->tasks.push_back(std::make_shared<TASK>(taskIndex, tmpPeriod, tmpOffset));
-
             std::cout << "Task ID : " << tasks[taskIndex]->GetId() << ", Period : " << tasks[taskIndex]->GetPeriod() << std::endl;
         }
         if (CheckMappable()) {
