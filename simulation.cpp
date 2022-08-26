@@ -197,6 +197,7 @@ void Simulation::TraceProcess(int inputRunnableId, int inputCycle, int thisRunna
 void Simulation::GetReactionTime() {
     double WorstReactionTime = 0.0;
     std::pair<int, int> WorstPair;
+
     for (auto StoE : processExecutions) {
         double tmpThisReactionTime =  StoE.second[1] - StoE.second[0];
         if (WorstReactionTime < tmpThisReactionTime) {
@@ -209,5 +210,20 @@ void Simulation::GetReactionTime() {
 }
 
 void Simulation::GetDataAge() {
+    double WorstDataAge = 0.0;
+    double WorstReactionTime = 0.0;
+    std::pair<int, int> WorstPair;
+    std::vector<double> dataage;
 
+    for (auto StoE : processExecutions) {
+        for (auto tmpStoE : processExecutions) {
+
+            double tmpThisReactionTime =  StoE.second[1] - StoE.second[0];
+            if (WorstReactionTime < tmpThisReactionTime) {
+                WorstReactionTime = tmpThisReactionTime;
+                WorstPair.first = StoE.first.first;
+                WorstPair.second = StoE.first.second;
+            }
+        }
+    }
 }
