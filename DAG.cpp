@@ -170,7 +170,7 @@ void DAG::GenerateTasks(int numberOfTasks) {
         }
         else {
             std::cout << "Increse Tasks Period!" << std::endl;
-            this->tasks.clear();
+            this->ClearTaskMapping();
             std::vector<std::shared_ptr<TASK>>().swap(this->tasks);
         }
     }
@@ -281,7 +281,7 @@ void DAG::SetRunnablePriorities() {
     std::cout << "Second Checkpoint 5" << std::endl;
 }
 
-void DAG::ExpandRunnablePriorities(std::vector<std::vector<int>> incompleteRunnablePriority, int iterator, int maxSize) {
+void DAG::ExpandRunnablePriorities(std::vector<std::vector<int>>& incompleteRunnablePriority, int iterator, int maxSize) {
     if (iterator == maxSize) {
         std::cout << "Second Checkpoint 2" << std::endl;
         std::vector<int> tmpList;
@@ -295,15 +295,14 @@ void DAG::ExpandRunnablePriorities(std::vector<std::vector<int>> incompleteRunna
         std::cout << "Second Checkpoint 4" << std::endl;
     } else {
         if (incompleteRunnablePriority[iterator].size() > 1) {
-            for (auto &samePrecedenceRunnableId : incompleteRunnablePriority[iterator]) {
-                std::vector<int> tmpRunnable;
+            std::cout << "Second Checkpoint tmp" << std::endl;
+            std::vector<int> tmpRunnable;
 
-                tmpRunnable.push_back(samePrecedenceRunnableId);
-                incompleteRunnablePriority[iterator].erase(std::find(incompleteRunnablePriority[iterator].begin(), incompleteRunnablePriority[iterator].end(), samePrecedenceRunnableId));
-                incompleteRunnablePriority.insert(incompleteRunnablePriority.begin() + iterator, tmpRunnable);
-                
-                this->ExpandRunnablePriorities(incompleteRunnablePriority, (iterator + 1), maxSize);
-            }
+            tmpRunnable.push_back(incompleteRunnablePriority[iterator][0]);
+            incompleteRunnablePriority[iterator].erase(std::find(incompleteRunnablePriority[iterator].begin(), incompleteRunnablePriority[iterator].end(), incompleteRunnablePriority[iterator][0]));
+            incompleteRunnablePriority.insert(incompleteRunnablePriority.begin() + iterator, tmpRunnable);
+            
+            this->ExpandRunnablePriorities(incompleteRunnablePriority, (iterator + 1), maxSize);
         } else {
             this->ExpandRunnablePriorities(incompleteRunnablePriority, (iterator + 1), maxSize);
         }

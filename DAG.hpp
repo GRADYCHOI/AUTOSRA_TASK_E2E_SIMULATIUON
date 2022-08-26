@@ -91,7 +91,7 @@ public:
     void SetTaskPriority();
     void SetRunnablePriority(int index);
     void SetRunnablePriorities();
-    void ExpandRunnablePriorities(std::vector<std::vector<int>> incompleteRunnablePriority, int iterator, int maxSize);
+    void ExpandRunnablePriorities(std::vector<std::vector<int>>& incompleteRunnablePriority, int iterator, int maxSize);
 
     // Sequence Case
     int GetNumberOfSequenceCase() { return static_cast<int>(runnablePriorities.size()); }

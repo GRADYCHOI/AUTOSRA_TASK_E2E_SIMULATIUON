@@ -59,11 +59,7 @@ int main() {
     dag->SetTaskPriority();
     std::cout << "Checkpoint 1" << std::endl;
     dag->SetRunnablePriorities();
-<<<<<<< HEAD
     std::cout << "Checkpoint 2" << std::endl;
-=======
-    std::cout << "debug4" << std::endl;
->>>>>>> 45a828d45d40770c65f9006c6a1857e6f1d5e9ca
 
     for (int numberOfCase = 0; numberOfCase < dag->GetNumberOfSequenceCase(); numberOfCase++) {
         dag->SetRunnablePriority(numberOfCase);
