@@ -74,7 +74,7 @@ public:
     void GenerateTasks(int numberOfTasks);
 
     // Mapping
-    void SetMapping(std::unique_ptr<Mapping> newMapping) { mapping = std::move(newMapping); }
+    void SetMapping(std::unique_ptr<Mapping>&& newMapping) { mapping = std::move(newMapping); }
     void DoMapping() { mapping->DoMapping(tasks, runnables); }
 
     bool CheckMappable();

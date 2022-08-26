@@ -7,6 +7,8 @@
 #include<vector>
 #include"DAG.hpp"
 #include"simulation.hpp"
+#include"mapping.hpp"
+#include"communication.hpp"
 using namespace std;
 
 int main() {
@@ -31,8 +33,7 @@ int main() {
 
     switch (mappingStrategy) {
         case 0 : {
-            std::unique_ptr<Mapping> randomMapping(new RandomMapping());
-            dag->SetMapping(std::move(randomMapping));
+            dag->SetMapping(std::unique_ptr<Mapping>(new RandomMapping()));
             break;
         }
 
@@ -54,8 +55,7 @@ int main() {
     for (int numberOfCase = 0; numberOfCase < dag->GetNumberOfSequenceCase(); numberOfCase++) {
         dag->SetRunnablePriority(numberOfCase);
         std::unique_ptr<Simulation> simulation(new Simulation(std::move(dag)));
-        std::unique_ptr<Communication> runnableImplicit(new RunnableImplicit());
-        simulation->SetCommunication(std::move(runnableImplicit));
+        simulation->SetCommunication(std::unique_ptr<Communication>(new RunnableImplicit()));
         simulation->Simulate();
     }
 
