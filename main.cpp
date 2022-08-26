@@ -1,15 +1,15 @@
-#include<iostream>
-#include<stdlib.h>
-#include<random>
-#include<time.h>
-#include<cstdlib>
-#include<ctime>
-#include<vector>
-#include"DAG.hpp"
-#include"simulation.hpp"
-#include"mapping.hpp"
-#include"communication.hpp"
-using namespace std;
+#include <iostream>
+#include <stdlib.h>
+#include <random>
+#include <time.h>
+#include <cstdlib>
+#include <ctime>
+#include <vector>
+#include "mapping.hpp"
+#include "communication.hpp"
+#include "DAG.hpp"
+#include "simulation.hpp"
+
 
 int main() {
     bool dag_file = false;
@@ -61,3 +61,5 @@ int main() {
 
     return 0;
 }
+
+// g++ main.cpp DAG.cpp TASK.cpp RUNNABLE.cpp simulation.cpp communication_LET.cpp communication_RunnableImplicit.cpp communication_TaskImplicit.cpp mapping_RandomMapping.cpp -o main -Wall
