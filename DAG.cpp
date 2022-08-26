@@ -161,6 +161,7 @@ void DAG::GenerateTasks(int numberOfTasks) {
         this->tasks.push_back(std::make_shared<TASK>(taskIndex, tmpPeriod, tmpOffset));
 
         std::cout << "Task ID : " << tasks[taskIndex]->GetId() << ", Period : " << tasks[taskIndex]->GetPeriod() << std::endl;
+        std::cout << "debug2";
     }
 }
 

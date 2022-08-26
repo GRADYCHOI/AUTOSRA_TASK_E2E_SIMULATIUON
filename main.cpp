@@ -33,6 +33,7 @@ int main() {
         std::cout << "Number of Tasks : ";
         std::cin >> numberOfTasks;
         dag->GenerateTasks(numberOfTasks);
+        std::cout << "debug1";
     }
 
     switch (mappingStrategy) {
