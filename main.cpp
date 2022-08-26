@@ -33,7 +33,7 @@ int main() {
 
     switch (mappingStrategy) {
         case 0 : {
-            dag->SetMapping(std::unique_ptr<Mapping>(new RandomMapping()));
+            dag->SetMapping(std::unique_ptr<Mapping> (new RandomMapping()));
             break;
         }
 
