@@ -216,7 +216,10 @@ void Simulation::GetDataAge() {
     std::vector<double> dataage;
 
     for (auto StoE : processExecutions) {
+        double tmpThisReactionTime = StoE.second[1] - StoE.second[0];
+        double tmpThisDataAge = tmpThisReactionTime;
         for (auto tmpStoE : processExecutions) {
+            // if 
 
             double tmpThisReactionTime =  StoE.second[1] - StoE.second[0];
             if (WorstReactionTime < tmpThisReactionTime) {
