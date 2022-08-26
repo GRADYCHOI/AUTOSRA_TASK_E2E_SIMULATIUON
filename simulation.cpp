@@ -195,21 +195,26 @@ void Simulation::TraceProcess(int inputRunnableId, int inputCycle, int thisRunna
 }
 
 void Simulation::GetReactionTime() {
-    double WorstReactionTime = 0.0;
     std::pair<int, int> WorstPair;
 
-    for (auto StoE : processExecutions) {
-        double tmpThisReactionTime =  StoE.second[1] - StoE.second[0];
-        if (WorstReactionTime < tmpThisReactionTime) {
-            WorstReactionTime = tmpThisReactionTime;
-            WorstPair.first = StoE.first.first;
-            WorstPair.second = StoE.first.second;
-        }       
+    for (auto &StoEs : processExecutions) {
+        double WorstReactionTime =  0.0;
+
+        for (auto &StoE : StoEs.second) {
+            double tmpThisReactionTime = StoE.endTime - StoE.startTime;
+            if (WorstReactionTime < tmpThisReactionTime) {
+                WorstReactionTime = tmpThisReactionTime;
+                WorstPair.first = StoE.startTime;
+                WorstPair.second = StoE.endTime;
+            }
+        }
+
+        std::cout << "Worst Pair Input, Output Runnable : " << StoEs.first.first << " " << StoEs.first.second << ", Reaction Time : " << WorstReactionTime << std::endl;
     }
-    cout << "Worst Pair Input, Output Runnable : " << WorstPair.first << " " << WorstPair.second << ", Reaction Time : " << WorstReactionTime << endl;
 }
 
 void Simulation::GetDataAge() {
+    /*
     double WorstDataAge = 0.0;
     double WorstReactionTime = 0.0;
     std::pair<int, int> WorstPair;
@@ -226,4 +231,5 @@ void Simulation::GetDataAge() {
             }
         }
     }
+    */
 }

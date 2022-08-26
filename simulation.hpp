@@ -39,7 +39,7 @@ private:
     void ClearTables();
 
 public:
-    Simulation(std::unique_ptr<DAG> newDag) { dag = std::move(newDag);}
+    Simulation(std::unique_ptr<DAG>&& newDag) { dag = std::move(newDag);}
     ~Simulation();
 
     void Simulate();
@@ -54,7 +54,7 @@ public:
     void GetReactionTime();
     void GetDataAge();
 
-    void SetCommunication(std::unique_ptr<Communication> newCommunication) { communication = std::move(newCommunication); }
+    void SetCommunication(std::unique_ptr<Communication>&& newCommunication) { communication = std::move(newCommunication); }
 
     void SaveData();
 };
