@@ -132,6 +132,7 @@ void Simulation::SetRunnableExecutions() {
         unit = GCD(unit, GCD(task->GetPeriod(), task->GetOffset()));
     }
 
+    std::clog << "[simulation.cpp] CheckPoint 4-1" << std::endl;
     std::vector<double> emptyTimes((static_cast<int>(this->hyperPeriod / unit)), unit);
 
     for (auto &runnable : this->dag->GetOrderOfPriorityRunnables()) {
@@ -207,13 +208,13 @@ void Simulation::TraceProcess(int inputRunnableId, int inputCycle, int thisRunna
     // ..
     // --------------------------------------------------------------------------------------------------------------
 
-    if (this->runnableInformations[thisRunnableId].status == 1) {
+    if (this->runnableInformations[thisRunnableId].status == 1) {  //precedence처럼 해보셈
         if (this->processExecutions.find(std::make_pair(inputRunnableId, thisRunnableId)) == this->processExecutions.end()) {
             std::vector<ExecutionInformation> tmpVector = { {this->runnableCommunications[inputRunnableId][inputCycle].startTime, this->runnableCommunications[thisRunnableId][thisCycle].endTime + thisHyperPeriodCount * this->hyperPeriod} };
             this->processExecutions.insert(std::make_pair(std::make_pair(inputRunnableId, thisRunnableId), tmpVector));
         } else {
             ExecutionInformation tmpInfo = {this->runnableCommunications[inputRunnableId][inputCycle].startTime, this->runnableCommunications[thisRunnableId][thisCycle].endTime + thisHyperPeriodCount * this->hyperPeriod};
-            this->processExecutions[std::make_pair(inputRunnableId, thisRunnableId)].push_back(tmpInfo);
+            this->processExecutions[std::make_pair(inputRunnableId, thisRunnableId)].push_back(tmpInfo); //그냥 push back 말고 worst로 비교해서 넣기
         }
     } else {
         for (auto &outputRunnable : this->dag->GetRunnable(thisRunnableId)->GetOutputRunnables()) {
