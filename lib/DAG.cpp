@@ -4,8 +4,8 @@
 using namespace std;
 
 double LCM(double a, double b) {
-    int tmp1 = (int)(a * 1000);
-    int tmp2 = (int)(b * 1000);
+    int tmp1 = static_cast<int>(a * 1000);
+    int tmp2 = static_cast<int>(b * 1000);
 
     while (tmp2 != 0) {
     	int tmp3 = tmp1 % tmp2;
@@ -13,7 +13,7 @@ double LCM(double a, double b) {
         tmp2 = tmp3;
     }
 
-    return (double)(a * (b / (double)(tmp1 / 1000)));
+    return static_cast<double>(a * (b / (double)(tmp1 / 1000)));
 }
 
 DAG::~DAG() {

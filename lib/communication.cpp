@@ -1,14 +1,14 @@
 #include "communication.hpp"
 
 
-void RunnableImplicit::GetCommunicationTable(RunnableInformation* runnableInformations, ExecutionInformation* runnableExecutions, int numberOfRunnables, int maxCycle, CommunicationInformation* runnableCommunications) {
-    memcpy(runnableExecutions, runnableCommunications, sizeof(ExecutionInformation) * numberOfRunnables * maxCycle);
+void RunnableImplicit::GetCommunicationTable(std::vector<RunnableInformation>& runnableInformations, std::vector<std::vector<ExecutionInformation>>& runnableExecutions, int numberOfRunnables, int maxCycle, std::vector<std::vector<ExecutionInformation>>& runnableCommunications) {
+    std::copy(runnableExecutions.begin(), runnableExecutions.end(), runnableCommunications.begin());
 }
 
-void TaskImplicit::GetCommunicationTable(RunnableInformation* runnableInformations, ExecutionInformation* runnableExecutions, int numberOfRunnables, int maxCycle, CommunicationInformation* runnableCommunications) {
+void TaskImplicit::GetCommunicationTable(std::vector<RunnableInformation>& runnableInformations, std::vector<std::vector<ExecutionInformation>>& runnableExecutions, int numberOfRunnables, int maxCycle, std::vector<std::vector<ExecutionInformation>>& runnableCommunications) {
     std::vector<std::pair<int, int>> runnablePriority(numberOfRunnables);
     std::vector<int> sameTaskMappedRunnables;
-    CommunicationInformation* tmpInformation = new CommunicationInformation[maxCycle];
+    std::vector<ExecutionInformation> tmpInformation;
 
     for (int runnableId = 0; runnableId < numberOfRunnables; runnableId++) {
         runnablePriority[runnableId] = std::make_pair(runnableId, runnableInformations[runnableId].priority);
@@ -16,25 +16,27 @@ void TaskImplicit::GetCommunicationTable(RunnableInformation* runnableInformatio
 
     std::sort(runnablePriority.begin(), runnablePriority.end(), [](std::pair<int, int> a, std::pair<int, int> b) { return a.second < b.second; });
 
-    int taskId = 0;
-    int preRunnableId = 0;
-    memcpy(tmpInformation, runnableExecutions + (runnablePriority[0].first * maxCycle), sizeof(ExecutionInformation) * maxCycle);
+    int taskId = runnableInformations[runnablePriority[0].first].taskId;
+    int preRunnableId = runnablePriority[0].first;
+
+    // First Runnable's ReadTime
+    std::copy(runnableExecutions[runnablePriority[0].first].begin(), runnableExecutions[runnablePriority[0].first].end(), tmpInformation.begin());
 
     for (auto &runnableId : runnablePriority) {
         if (taskId != runnableInformations[runnableId.first].taskId) {
             // Set Runnable Write Time
             for (int cycle = 0; cycle < maxCycle; cycle++) {
-                tmpInformation[cycle].writeTime = runnableExecutions[preRunnableId * maxCycle + cycle].endTime;
+                tmpInformation[cycle].endTime = runnableExecutions[preRunnableId][cycle].endTime;
             }
 
             // Save R/W Time
             for (auto &index : sameTaskMappedRunnables) {
-                memcpy(runnableCommunications + (index * maxCycle), tmpInformation, sizeof(CommunicationInformation) * maxCycle);
+                std::copy(tmpInformation.begin(), tmpInformation.end(), runnableCommunications[index].begin());
             }
             sameTaskMappedRunnables.clear();
 
             // Set Runnable Read Time
-            memcpy(tmpInformation, runnableExecutions + (runnableId.first * maxCycle), sizeof(ExecutionInformation) * maxCycle);
+            std::copy(runnableExecutions[runnableId.first].begin(), runnableExecutions[runnableId.first].end(), tmpInformation.begin());
 
             taskId = runnableInformations[runnableId.first].taskId;
         } else {
@@ -46,20 +48,18 @@ void TaskImplicit::GetCommunicationTable(RunnableInformation* runnableInformatio
 
     // Memcpy last Task's Runnables
     for (int cycle = 0; cycle < maxCycle; cycle++) {
-        tmpInformation[cycle].writeTime = runnableExecutions[preRunnableId * maxCycle + cycle].endTime;
+        tmpInformation[cycle].endTime = runnableExecutions[preRunnableId][cycle].endTime;
     }
     for (auto &index : sameTaskMappedRunnables) {
-        memcpy(runnableCommunications + (index * maxCycle), tmpInformation, sizeof(CommunicationInformation) * maxCycle);
+        std::copy(tmpInformation.begin(), tmpInformation.end(), runnableCommunications[index].begin());
     }
-
-    delete[] tmpInformation;
 }
 
-void LET::GetCommunicationTable(RunnableInformation* runnableInformations, ExecutionInformation* runnableExecutions, int numberOfRunnables, int maxCycle, CommunicationInformation* runnableCommunications) {
+void LET::GetCommunicationTable(std::vector<RunnableInformation>& runnableInformations, std::vector<std::vector<ExecutionInformation>>& runnableExecutions, int numberOfRunnables, int maxCycle, std::vector<std::vector<ExecutionInformation>>& runnableCommunications) {
     for (int runnableId = 0; runnableId < numberOfRunnables; runnableId++) {
         for (int cycle = 0; cycle < maxCycle; cycle++) {
-            runnableCommunications[runnableId * maxCycle + cycle].readTime = runnableInformations[runnableId].period * cycle + runnableInformations[runnableId].offset;
-            runnableCommunications[runnableId * maxCycle + cycle].writeTime = runnableInformations[runnableId].period * (cycle + 1) + runnableInformations[runnableId].offset;
+            runnableCommunications[runnableId][cycle].startTime = runnableInformations[runnableId].period * cycle + runnableInformations[runnableId].offset;
+            runnableCommunications[runnableId][cycle].endTime = runnableInformations[runnableId].period * (cycle + 1) + runnableInformations[runnableId].offset;
         }
     }
 }

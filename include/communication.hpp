@@ -11,22 +11,22 @@ public:
     Communication() {}
     virtual ~Communication() {}
 
-    virtual void GetCommunicationTable(RunnableInformation* runnableInformations, ExecutionInformation* runnableExecutions, int numberOfRunnables, int maxCycle, CommunicationInformation* runnableCommunications) = 0;
+    virtual void GetCommunicationTable(std::vector<RunnableInformation>& runnableInformations, std::vector<std::vector<ExecutionInformation>>& runnableExecutions, int numberOfRunnables, int maxCycle, std::vector<std::vector<ExecutionInformation>>& runnableCommunications) = 0;
 };
 
 class RunnableImplicit : public Communication {
 public:
-    void GetCommunicationTable(RunnableInformation* runnableInformations, ExecutionInformation* runnableExecutions, int numberOfRunnables, int maxCycle, CommunicationInformation* runnableCommunications);
+    void GetCommunicationTable(std::vector<RunnableInformation>& runnableInformations, std::vector<std::vector<ExecutionInformation>>& runnableExecutions, int numberOfRunnables, int maxCycle, std::vector<std::vector<ExecutionInformation>>& runnableCommunications);
 };
 
 class TaskImplicit : public Communication {
 public:
-    void GetCommunicationTable(RunnableInformation* runnableInformations, ExecutionInformation* runnableExecutions, int numberOfRunnables, int maxCycle, CommunicationInformation* runnableCommunications);
+    void GetCommunicationTable(std::vector<RunnableInformation>& runnableInformations, std::vector<std::vector<ExecutionInformation>>& runnableExecutions, int numberOfRunnables, int maxCycle, std::vector<std::vector<ExecutionInformation>>& runnableCommunications);
 };
 
 class LET : public Communication {
 public:
-    void GetCommunicationTable(RunnableInformation* runnableInformations, ExecutionInformation* runnableExecutions, int numberOfRunnables, int maxCycle, CommunicationInformation* runnableCommunications);
+    void GetCommunicationTable(std::vector<RunnableInformation>& runnableInformations, std::vector<std::vector<ExecutionInformation>>& runnableExecutions, int numberOfRunnables, int maxCycle, std::vector<std::vector<ExecutionInformation>>& runnableCommunications);
 };
 
 #endif

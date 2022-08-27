@@ -34,9 +34,9 @@ private:
     int numberOfInputRunnables;
     int numberOfOutputRunnables;
 
-    std::unique_ptr<RunnableInformation[]> runnableInformations;
-    std::unique_ptr<ExecutionInformation[]> runnableExecutions;
-    std::unique_ptr<CommunicationInformation[]> runnableCommunications;
+    std::vector<RunnableInformation> runnableInformations;
+    std::vector<std::vector<ExecutionInformation>> runnableExecutions;
+    std::vector<std::vector<ExecutionInformation>> runnableCommunications;
     std::map<std::pair<int, int>, std::vector<ExecutionInformation>> processExecutions;
 
     void Initialize();
@@ -56,7 +56,7 @@ public:
     void SetRunnableInformations();
     void SetRunnableExecutions();
     void SetRunnableCommunications() {
-        communication->GetCommunicationTable(this->runnableInformations.get(), this->runnableExecutions.get(), this->numberOfRunnables, this->maxCycle, this->runnableCommunications.get());
+        communication->GetCommunicationTable(this->runnableInformations, this->runnableExecutions, this->numberOfRunnables, this->maxCycle, this->runnableCommunications);
     }
     void SetProcessExecutions();
     void TraceProcess(int inputRunnableIndex, int inputCycle, int thisRunnableId, int thisCycle, int hyperPeriodCount);
