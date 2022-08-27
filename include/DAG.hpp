@@ -88,7 +88,7 @@ public:
     double GetUtilization();
 
     // Set Precedence
-    void CheckPrecedence(std::shared_ptr<RUNNABLE> runnable, int precedence);
+    int CheckPrecedence(std::shared_ptr<RUNNABLE> runnable, int precedence);
     void SetRunnablePrecedence();
 
     // Get Priority
