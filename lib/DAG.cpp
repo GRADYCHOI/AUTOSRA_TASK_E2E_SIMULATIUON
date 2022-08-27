@@ -217,8 +217,13 @@ int DAG::CheckPrecedence(std::shared_ptr<RUNNABLE> runnable, int precedence) {
     //int runnableId = runnable->GetId();
     //this->runnablePrecedence[runnableId] = (this->runnablePrecedence[runnableId] > precedence) ? this->runnablePrecedence[runnableId] : precedence;
     if (runnablePrecedence[runnable->GetId()] < precedence) runnablePrecedence[runnable->GetId()] = precedence;
-    std::cout << runnable->GetId() << " " << runnable->GetStatus() << std::endl;
-    if (runnable->GetStatus() == 2) for (auto &outputRunnable : runnable->GetOutputRunnables()) CheckPrecedence(outputRunnable, precedence);
+    //std::cout << runnable->GetId() << " " << runnable->GetStatus() << std::endl;
+    if (runnable->GetStatus() == 2) {
+        for (auto &outputRunnable : runnable->GetOutputRunnables()) {
+            if (runnablePrecedence[outputRunnable->GetId()] < precedence+1) CheckPrecedence(outputRunnable, precedence);
+        }
+    }
+
     return 0;
 }
 
@@ -230,9 +235,12 @@ void DAG::SetRunnablePrecedence() {
     for (auto &inputRunnable : this->inputRunnables) {
         int precedence = 1;
         this->runnablePrecedence[inputRunnable->GetId()] = precedence;
-        for (auto &outputRunnable : inputRunnable->GetOutputRunnables()) CheckPrecedence(outputRunnable, 0);
-        //std::cout << inputRunnable->GetId() << " " << inputRunnable->GetStatus() << std::endl;
+        for (auto &outputRunnable : inputRunnable->GetOutputRunnables()) {
+            CheckPrecedence(outputRunnable, 0);
+        }
+            
     }
+    for (auto &run : runnables)std::cout << run->GetId() << " " << run->GetStatus() << " " << runnablePrecedence[run->GetId()] << std::endl;
 }
 
 void DAG::SetTaskPriority() {
