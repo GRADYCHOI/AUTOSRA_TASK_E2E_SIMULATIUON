@@ -124,7 +124,7 @@ void DAG::GenerateRunnables(int numberOfRunnables) {
     for (int runnableIndex = 0; runnableIndex < numberOfRunnables; runnableIndex++) {
         std::shared_ptr<RUNNABLE> runnable(new RUNNABLE(runnableIndex, runnableIndex, (double)(std::rand() % 100) / 1000));
         this->runnables.push_back(runnable);
-        std::cout << "Runnable ID : " << runnable->GetId() << ", Execution Time : " << runnable->GetExecutionTime() << std::endl;
+        //std::cout << "Runnable ID : " << runnable->GetId() << ", Execution Time : " << runnable->GetExecutionTime() << std::endl;
     }
 
     this->RandomEdge();

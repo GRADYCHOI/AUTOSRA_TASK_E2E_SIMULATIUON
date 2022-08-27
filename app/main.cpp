@@ -14,7 +14,10 @@
 #include "rapidjson/stringbuffer.h"
 #include "rapidjson/prettywriter.h"
 
+
 int main() {
+    //std::clog.setstate(std::ios_base::failbit);
+
     // clear screen (only linux)
     std::system("clear");
 
@@ -46,14 +49,24 @@ int main() {
         }
     }
 
+    std::clog << "[main.cpp] CheckPoint 1" << std::endl;
     dag->DoMapping();
+    std::clog << "[main.cpp] CheckPoint 2" << std::endl;
     dag->SetRunnablePrecedence();
+    std::clog << "[main.cpp] CheckPoint 3" << std::endl;
     dag->SetTaskPriority();
+    std::clog << "[main.cpp] CheckPoint 4" << std::endl;
     dag->SetRunnablePriorities();
+    std::clog << "[main.cpp] CheckPoint 5" << std::endl;
 
     std::unique_ptr<Simulation> simulation(new Simulation(std::move(dag)));
+    std::clog << "[main.cpp] CheckPoint 6" << std::endl;
     simulation->SetCommunication(std::unique_ptr<Communication>(new RunnableImplicit()));
+    std::clog << "[main.cpp] CheckPoint 7" << std::endl;
+    
     simulation->Simulate();
+    std::clog << "[main.cpp] CheckPoint 8" << std::endl;
+    
 
     return 0;
 }

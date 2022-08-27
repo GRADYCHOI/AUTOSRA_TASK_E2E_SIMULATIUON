@@ -48,7 +48,7 @@ private:
     void SaveDataAge();
 
 public:
-    Simulation(std::unique_ptr<DAG>&& newDag) { dag = std::move(newDag);}
+    Simulation(std::unique_ptr<DAG>&& newDag) { dag = std::move(newDag); Initialize(); }
     ~Simulation() = default;
 
     void Simulate();
