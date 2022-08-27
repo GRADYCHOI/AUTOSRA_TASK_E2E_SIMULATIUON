@@ -31,16 +31,18 @@ void Simulation::ClearTables() {
 }
 
 void Simulation::Simulate() {
-    SetRunnableInformations();
-    SetRunnableExecutions();
-    SetRunnableCommunications();
-    SetProcessExecutions();
-    GetReactionTime();
-    GetDataAge();
-}
+    int numberOfCase = this->dag->GetNumberOfSequenceCase();
 
-void Simulation::SaveData() {
-
+    for (int caseIndex = 0; caseIndex < numberOfCase; caseIndex++) {
+        this->dag->SetRunnablePriority(caseIndex);
+        this->ClearTables();
+        this->SetRunnableInformations();
+        this->SetRunnableExecutions();
+        this->SetRunnableCommunications();
+        this->SetProcessExecutions();
+        this->GetReactionTime();
+        this->GetDataAge();
+    }
 }
 
 void Simulation::SetRunnableInformations() {
@@ -234,4 +236,24 @@ void Simulation::GetDataAge() {
             }
         }
     }*/
+}
+
+void Simulation::SaveData() {
+
+}
+
+void Simulation::SaveDAG() {
+
+}
+
+void Simulation::SaveMapping() {
+
+}
+
+void Simulation::SaveReactionTime() {
+
+}
+
+void Simulation::SaveDataAge() {
+
 }

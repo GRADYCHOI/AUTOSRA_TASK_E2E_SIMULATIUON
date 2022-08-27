@@ -1,5 +1,5 @@
 #include "DAG.hpp"
-#include <iostream>
+
 
 using namespace std;
 
@@ -15,8 +15,6 @@ double LCM(double a, double b) {
 
     return (double)(a * (b / (double)(tmp1 / 1000)));
 }
-
-DAG::DAG() {}
 
 DAG::~DAG() {
     tasks.clear();
@@ -305,7 +303,7 @@ void DAG::ExpandRunnablePriorities(std::vector<std::vector<int>>& incompleteRunn
     }
 }
 
-void DAG::DisplayRunnables(){
+void DAG::DisplayRunnables() {
     std::cout << "[Debugging] Display Start" << std::endl;
     std::cout << " - Runnable Vector Size : " << std::cout.width(5) << this->runnables.size() << std::endl;
     std::cout << " - Runnable Vector capacity : " << std::cout.width(5) << this->runnables.capacity() << std::endl;
@@ -320,4 +318,27 @@ void DAG::DisplayRunnables(){
         std::cout << "Output Runnable : ";
         runnable->DisplayOutputRunnables();
     }
+}
+
+void DAG::SaveJson() {
+
+}
+
+void DAG::ParseDag() {
+
+}
+
+void DAG::GenerateDag() {
+    int numberOfRunnables;
+    int numberOfTasks;
+
+    std::cout << "[DAG Generation]\n";
+
+    std::cout << "Number of Runnables : ";
+    std::cin >> numberOfRunnables;
+    this->GenerateRunnables(numberOfRunnables);
+
+    std::cout << "Number of Tasks : ";
+    std::cin >> numberOfTasks;
+    this->GenerateTasks(numberOfTasks);
 }

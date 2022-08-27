@@ -9,26 +9,25 @@
 #include "communication.hpp"
 #include "DAG.hpp"
 #include "simulation.hpp"
+#include "rapidjson/document.h"
+#include "rapidjson/writer.h"
+#include "rapidjson/stringbuffer.h"
+#include "rapidjson/prettywriter.h"
 
 int main() {
+    // clear screen (only linux)
+    std::system("clear");
+
     srand(time(NULL));
     bool dag_file = false;
-    int numberOfRunnables = 0;
-    int numberOfTasks = 0;
     int mappingStrategy = 0;
 
     std::unique_ptr<DAG> dag(new DAG());
 
     if (dag_file) {
-        /* parsing으로 dag 입력 */
+        dag->ParseDag();
     } else {
-        std::cout << "Number of Runnables : ";
-        std::cin >> numberOfRunnables;
-        dag->GenerateRunnables(numberOfRunnables);
-
-        std::cout << "Number of Tasks : ";
-        std::cin >> numberOfTasks;
-        dag->GenerateTasks(numberOfTasks);
+        dag->GenerateDag();
     }
 
     switch (mappingStrategy) {
@@ -52,12 +51,9 @@ int main() {
     dag->SetTaskPriority();
     dag->SetRunnablePriorities();
 
-    for (int numberOfCase = 0; numberOfCase < dag->GetNumberOfSequenceCase(); numberOfCase++) {
-        dag->SetRunnablePriority(numberOfCase);
-        std::unique_ptr<Simulation> simulation(new Simulation(std::move(dag)));
-        simulation->SetCommunication(std::unique_ptr<Communication>(new RunnableImplicit()));
-        simulation->Simulate();
-    }
+    std::unique_ptr<Simulation> simulation(new Simulation(std::move(dag)));
+    simulation->SetCommunication(std::unique_ptr<Communication>(new RunnableImplicit()));
+    simulation->Simulate();
 
     return 0;
 }

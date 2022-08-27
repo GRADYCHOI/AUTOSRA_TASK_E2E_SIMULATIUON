@@ -2,8 +2,6 @@
 
 #define __DAG_HPP__
 
-#include "TASK.hpp"
-#include "mapping.hpp"
 #include <algorithm>
 #include <vector>
 #include <memory>
@@ -12,6 +10,12 @@
 #include <cstring>
 #include <time.h>
 #include <stdlib.h>
+#include "TASK.hpp"
+#include "mapping.hpp"
+#include "rapidjson/document.h"
+#include "rapidjson/writer.h"
+#include "rapidjson/stringbuffer.h"
+#include "rapidjson/prettywriter.h"
 
 
 class DAG
@@ -38,7 +42,7 @@ private:
     std::vector<int> runnablePrecedence;
 
 public:
-    DAG();
+    DAG() {}
     ~DAG();
 
     std::shared_ptr<TASK> GetTask(const int index) const { return tasks[index]; }
@@ -98,6 +102,12 @@ public:
 
     // Debugging
     void DisplayRunnables();
+
+    // Save to .json
+    void SaveJson();
+    void ParseDag();
+
+    void GenerateDag();
 };
 
 #endif
