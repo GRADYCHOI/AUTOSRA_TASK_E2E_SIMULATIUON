@@ -295,20 +295,21 @@ double Simulation::GetDataAge() {
     std::pair<int, int> WorstPair;
     std::vector<double> dataage;
 
-    for (auto &StoE : processExecutions) {
-        //double tmpThisReactionTime = StoE.endTime - StoE.startTime;
-        //double tmpThisDataAge = tmpThisReactionTime;
-        for (auto tmpStoE : processExecutions) {
-            // if 
+    for (auto &StoEs : processExecutions) {
+        for (auto &StoE : StoEs.second) {
+            //int thisOutputRunnable = StoEs.first.second;
+            std::cout << "input : " << StoEs.first.first << " , output : " << StoEs.first.second << " , start time : " << StoE.startTime << " , " << StoE.endTime << std::endl;
 
-            double tmpThisReactionTime =  StoE.second[1] - StoE.second[0];
-            if (WorstReactionTime < tmpThisReactionTime) {
-                WorstReactionTime = tmpThisReactionTime;
-                WorstPair.first = StoE.first.first;
-                WorstPair.second = StoE.first.second;
-            }
+        }
+        
+        for (auto &run : StoEs.first.second) {
+            
+
         }
     }
+
+
+
     return WorstDataAge;
 }
 
