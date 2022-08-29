@@ -260,6 +260,8 @@ void DAG::SetTaskPriority() {
 void DAG::SetRunnablePriority(int index) {
     std::vector<int> tmpRunnablePriority = this->runnablePriorities[index];
     tmpRunnablePriority.swap(this->runnablePriority);
+
+    this->currentSequenceIndex = index;
 }
 
 void DAG::SetRunnablePriorities() {
@@ -331,11 +333,61 @@ void DAG::DisplayRunnables() {
     }
 }
 
-void DAG::SaveJson() {
+void DAG::SaveDag(const std::string& thisTime) {
+    rapidjson::Document doc;
+    rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();
 
+    rapidjson::Value dagObject(rapidjson::kObjectType);
+    rapidjson::Value runnableArray(rapidjson::kArrayType);
+    rapidjson::Value taskArray(rapidjson::kArrayType);
+
+    for (auto &runnable : this->runnables) {
+        rapidjson::Value runnableObject(rapidjson::kObjectType);
+        rapidjson::Value inputRunnableArray(rapidjson::kArrayType);
+        rapidjson::Value outputRunnableArray(rapidjson::kArrayType);
+
+        runnableObject.AddMember("ID", runnable->GetRealId(), allocator);
+        runnableObject.AddMember("Execution Time", runnable->GetExecutionTime(), allocator);
+        runnableObject.AddMember("Status", runnable->GetStatus(), allocator);
+
+        for (auto &inputRunnable : runnable->GetInputRunnables()) {
+            inputRunnableArray.PushBack(inputRunnable->GetRealId(), allocator);
+        }
+        runnableObject.AddMember("Input Runnables's ID", inputRunnableArray, allocator);
+
+        for (auto &outputRunnable : runnable->GetOutputRunnables()) {
+            outputRunnableArray.PushBack(outputRunnable->GetRealId(), allocator);
+        }
+        runnableObject.AddMember("Output Runnable's ID", outputRunnableArray, allocator);
+
+        runnableArray.PushBack(runnableObject, allocator);
+    }
+    dagObject.AddMember("Runnables", runnableArray, allocator);
+
+    for (auto &task : this->tasks) {
+        rapidjson::Value taskObject(rapidjson::kObjectType);
+
+        taskObject.AddMember("Period", task->GetPeriod(), allocator);
+        taskObject.AddMember("Offset", task->GetOffset(), allocator);
+
+        taskArray.PushBack(taskObject, allocator);
+    }
+    dagObject.AddMember("Tasks", taskArray, allocator);
+
+    // Save to json
+    std::string fileName = "../data/DAG_" + thisTime + ".json";
+
+    std::ofstream ofs(fileName.c_str());
+    rapidjson::OStreamWrapper osw(ofs);
+
+    rapidjson::PrettyWriter<rapidjson::OStreamWrapper> writer(osw);
+    writer.SetFormatOptions(rapidjson::kFormatSingleLineArray);
+    dagObject.Accept(writer);
+
+    ofs.close();
 }
 
-void DAG::ParseDag() {
+void DAG::ParseDag(const std::string& jsonPath) {
 
 }
 

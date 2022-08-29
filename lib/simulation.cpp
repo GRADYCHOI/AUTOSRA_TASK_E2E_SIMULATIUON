@@ -27,6 +27,15 @@ void Simulation::Initialize() {
     this->ClearTables();
 
     std::clog << "[simulation.cpp] CheckPoint 0-2" << std::endl;
+
+    // About File
+    time_t rawTime;
+    struct tm* pTimeInfo;
+
+    rawTime = time(NULL);
+    pTimeInfo = localtime(&rawTime);
+
+    this->simulationTime = std::to_string(pTimeInfo->tm_year + 1900) + "_" + std::to_string(pTimeInfo->tm_mon + 1) + "_" + std::to_string(pTimeInfo->tm_mday) + "_" + std::to_string(pTimeInfo->tm_hour) + "_" + std::to_string(pTimeInfo->tm_min);
 }
 
 void Simulation::ClearTables() {
@@ -69,13 +78,15 @@ void Simulation::Simulate() {
         this->SetProcessExecutions();
 
         std::clog << "[simulation.cpp] CheckPoint 7" << std::endl;
-        this->GetReactionTime();
+        this->SetResult();
 
         std::clog << "[simulation.cpp] CheckPoint 8" << std::endl;
-        //this->GetDataAge();
-
-        std::clog << "[simulation.cpp] CheckPoint 9" << std::endl;
     }
+}
+
+void SetResult() {
+    ResultInformation result = {this->dag->GetCurrentSequenceIndex(), this->GetReactionTime(), this->GetDataAge()};
+    this->results.push_back(result);
 }
 
 void Simulation::SetRunnableInformations() {
@@ -85,16 +96,13 @@ void Simulation::SetRunnableInformations() {
     // ## The order of Runnable is based on their IDs
     // 1 : RunnableInformation (taskId, priority, period, offset, executionTime)
     // --------------------------------------------------------------------------------------------------------------
-
     
     std::vector<int> runnablePriority = this->dag->GetRunnablePriority();
-
     
     for (auto &task : this->dag->GetTasks()) {
         for (auto &runnable : task->GetRunnables()) {
             std::clog << "[simulation.cpp] CheckPoint 3-1" << std::endl;
             int runnableId = runnable->GetId();
-
             std::clog << "[simulation.cpp] CheckPoint 3-2" << std::endl;
             this->runnableInformations[runnableId].taskId = task->GetId();
             std::clog << "[simulation.cpp] CheckPoint 3-3" << std::endl;
@@ -304,22 +312,207 @@ double Simulation::GetDataAge() {
     return WorstDataAge;
 }
 
-void Simulation::SaveData() {
+std::vector<ResultInformation> Simulation::GetBestReactionTime(int numberOfCase) {
+    std::sort(this->results.begin(), this->results.end(), [](ResultInformation a, ResultInformation b) { return a.reactionTime < b.reactionTime; });
 
+    std::vector<ResultInformation> tmpVector(numberOfCase);
+    std::copy(this->results.begin(), this->results.begin() + numberOfCase, tmpVector.begin());
+
+    return tmpVector;
+}
+
+std::vector<ResultInformation> Simulation::GetWorstReactionTime(int numberOfCase) {
+    std::sort(this->results.begin(), this->results.end(), [](ResultInformation a, ResultInformation b) { return a.reactionTime > b.reactionTime; });
+
+    std::vector<ResultInformation> tmpVector(numberOfCase);
+    std::copy(this->results.begin(), this->results.begin() + numberOfCase, tmpVector.begin());
+
+    return tmpVector;
+}
+
+std::vector<ResultInformation> Simulation::GetBestDataAge(int numberOfCase) {
+    std::sort(this->results.begin(), this->results.end(), [](ResultInformation a, ResultInformation b) { return a.dataAge < b.dataAge; });
+
+    std::vector<ResultInformation> tmpVector(numberOfCase);
+    std::copy(this->results.begin(), this->results.begin() + numberOfCase, tmpVector.begin());
+
+    return tmpVector;
+}
+
+std::vector<ResultInformation> Simulation::GetWorstDataAge(int numberOfCase) {
+    std::sort(this->results.begin(), this->results.end(), [](ResultInformation a, ResultInformation b) { return a.dataAge > b.dataAge; });
+
+    std::vector<ResultInformation> tmpVector(numberOfCase);
+    std::copy(this->results.begin(), this->results.begin() + numberOfCase, tmpVector.begin());
+
+    return tmpVector;
+}
+
+void Simulation::SaveData() {
+    rapidjson::Document doc;
+    rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();
+
+    rapidjson::Value resultObject(rapidjson::kObjectType);
+
+    resultObject.AddMember("Reaction Time Ranking", this->SaveReactionTime(), allocator);
+
+    resultObject.AddMember("Data Age Ranking", this->SaveDataAge(), allocator);
+
+    // Save to json
+    std::string thisTime = this->simulationTime;
+    std::string fileName = "../data/Result_" + thisTime + ".json";
+
+    std::ofstream ofs(fileName.c_str());
+    rapidjson::OStreamWrapper osw(ofs);
+
+    rapidjson::PrettyWriter<rapidjson::OStreamWrapper> writer(osw);
+    writer.SetFormatOptions(rapidjson::kFormatSingleLineArray);
+    resultObject.Accept(writer);
+
+    ofs.close();
 }
 
 void Simulation::SaveDAG() {
-
+    this->dag->SaveDag(this->simulationTime);
 }
 
-void Simulation::SaveMapping() {
+rapidjson::Value Simulation::SaveReactionTime() {
+    int rankingCount;
+    rapidjson::Value reactionTimeArray(rapidjson::kArrayType);
 
+    // Best Reaction Time
+    rankingCount = 0;
+
+    for (auto &reactionTime : this->GetBestReactionTime(5)) {
+        rapidjson::Value bestReactionTimeObject(rapidjson::kObjectType);
+        rapidjson::Value bestReactionTimeArray(rapidjson::kArrayType);
+
+        bestReactionTimeObject.AddMember("Ranking", ++rankingCount, allocator);
+        bestReactionTimeObject.AddMember("Reactoin Time", reactionTime.reactionTime, allocator);
+
+        std::vector<int> sequence = this->dag->GetRunnablePriority(reactionTime.sequenceIndex);
+        int vectorPointer = 0;
+        for (auto &task : this->dag->GetTasks()) {
+            rapidjson::Value taskObject(rapidjson::kObjectType);
+            taskObject.AddMember("Period", task->GetPeriod(), allocator);
+            taskObject.AddMember("Offset", task->GetPeriod(), allocator);
+
+            rapidjson::Value sequenceArray(rapidjson::kArrayType);
+            int numberOfRunnables = task->GetNumberOfRunnables();
+            for (int runnableIndex = 0; runnableIndex < numberOfRunnables; runnableIndex++) {
+                sequenceArray.PushBack(sequence[vectorPointer + runnableIndex]);
+            }
+            vectorPointer += numberOfRunnables;
+            taskObject.AddMember("Runnable Sequence", sequenceArray, allocator);
+
+            bestReactionTimeArray.PushBack(taskObject, allocator);
+        }
+        bestReactionTimeObject.AddMember("Sequence", bestReactionTimeArray, allocator);
+
+        reactionTimeArray.PushBack(bestReactionTimeArray, allocator);
+    }
+
+    // Worst Reaction Time
+    int rankingCount = this->dag->GetNumberOfSequenceCase() + 1;
+
+    for (auto &reactionTime : this->GetWorstReactionTime(5)) {
+        rapidjson::Value worstReactionTimeObject(rapidjson::kObjectType);
+        rapidjson::Value worstReactionTimeArray(rapidjson::kArrayType);
+
+        worstReactionTimeObject.AddMember("Ranking", --rankingCount, allocator);
+
+        worstReactionTimeObject.AddMember("Reactoin Time", reactionTime.reactionTime, allocator);
+
+        std::vector<int> sequence = this->dag->GetRunnablePriority(reactionTime.sequenceIndex);
+        int vectorPointer = 0;
+        for (auto &task : this->dag->GetTasks()) {
+            rapidjson::Value taskObject(rapidjson::kObjectType);
+            taskObject.AddMember("Period", task->GetPeriod(), allocator);
+            taskObject.AddMember("Offset", task->GetPeriod(), allocator);
+
+            rapidjson::Value sequenceArray(rapidjson::kArrayType);
+            int numberOfRunnables = task->GetNumberOfRunnables();
+            for (int runnableIndex = 0; runnableIndex < numberOfRunnables; runnableIndex++) {
+                sequenceArray.PushBack(sequence[vectorPointer + runnableIndex]);
+            }
+            vectorPointer += numberOfRunnables;
+            taskObject.AddMember("Runnable Sequence", sequenceArray, allocator);
+
+            worstReactionTimeArray.PushBack(taskObject, allocator);
+        }
+        worstReactionTimeObject.AddMember("Sequence", worstReactionTimeArray, allocator);
+
+        reactionTimeArray.PushBack(worstReactionTimeObject, allocator);
+    }
+
+    return reactionTimeArray;
 }
 
-void Simulation::SaveReactionTime() {
+rapidjson::Value Simulation::SaveDataAge() {
+    int rankingCount;
+    rapidjson::Value dataAgeArray(rapidjson::kArrayType);
 
-}
+    // Best Data Age
+    rankingCount = 0;
 
-void Simulation::SaveDataAge() {
+    for (auto &dataAge : this->GetBestDataAge(5)) {
+        rapidjson::Value bestDataAgeObject(rapidjson::kObjectType);
+        rapidjson::Value bestDataAgeArray(rapidjson::kArrayType);
 
+        bestDataAgeObject.AddMember("Ranking", ++rankingCount, allocator);
+        bestDataAgeObject.AddMember("Reactoin Time", dataAge.dataAge, allocator);
+
+        std::vector<int> sequence = this->dag->GetRunnablePriority(dataAge.sequenceIndex);
+        int vectorPointer = 0;
+        for (auto &task : this->dag->GetTasks()) {
+            rapidjson::Value taskObject(rapidjson::kObjectType);
+            taskObject.AddMember("Period", task->GetPeriod(), allocator);
+            taskObject.AddMember("Offset", task->GetPeriod(), allocator);
+
+            rapidjson::Value sequenceArray(rapidjson::kArrayType);
+            int numberOfRunnables = task->GetNumberOfRunnables();
+            for (int runnableIndex = 0; runnableIndex < numberOfRunnables; runnableIndex++) {
+                sequenceArray.PushBack(sequence[vectorPointer + runnableIndex]);
+            }
+            vectorPointer += numberOfRunnables;
+            taskObject.AddMember("Runnable Sequence", sequenceArray, allocator);
+
+            bestDataAgeArray.PushBack(taskObject, allocator);
+        }
+
+        dataAgeArray.PushBack(runnableObject, allocator);
+    }
+
+    // Worst Data Age
+    rankingCount = this->dag->GetNumberOfSequenceCase() + 1;
+    
+    for (auto &dataAge : this->GetWorstDataAge(5)) {
+        rapidjson::Value worstDataAgeObject(rapidjson::kObjectType);
+        rapidjson::Value worstDataAgeArray(rapidjson::kArrayType);
+
+        worstDataAgeObject.AddMember("Ranking", ++rankingCount, allocator);
+        worstDataAgeObject.AddMember("Reactoin Time", dataAge.dataAge, allocator);
+
+        std::vector<int> sequence = this->dag->GetRunnablePriority(dataAge.sequenceIndex);
+        int vectorPointer = 0;
+        for (auto &task : this->dag->GetTasks()) {
+            rapidjson::Value taskObject(rapidjson::kObjectType);
+            taskObject.AddMember("Period", task->GetPeriod(), allocator);
+            taskObject.AddMember("Offset", task->GetPeriod(), allocator);
+
+            rapidjson::Value sequenceArray(rapidjson::kArrayType);
+            int numberOfRunnables = task->GetNumberOfRunnables();
+            for (int runnableIndex = 0; runnableIndex < numberOfRunnables; runnableIndex++) {
+                sequenceArray.PushBack(sequence[vectorPointer + runnableIndex]);
+            }
+            vectorPointer += numberOfRunnables;
+            taskObject.AddMember("Runnable Sequence", sequenceArray, allocator);
+
+            worstDataAgeArray.PushBack(taskObject, allocator);
+        }
+
+        dataAgeArray.PushBack(runnableObject, allocator);
+    }
+
+    return dataAgeArray;
 }

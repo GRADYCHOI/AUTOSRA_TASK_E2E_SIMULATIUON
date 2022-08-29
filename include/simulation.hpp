@@ -34,16 +34,18 @@ private:
     int numberOfInputRunnables;
     int numberOfOutputRunnables;
 
+    std::string simulationTime;
+
     std::vector<RunnableInformation> runnableInformations;
     std::vector<std::vector<ExecutionInformation>> runnableExecutions;
     std::vector<std::vector<ExecutionInformation>> runnableCommunications;
     std::map<std::pair<int, int>, std::vector<ExecutionInformation>> processExecutions;
 
+    std::vector<ResultInformation> results;
+
     void Initialize();
     void ClearTables();
 
-    void SaveDAG();
-    void SaveMapping();
     void SaveReactionTime();
     void SaveDataAge();
 
@@ -60,12 +62,24 @@ public:
     }
     void SetProcessExecutions();
     void TraceProcess(int inputRunnableIndex, int inputCycle, int thisRunnableId, int thisCycle, int hyperPeriodCount, std::map<int, double>& path);
-    double GetReactionTime();
-    double GetDataAge();
+    void SetResult();
+
+    void GetReactionTime();
+    void GetDataAge();
 
     void SetCommunication(std::unique_ptr<Communication>&& newCommunication) { communication = std::move(newCommunication); }
 
+    std::vector<ResultInformation> GetBestReactionTime(int numberOfCase);
+    std::vector<ResultInformation> GetWorstReactionTime(int numberOfCase);
+
+    std::vector<ResultInformation> GetBestDataAge(int numberOfCase);
+    std::vector<ResultInformation> GetWorstDataAge(int numberOfCase);
+
+    void SaveDAG();
     void SaveData();
+
+    rapidjson::Value SaveReactionTime();
+    rapidjson::Value SaveDataAge();
 };
 
 #endif

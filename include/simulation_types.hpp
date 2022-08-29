@@ -21,4 +21,10 @@ struct CommunicationInformation {
     double writeTime;
 };
 
+struct ResultInformation {
+    int sequenceIndex;
+    double reactionTime;
+    double dataAge;
+};
+
 #endif
