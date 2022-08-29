@@ -16,7 +16,7 @@
 
 
 int main(int argc, char *argv[]) {
-    //std::clog.setstate(std::ios_base::failbit);
+    std::clog.setstate(std::ios_base::failbit);
 
     // clear screen (only linux)
     std::system("clear");

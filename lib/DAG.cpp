@@ -417,7 +417,7 @@ void DAG::ParseDag(std::string jsonPath) {
     runnableIndex = 0;
     for (auto &runnable : doc["Runnables"].GetArray()) {
         for (auto &outputRunnable : runnable["Output Runnable's ID"].GetArray()) {
-            this->runnables[runnableIndex]->LinkOutputRunnable(this->runnables[(std::find(idToRealId.begin(), idToRealId.end(), outputRunnable.GetInt()) - idToRealId.begin())]->GetSharedPtr());
+            this->runnables[runnableIndex]->LinkOutputRunnable(this->runnables[std::distance(idToRealId.begin(), std::find(idToRealId.begin(), idToRealId.end(), outputRunnable.GetInt()))]->GetSharedPtr());
         }
 
         runnableIndex++;
@@ -425,6 +425,8 @@ void DAG::ParseDag(std::string jsonPath) {
 
     this->SetInputRunnableList();
     this->SetOutputRunnableList();
+
+    ifs.close();
 }
 
 void DAG::GenerateDag() {

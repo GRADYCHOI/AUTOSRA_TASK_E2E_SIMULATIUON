@@ -57,9 +57,10 @@ void Simulation::ClearTables() {
 
 void Simulation::Simulate() {
     int numberOfCase = this->dag->GetNumberOfSequenceCase();
+    std::cout << "[simulation.cpp] Number Of Case : " << numberOfCase << std::endl;
 
     for (int caseIndex = 0; caseIndex < numberOfCase; caseIndex++) {
-        std::clog << "[simulation.cpp] CheckPoint 1" << std::endl;
+        std::cout << "[simulation.cpp] CheckPoint 1" << std::endl;
         this->dag->SetRunnablePriority(caseIndex);
 
         std::clog << "[simulation.cpp] CheckPoint 2" << std::endl;
@@ -385,9 +386,15 @@ void Simulation::SaveData() {
 
     rapidjson::Value resultObject(rapidjson::kObjectType);
 
+    std::clog << "[simulation.cpp] Checkpoint 9-1" << std::endl;
+
     resultObject.AddMember("Reaction Time Ranking", this->SaveReactionTime(allocator), allocator);
 
+    std::clog << "[simulation.cpp] Checkpoint 9-2" << std::endl;
+
     resultObject.AddMember("Data Age Ranking", this->SaveDataAge(allocator), allocator);
+
+    std::clog << "[simulation.cpp] Checkpoint 9-3" << std::endl;
 
     // Save to json
     std::string thisTime = this->simulationTime;
@@ -401,6 +408,8 @@ void Simulation::SaveData() {
     resultObject.Accept(writer);
 
     ofs.close();
+
+    std::clog << "[simulation.cpp] Checkpoint 9-4" << std::endl;
 }
 
 void Simulation::SaveDag() {
@@ -409,44 +418,58 @@ void Simulation::SaveDag() {
 
 rapidjson::Value Simulation::SaveReactionTime(rapidjson::Document::AllocatorType& allocator) {
     int rankingCount;
+    int numberOfCase;
     rapidjson::Value reactionTimeArray(rapidjson::kArrayType);
 
     // Best Reaction Time
+    numberOfCase = (this->dag->GetNumberOfSequenceCase() > 5) ? 5 : this->dag->GetNumberOfSequenceCase(); 
     rankingCount = 0;
 
-    for (auto &reactionTime : this->GetBestReactionTime(5)) {
+    for (auto &reactionTime : this->GetBestReactionTime(numberOfCase)) {
         rapidjson::Value bestReactionTimeObject(rapidjson::kObjectType);
         rapidjson::Value bestReactionTimeArray(rapidjson::kArrayType);
 
         bestReactionTimeObject.AddMember("Ranking", ++rankingCount, allocator);
         bestReactionTimeObject.AddMember("Reactoin Time", reactionTime.reactionTime, allocator);
 
+        std::clog << "[simulation.cpp] Checkpoint 9-1-3" << std::endl;
+
         std::vector<int> sequence = this->dag->GetRunnableSequence(reactionTime.sequenceIndex);
+        std::clog << "[simulation.cpp] Checkpoint 9-1-4" << std::endl;
         int vectorPointer = 0;
         for (auto &task : this->dag->GetTasks()) {
+            std::clog << "[simulation.cpp] Checkpoint 9-1-5" << std::endl;
             rapidjson::Value taskObject(rapidjson::kObjectType);
             taskObject.AddMember("Period", task->GetPeriod(), allocator);
-            taskObject.AddMember("Offset", task->GetPeriod(), allocator);
+            taskObject.AddMember("Offset", task->GetOffset(), allocator);
+            std::clog << "[simulation.cpp] Checkpoint 9-1-6" << std::endl;
 
             rapidjson::Value sequenceArray(rapidjson::kArrayType);
             int numberOfRunnables = task->GetNumberOfRunnables();
+            std::clog << "[simulation.cpp] Checkpoint 9-1-7" << std::endl;
             for (int runnableIndex = 0; runnableIndex < numberOfRunnables; runnableIndex++) {
                 sequenceArray.PushBack(sequence[vectorPointer + runnableIndex], allocator);
             }
+            std::clog << "[simulation.cpp] Checkpoint 9-1-8" << std::endl;
             vectorPointer += numberOfRunnables;
             taskObject.AddMember("Runnable Sequence", sequenceArray, allocator);
+            std::clog << "[simulation.cpp] Checkpoint 9-1-9" << std::endl;
 
             bestReactionTimeArray.PushBack(taskObject, allocator);
+            std::clog << "[simulation.cpp] Checkpoint 9-1-10" << std::endl;
         }
         bestReactionTimeObject.AddMember("Sequence", bestReactionTimeArray, allocator);
+        std::clog << "[simulation.cpp] Checkpoint 9-1-11" << std::endl;
 
-        reactionTimeArray.PushBack(bestReactionTimeArray, allocator);
+        reactionTimeArray.PushBack(bestReactionTimeObject, allocator);
+        std::clog << "[simulation.cpp] Checkpoint 9-1-12" << std::endl;
     }
 
     // Worst Reaction Time
+    numberOfCase = ((this->dag->GetNumberOfSequenceCase() - 5) > 5) ? 5 : ((this->dag->GetNumberOfSequenceCase() - 5) > 0) ? (this->dag->GetNumberOfSequenceCase() - 5) : 0;
     rankingCount = this->dag->GetNumberOfSequenceCase() + 1;
 
-    for (auto &reactionTime : this->GetWorstReactionTime(5)) {
+    for (auto &reactionTime : this->GetWorstReactionTime(numberOfCase)) {
         rapidjson::Value worstReactionTimeObject(rapidjson::kObjectType);
         rapidjson::Value worstReactionTimeArray(rapidjson::kArrayType);
 
@@ -459,7 +482,7 @@ rapidjson::Value Simulation::SaveReactionTime(rapidjson::Document::AllocatorType
         for (auto &task : this->dag->GetTasks()) {
             rapidjson::Value taskObject(rapidjson::kObjectType);
             taskObject.AddMember("Period", task->GetPeriod(), allocator);
-            taskObject.AddMember("Offset", task->GetPeriod(), allocator);
+            taskObject.AddMember("Offset", task->GetOffset(), allocator);
 
             rapidjson::Value sequenceArray(rapidjson::kArrayType);
             int numberOfRunnables = task->GetNumberOfRunnables();
@@ -476,17 +499,21 @@ rapidjson::Value Simulation::SaveReactionTime(rapidjson::Document::AllocatorType
         reactionTimeArray.PushBack(worstReactionTimeObject, allocator);
     }
 
+    std::clog << "[simulation.cpp] Checkpoint 9-1-13" << std::endl;
+
     return reactionTimeArray;
 }
 
 rapidjson::Value Simulation::SaveDataAge(rapidjson::Document::AllocatorType& allocator) {
     int rankingCount;
+    int numberOfCase;
     rapidjson::Value dataAgeArray(rapidjson::kArrayType);
 
     // Best Data Age
+    numberOfCase = (this->dag->GetNumberOfSequenceCase() > 5) ? 5 : this->dag->GetNumberOfSequenceCase(); 
     rankingCount = 0;
 
-    for (auto &dataAge : this->GetBestDataAge(5)) {
+    for (auto &dataAge : this->GetBestDataAge(numberOfCase)) {
         rapidjson::Value bestDataAgeObject(rapidjson::kObjectType);
         rapidjson::Value bestDataAgeArray(rapidjson::kArrayType);
 
@@ -498,7 +525,7 @@ rapidjson::Value Simulation::SaveDataAge(rapidjson::Document::AllocatorType& all
         for (auto &task : this->dag->GetTasks()) {
             rapidjson::Value taskObject(rapidjson::kObjectType);
             taskObject.AddMember("Period", task->GetPeriod(), allocator);
-            taskObject.AddMember("Offset", task->GetPeriod(), allocator);
+            taskObject.AddMember("Offset", task->GetOffset(), allocator);
 
             rapidjson::Value sequenceArray(rapidjson::kArrayType);
             int numberOfRunnables = task->GetNumberOfRunnables();
@@ -516,9 +543,10 @@ rapidjson::Value Simulation::SaveDataAge(rapidjson::Document::AllocatorType& all
     }
 
     // Worst Data Age
+    numberOfCase = ((this->dag->GetNumberOfSequenceCase() - 5) > 5) ? 5 : ((this->dag->GetNumberOfSequenceCase() - 5) > 0) ? (this->dag->GetNumberOfSequenceCase() - 5) : 0;
     rankingCount = this->dag->GetNumberOfSequenceCase() + 1;
     
-    for (auto &dataAge : this->GetWorstDataAge(5)) {
+    for (auto &dataAge : this->GetWorstDataAge(numberOfCase)) {
         rapidjson::Value worstDataAgeObject(rapidjson::kObjectType);
         rapidjson::Value worstDataAgeArray(rapidjson::kArrayType);
 
@@ -530,7 +558,7 @@ rapidjson::Value Simulation::SaveDataAge(rapidjson::Document::AllocatorType& all
         for (auto &task : this->dag->GetTasks()) {
             rapidjson::Value taskObject(rapidjson::kObjectType);
             taskObject.AddMember("Period", task->GetPeriod(), allocator);
-            taskObject.AddMember("Offset", task->GetPeriod(), allocator);
+            taskObject.AddMember("Offset", task->GetOffset(), allocator);
 
             rapidjson::Value sequenceArray(rapidjson::kArrayType);
             int numberOfRunnables = task->GetNumberOfRunnables();
