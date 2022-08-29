@@ -291,16 +291,20 @@ double Simulation::GetReactionTime() {
 
 double Simulation::GetDataAge() {
     double WorstDataAge = 0.0;
-    double WorstReactionTime = 0.0;
+    //double WorstReactionTime = 0.0;
     std::pair<int, int> WorstPair;
     std::vector<double> dataage;
 
     for (auto &StoEs : processExecutions) {
         for (auto &StoE : StoEs.second) {
+            
+            //int order = std::distance(this->runnableExecutions[StoE.first.second].begin(), std::find_if(this->runnableExecutions[StoE.first.second].begin(), this->runnableExecutions[StoE.first.second].end(), [](ExecutionInformation a) { return (a.endTime == StoE.second.endTime) ? true : false; }));
             //int thisOutputRunnable = StoEs.first.second;
-            //std::cout << "input : " << StoEs.first.first << " , output : " << StoEs.first.second << " , start time : " << StoE.startTime << " , " << StoE.endTime << std::endl;
+            std::cout << "input : " << StoEs.first.first << " , output : " << StoEs.first.second << " , start time : " << StoE.startTime << " , " << StoE.endTime << std::endl;
+
 
         }
+
         
     }
 
