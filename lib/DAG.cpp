@@ -307,14 +307,17 @@ void DAG::ExpandRunnablePriorities(std::vector<std::vector<int>>& incompleteRunn
         this->runnablePriorities.push_back(tmpList);
     } else {
         if (incompleteRunnablePriority[iterator].size() > 1) {
-            std::vector<int> tmpRunnable;
+            for (auto &samePrecedenceId : incompleteRunnablePriority[iterator]) {
+                std::vector<int> tmpRunnable;
+                tmpRunnable.push_back(samePrecedenceId); // 0~n
 
-            tmpRunnable.push_back(incompleteRunnablePriority[iterator][0]);
-            incompleteRunnablePriority[iterator].erase(std::find(incompleteRunnablePriority[iterator].begin(), incompleteRunnablePriority[iterator].end(), incompleteRunnablePriority[iterator][0]));
-            incompleteRunnablePriority.insert(incompleteRunnablePriority.begin() + iterator, tmpRunnable);
-            
-            this->ExpandRunnablePriorities(incompleteRunnablePriority, (iterator + 1), maxSize);
-        } else {
+                incompleteRunnablePriority[iterator].erase(std::find(incompleteRunnablePriority[iterator].begin(), incompleteRunnablePriority[iterator].end(), samePrecedenceId));
+                incompleteRunnablePriority.insert(incompleteRunnablePriority.begin() + iterator, tmpRunnable);
+                
+                this->ExpandRunnablePriorities(incompleteRunnablePriority, (iterator + 1), maxSize);
+            }
+        } 
+        else {
             this->ExpandRunnablePriorities(incompleteRunnablePriority, (iterator + 1), maxSize);
         }
     }

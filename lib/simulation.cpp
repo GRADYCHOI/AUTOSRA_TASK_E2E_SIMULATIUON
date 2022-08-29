@@ -291,6 +291,8 @@ double Simulation::GetReactionTime() {
 
 double Simulation::GetDataAge() {
     double WorstDataAge = 0.0;
+    int outputrun = 0;
+    int inputrun = 0;
 
     for (auto &ouputRunnable : this->dag->GetOutputRunnables()) {
         int runnableId = ouputRunnable->GetId();
@@ -301,10 +303,13 @@ double Simulation::GetDataAge() {
                 for (auto &StoE : StoEs.second) {
                     if (StoE.endTime > biggestEndTime) {
                         biggestEndTime = StoE.endTime;
+                        inputrun = StoEs.first.first;
+                        outputrun = StoEs.first.second;
                     }
                 }
             }
         }
+
         int hyperperiodCount = std::ceil(biggestEndTime/this->hyperPeriod);
         for (auto &StoEs : processExecutions) {
             if (StoEs.first.second == runnableId) {
@@ -317,28 +322,34 @@ double Simulation::GetDataAge() {
                 }
             }
         }
+
         std::vector<double> endTimeTable;
         for (int count = 0; count < hyperperiodCount; count++) {
             for (auto &executionTime : this->runnableExecutions[runnableId]) {
                 endTimeTable.push_back(executionTime.endTime + this->hyperPeriod*count);
             }
         }
+
         std::vector<int> endTimeIndex; 
         for (auto &endTime : endTimes) {
             endTimeIndex.push_back(std::distance(endTimeTable.begin(), std::find(endTimeTable.begin(), endTimeTable.end(), endTime)));
         }
+
         std::sort(endTimeIndex.begin(), endTimeIndex.end(), [](int a, int b) { return a < b; });
 
         int preindex = endTimeIndex[0];
         for (auto &index : endTimeIndex) {
             if (index > preindex + 1)  {
-                if (WorstDataAge < endTimeTable[index] - endTimeTable[preindex]) WorstDataAge = endTimeTable[index] - endTimeTable[preindex];
+                if (WorstDataAge < endTimeTable[index] - endTimeTable[preindex]) {
+                    WorstDataAge = endTimeTable[index] - endTimeTable[preindex];
+                    std::cout << "debug : " << endTimeTable[index] << " " << endTimeTable[preindex]  << " " << ouputRunnable->GetExecutionTime() << " " << inputrun << " " << outputrun << std::endl;
+
+                }
             }
             preindex = index;
         }
     }
     std::cout << "Worst data age : " << WorstDataAge << std::endl;
-
 
     return WorstDataAge;
 }
