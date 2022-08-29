@@ -373,7 +373,7 @@ void Simulation::SaveData() {
     ofs.close();
 }
 
-void Simulation::SaveDAG() {
+void Simulation::SaveDag() {
     this->dag->SaveDag(this->simulationTime);
 }
 

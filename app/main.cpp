@@ -15,8 +15,8 @@
 #include "rapidjson/prettywriter.h"
 
 
-int main() {
-    std::clog.setstate(std::ios_base::failbit);
+int main(int argc, char *argv[]) {
+    //std::clog.setstate(std::ios_base::failbit);
 
     // clear screen (only linux)
     std::system("clear");
@@ -27,8 +27,13 @@ int main() {
 
     std::unique_ptr<DAG> dag(new DAG());
 
-    if (dag_file) {
-        dag->ParseDag();
+    if (argc > 1) {
+        try {
+            dag->ParseDag(argv[1]);
+        } catch (std::string error) {
+            std::cout << error << std::endl;
+            return 0;
+        }
     } else {
         dag->GenerateDag();
     }
@@ -44,8 +49,8 @@ int main() {
         }
 
         default : {
-            std::cout << "Wrong Number." << std::endl;
-            break;
+            std::cout << "Wrong Mapping Number." << std::endl;
+            return 0;
         }
     }
 
@@ -66,7 +71,9 @@ int main() {
     
     simulation->Simulate();
     std::clog << "[main.cpp] CheckPoint 8" << std::endl;
-    
 
+    simulation->SaveDag();
+    simulation->SaveData();
+    
     return 0;
 }

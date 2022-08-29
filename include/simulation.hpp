@@ -78,7 +78,7 @@ public:
     std::vector<ResultInformation> GetBestDataAge(int numberOfCase);
     std::vector<ResultInformation> GetWorstDataAge(int numberOfCase);
 
-    void SaveDAG();
+    void SaveDag();
     void SaveData();
 
     rapidjson::Value SaveReactionTime();

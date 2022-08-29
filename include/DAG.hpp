@@ -18,6 +18,7 @@
 #include "rapidjson/writer.h"
 #include "rapidjson/prettywriter.h"
 #include "rapidjson/stringbuffer.h"
+#include "rapidjson/istreamwrapper.h"
 #include "rapidjson/ostreamwrapper.h"
 
 
@@ -111,8 +112,8 @@ public:
     void DisplayRunnables();
 
     // Save to .json
-    void ParseDag(const std::string& jsonPath);
-    void SaveDag(const std::string& thisTime);
+    void ParseDag(std::string jsonPath);
+    void SaveDag(std::string thisTime);
 
     void GenerateDag();
 };

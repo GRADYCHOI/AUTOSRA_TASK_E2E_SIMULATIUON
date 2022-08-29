@@ -333,7 +333,7 @@ void DAG::DisplayRunnables() {
     }
 }
 
-void DAG::SaveDag(const std::string& thisTime) {
+void DAG::SaveDag(std::string thisTime) {
     rapidjson::Document doc;
     rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();
 
@@ -387,8 +387,40 @@ void DAG::SaveDag(const std::string& thisTime) {
     ofs.close();
 }
 
-void DAG::ParseDag(const std::string& jsonPath) {
+void DAG::ParseDag(std::string jsonPath) {
+    std::ifstream ifs(jsonPath.c_str());
+    if (ifs.fail()) {
+        throw ("File doesn't exist.");
+    }
 
+    rapidjson::IStreamWrapper isw(ifs);
+
+    rapidjson::Document doc;
+    doc.ParseStream(isw);
+
+    std::cout << "Parse Runnables Start" << std::endl;
+
+    std::vector<int> idToRealId;
+
+    int runnableIndex = 0;
+    for (auto &runnable : doc["Runnables"].GetArray()) {
+        std::shared_ptr<RUNNABLE> tmpRunnable(new RUNNABLE(runnableIndex, runnable["ID"].GetInt(), runnable["Execution Time"].GetDouble()));
+        this->runnables.push_back(tmpRunnable);
+        idToRealId.push_back(runnable["ID"].GetInt());
+        runnableIndex++;
+    }
+
+    runnableIndex = 0;
+    for (auto &runnable : doc["Runnables"].GetArray()) {
+        for (auto &outputRunnable : runnable["Output Runnable's ID"].GetArray()) {
+            this->runnables[runnableIndex]->LinkOutputRunnable(this->runnables[(std::find(idToRealId.begin(), idToRealId.end(), outputRunnable.GetInt()) - idToRealId.begin())]->GetSharedPtr());
+        }
+
+        runnableIndex++;
+    }
+
+    this->SetInputRunnableList();
+    this->SetOutputRunnableList();
 }
 
 void DAG::GenerateDag() {
