@@ -391,7 +391,7 @@ rapidjson::Value Simulation::SaveReactionTime(rapidjson::Document::AllocatorType
         bestReactionTimeObject.AddMember("Ranking", ++rankingCount, allocator);
         bestReactionTimeObject.AddMember("Reactoin Time", reactionTime.reactionTime, allocator);
 
-        std::vector<int> sequence = this->dag->GetRunnablePriority(reactionTime.sequenceIndex);
+        std::vector<int> sequence = this->dag->GetRunnableSequence(reactionTime.sequenceIndex);
         int vectorPointer = 0;
         for (auto &task : this->dag->GetTasks()) {
             rapidjson::Value taskObject(rapidjson::kObjectType);
@@ -424,7 +424,7 @@ rapidjson::Value Simulation::SaveReactionTime(rapidjson::Document::AllocatorType
 
         worstReactionTimeObject.AddMember("Reactoin Time", reactionTime.reactionTime, allocator);
 
-        std::vector<int> sequence = this->dag->GetRunnablePriority(reactionTime.sequenceIndex);
+        std::vector<int> sequence = this->dag->GetRunnableSequence(reactionTime.sequenceIndex);
         int vectorPointer = 0;
         for (auto &task : this->dag->GetTasks()) {
             rapidjson::Value taskObject(rapidjson::kObjectType);
@@ -463,7 +463,7 @@ rapidjson::Value Simulation::SaveDataAge(rapidjson::Document::AllocatorType& all
         bestDataAgeObject.AddMember("Ranking", ++rankingCount, allocator);
         bestDataAgeObject.AddMember("Reactoin Time", dataAge.dataAge, allocator);
 
-        std::vector<int> sequence = this->dag->GetRunnablePriority(dataAge.sequenceIndex);
+        std::vector<int> sequence = this->dag->GetRunnableSequence(dataAge.sequenceIndex);
         int vectorPointer = 0;
         for (auto &task : this->dag->GetTasks()) {
             rapidjson::Value taskObject(rapidjson::kObjectType);
@@ -495,7 +495,7 @@ rapidjson::Value Simulation::SaveDataAge(rapidjson::Document::AllocatorType& all
         worstDataAgeObject.AddMember("Ranking", ++rankingCount, allocator);
         worstDataAgeObject.AddMember("Reactoin Time", dataAge.dataAge, allocator);
 
-        std::vector<int> sequence = this->dag->GetRunnablePriority(dataAge.sequenceIndex);
+        std::vector<int> sequence = this->dag->GetRunnableSequence(dataAge.sequenceIndex);
         int vectorPointer = 0;
         for (auto &task : this->dag->GetTasks()) {
             rapidjson::Value taskObject(rapidjson::kObjectType);

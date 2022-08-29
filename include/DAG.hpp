@@ -57,9 +57,6 @@ public:
     std::vector<std::shared_ptr<TASK>> GetTasks() const { return tasks; }
     std::vector<std::shared_ptr<RUNNABLE>> GetRunnables() const { return runnables; }
 
-    std::vector<int> GetRunnablePriority();
-    std::vector<int> GetTaskPriority();
-
     std::vector<std::shared_ptr<TASK>> GetOrderOfPriorityTasks();
     std::vector<std::shared_ptr<RUNNABLE>> GetOrderOfPriorityRunnables();
 
@@ -103,7 +100,11 @@ public:
     void SetRunnablePriority(int index);
     void SetRunnablePriorities();
     void ExpandRunnablePriorities(std::vector<std::vector<int>>& incompleteRunnablePriority, int iterator, int maxSize);
-    const std::vector<int> GetRunnablePriority(int index);
+
+    std::vector<int> GetRunnablePriority();
+    std::vector<int> GetTaskPriority();
+
+    std::vector<int> GetRunnableSequence(int index);
 
     // Sequence Case
     const int GetCurrentSequenceIndex() const { return currentSequenceIndex; }

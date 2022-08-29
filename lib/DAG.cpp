@@ -40,6 +40,10 @@ std::vector<int> DAG::GetRunnablePriority() {
     return result;
 }
 
+std::vector<int> DAG::GetRunnableSequence(int index) {
+    return this->runnablePriorities[index];
+}
+
 std::vector<int> DAG::GetTaskPriority() {
     std::vector<std::pair<int, int>> tmpVector;
     std::vector<int> result;
