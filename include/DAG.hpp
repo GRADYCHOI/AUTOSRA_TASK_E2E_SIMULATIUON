@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <cstdio>
 #include <map>
+#include <fstream>
 #include "TASK.hpp"
 #include "mapping.hpp"
 #include "rapidjson/document.h"
