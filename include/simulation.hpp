@@ -60,8 +60,8 @@ public:
     }
     void SetProcessExecutions();
     void TraceProcess(int inputRunnableIndex, int inputCycle, int thisRunnableId, int thisCycle, int hyperPeriodCount, std::map<int, double>& path);
-    void GetReactionTime();
-    void GetDataAge();
+    double GetReactionTime();
+    double GetDataAge();
 
     void SetCommunication(std::unique_ptr<Communication>&& newCommunication) { communication = std::move(newCommunication); }
 
