@@ -298,14 +298,10 @@ double Simulation::GetDataAge() {
     for (auto &StoEs : processExecutions) {
         for (auto &StoE : StoEs.second) {
             //int thisOutputRunnable = StoEs.first.second;
-            std::cout << "input : " << StoEs.first.first << " , output : " << StoEs.first.second << " , start time : " << StoE.startTime << " , " << StoE.endTime << std::endl;
+            //std::cout << "input : " << StoEs.first.first << " , output : " << StoEs.first.second << " , start time : " << StoE.startTime << " , " << StoE.endTime << std::endl;
 
         }
         
-        for (auto &run : StoEs.first.second) {
-            
-
-        }
     }
 
 
