@@ -11,7 +11,7 @@ double GCD(double a, double b) {
         tmp2 = tmp3;
     }
 
-    return static_cast<double>(tmp1);
+    return static_cast<double>(tmp1/1000);
 }
 
 void Simulation::Initialize() {
@@ -129,7 +129,7 @@ void Simulation::SetRunnableExecutions() {
 
     double unit = this->runnableInformations[0].period;
     for (auto &task : this->dag->GetTasks()) {
-        unit = GCD(unit, GCD(task->GetPeriod(), task->GetOffset()));
+        unit = GCD(unit, ((task->GetOffset() != 0.0) ? GCD(task->GetPeriod(), task->GetOffset()) : task->GetPeriod()));
     }
 
     std::clog << "[simulation.cpp] CheckPoint 4-1" << std::endl;
@@ -138,15 +138,19 @@ void Simulation::SetRunnableExecutions() {
     for (auto &runnable : this->dag->GetOrderOfPriorityRunnables()) {
         int runnableId = runnable->GetId();
         int runnableMaxCycle = static_cast<int>(this->hyperPeriod) / this->runnableInformations[runnableId].period;
+        std::clog << "[simulation.cpp] CheckPoint 4-2" << std::endl;
 
         for (int cycle = 0; cycle < runnableMaxCycle; cycle++) {
             double releaseTime = this->runnableInformations[runnableId].period * cycle + this->runnableInformations[runnableId].offset;
             double deadTime = this->runnableInformations[runnableId].period * (cycle + 1) + this->runnableInformations[runnableId].offset;
 
             int unitIndex = static_cast<int>(std::floor(releaseTime / unit));
+            std::clog << "[simulation.cpp] CheckPoint 4-3" << std::endl;
+            std::cout << unit << std::endl;
 
             // Regard time-line
             while (emptyTimes[(unitIndex)] == 0.0) unitIndex++;
+            std::clog << "[simulation.cpp] CheckPoint 4-4" << std::endl;
 
             // Set start time
             this->runnableExecutions[runnableId][cycle].startTime = (static_cast<double>(unitIndex) * unit) + (1 - emptyTimes[unitIndex]);
@@ -154,11 +158,13 @@ void Simulation::SetRunnableExecutions() {
                 std::cerr << "[Scheduling Error] : This sequence can't scheduling";
                 throw runnable;
             }
+            std::clog << "[simulation.cpp] CheckPoint 4-5" << std::endl;
 
             // Set end time
             double executionTime = this->runnableInformations[runnableId].executionTime;
 
             while (executionTime) {
+                std::clog << "[simulation.cpp] CheckPoint 4-6" << std::endl;
                 if (emptyTimes[unitIndex] < executionTime) {
                     executionTime -= emptyTimes[unitIndex];
                     emptyTimes[unitIndex] = 0.0;
@@ -170,6 +176,7 @@ void Simulation::SetRunnableExecutions() {
                     executionTime = 0.0;
                 }
             }
+            std::clog << "[simulation.cpp] CheckPoint 4-7" << std::endl;
         }
     }
 }

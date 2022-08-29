@@ -240,7 +240,7 @@ void DAG::SetRunnablePrecedence() {
         }
             
     }
-    for (auto &run : runnables)std::cout << run->GetId() << " " << run->GetStatus() << " " << runnablePrecedence[run->GetId()] << std::endl;
+    for (auto &run : runnables)std::clog << run->GetId() << " " << run->GetStatus() << " " << runnablePrecedence[run->GetId()] << std::endl;
 }
 
 void DAG::SetTaskPriority() {
