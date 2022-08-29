@@ -229,8 +229,8 @@ void Simulation::TraceProcess(int inputRunnableId, int inputCycle, int thisRunna
             this->processExecutions.insert(std::make_pair(std::make_pair(inputRunnableId, thisRunnableId), tmpVector));
         } else {
             ExecutionInformation tmpInfo = {this->runnableCommunications[inputRunnableId][inputCycle].startTime, this->runnableCommunications[thisRunnableId][thisCycle].endTime + thisHyperPeriodCount * this->hyperPeriod};
-            if (static_cast<int>(this->processExecutions[std::make_pair(inputRunnableId, thisRunnableId)].size()) != thisCycle + 1) this->processExecutions[std::make_pair(inputRunnableId, thisRunnableId)].push_back(tmpInfo); //그냥 push back 말고 worst로 비교해서 넣기
-            else if (this->processExecutions[std::make_pair(inputRunnableId, thisRunnableId)][thisCycle].endTime < this->runnableCommunications[thisRunnableId][thisCycle].endTime) this->processExecutions[std::make_pair(inputRunnableId, thisRunnableId)][thisCycle].endTime = this->runnableCommunications[thisRunnableId][thisCycle].endTime;
+            if (static_cast<int>(this->processExecutions[std::make_pair(inputRunnableId, thisRunnableId)].size()) != inputCycle + 1) this->processExecutions[std::make_pair(inputRunnableId, thisRunnableId)].push_back(tmpInfo); //그냥 push back 말고 worst로 비교해서 넣기
+            else if (this->processExecutions[std::make_pair(inputRunnableId, thisRunnableId)][inputCycle].endTime < this->runnableCommunications[thisRunnableId][thisCycle].endTime) this->processExecutions[std::make_pair(inputRunnableId, thisRunnableId)][inputCycle].endTime = this->runnableCommunications[thisRunnableId][thisCycle].endTime;
         }
     } else {
         if (path.find(thisRunnableId) == path.end()) path.insert({thisRunnableId, -1.0});
@@ -291,23 +291,53 @@ double Simulation::GetReactionTime() {
 
 double Simulation::GetDataAge() {
     double WorstDataAge = 0.0;
-    //double WorstReactionTime = 0.0;
-    std::pair<int, int> WorstPair;
-    std::vector<double> dataage;
 
-    for (auto &StoEs : processExecutions) {
-        for (auto &StoE : StoEs.second) {
-            
-            //int order = std::distance(this->runnableExecutions[StoE.first.second].begin(), std::find_if(this->runnableExecutions[StoE.first.second].begin(), this->runnableExecutions[StoE.first.second].end(), [](ExecutionInformation a) { return (a.endTime == StoE.second.endTime) ? true : false; }));
-            //int thisOutputRunnable = StoEs.first.second;
-            std::cout << "input : " << StoEs.first.first << " , output : " << StoEs.first.second << " , start time : " << StoE.startTime << " , " << StoE.endTime << std::endl;
-
-
+    for (auto &ouputRunnable : this->dag->GetOutputRunnables()) {
+        int runnableId = ouputRunnable->GetId();
+        double biggestEndTime = 0.0; 
+        std::vector<double> endTimes;
+        for (auto &StoEs : processExecutions) {
+            if (StoEs.first.second == runnableId) {
+                for (auto &StoE : StoEs.second) {
+                    if (StoE.endTime > biggestEndTime) {
+                        biggestEndTime = StoE.endTime;
+                    }
+                }
+            }
         }
+        int hyperperiodCount = std::ceil(biggestEndTime/this->hyperPeriod);
+        for (auto &StoEs : processExecutions) {
+            if (StoEs.first.second == runnableId) {
+                for (auto &StoE : StoEs.second) {
+                    double tmpEndTime = StoE.endTime;
+                    while (tmpEndTime <= biggestEndTime) {
+                        endTimes.push_back(tmpEndTime);                    
+                        tmpEndTime += this->hyperPeriod;
+                    }
+                }
+            }
+        }
+        std::vector<double> endTimeTable;
+        for (int count = 0; count < hyperperiodCount; count++) {
+            for (auto &executionTime : this->runnableExecutions[runnableId]) {
+                endTimeTable.push_back(executionTime.endTime + this->hyperPeriod*count);
+            }
+        }
+        std::vector<int> endTimeIndex; 
+        for (auto &endTime : endTimes) {
+            endTimeIndex.push_back(std::distance(endTimeTable.begin(), std::find(endTimeTable.begin(), endTimeTable.end(), endTime)));
+        }
+        std::sort(endTimeIndex.begin(), endTimeIndex.end(), [](int a, int b) { return a < b; });
 
-        
+        int preindex = endTimeIndex[0];
+        for (auto &index : endTimeIndex) {
+            if (index > preindex + 1)  {
+                if (WorstDataAge < endTimeTable[index] - endTimeTable[preindex]) WorstDataAge = endTimeTable[index] - endTimeTable[preindex];
+            }
+            preindex = index;
+        }
     }
-
+    std::cout << "Worst data age : " << WorstDataAge << std::endl;
 
 
     return WorstDataAge;
