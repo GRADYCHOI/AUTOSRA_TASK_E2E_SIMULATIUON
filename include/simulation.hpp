@@ -34,16 +34,18 @@ private:
     int numberOfInputRunnables;
     int numberOfOutputRunnables;
 
+    std::string simulationTime;
+
     std::vector<RunnableInformation> runnableInformations;
     std::vector<std::vector<ExecutionInformation>> runnableExecutions;
     std::vector<std::vector<ExecutionInformation>> runnableCommunications;
     std::map<std::pair<int, int>, std::vector<ExecutionInformation>> processExecutions;
 
+    std::vector<ResultInformation> results;
+
     void Initialize();
     void ClearTables();
 
-    void SaveDAG();
-    void SaveMapping();
     void SaveReactionTime();
     void SaveDataAge();
 
@@ -65,6 +67,13 @@ public:
 
     void SetCommunication(std::unique_ptr<Communication>&& newCommunication) { communication = std::move(newCommunication); }
 
+    std::vector<ResultInformation> GetBestReactionTime(int numberOfCase);
+    std::vector<ResultInformation> GetWorstReactionTime(int numberOfCase);
+
+    std::vector<ResultInformation> GetBestDataAge(int numberOfCase);
+    std::vector<ResultInformation> GetWorstDataAge(int numberOfCase);
+
+    void SaveDAG();
     void SaveData();
 };
 

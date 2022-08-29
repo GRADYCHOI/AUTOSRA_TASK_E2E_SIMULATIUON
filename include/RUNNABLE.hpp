@@ -35,6 +35,9 @@ public:
     int GetNumberOfOutputRunnables();
     int GetNumberOfInputRunnables();
 
+    const std::shared_ptr<RUNNABLE> GetInputRunnable(int index);
+    const std::vector<std::shared_ptr<RUNNABLE>> GetInputRunnables();
+
     const std::shared_ptr<RUNNABLE> GetOutputRunnable(int index) const;
     const std::vector<std::shared_ptr<RUNNABLE>> GetOutputRunnables() const;
 

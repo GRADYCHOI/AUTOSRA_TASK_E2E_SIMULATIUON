@@ -52,6 +52,20 @@ int RUNNABLE::GetNumberOfInputRunnables() {
     return (int)this->inputRunnables.size();
 }
 
+const std::vector<std::shared_ptr<RUNNABLE>> RUNNABLE::GetInputRunnable(int index) {
+    return inputRunnables[index].lock();
+}
+
+const std::vector<std::shared_ptr<RUNNABLE>> RUNNABLE::GetInputRunnables() {
+    std::vector<std::shared_ptr<RUNNABLE>> tmpRunnables;
+    
+    for (auto &inputRunnable : this->inputRunnables) {
+        tmpRunnables.push_back(inputRunnable.lock());
+    }
+
+    return tmpRunnables;
+}
+
 const std::shared_ptr<RUNNABLE> RUNNABLE::GetOutputRunnable(int index) const {
     return this->outputRunnables[index];
 }

@@ -10,17 +10,22 @@
 #include <cstring>
 #include <time.h>
 #include <stdlib.h>
+#include <cstdio>
+#include <map>
 #include "TASK.hpp"
 #include "mapping.hpp"
 #include "rapidjson/document.h"
 #include "rapidjson/writer.h"
-#include "rapidjson/stringbuffer.h"
 #include "rapidjson/prettywriter.h"
+#include "rapidjson/stringbuffer.h"
+#include "rapidjson/ostreamwrapper.h"
 
 
 class DAG
 { 
 private:
+    int currentSequenceIndex = -1;
+
     // Command Pattern
     friend class Mapping;
     std::unique_ptr<Mapping> mapping;
@@ -96,6 +101,7 @@ public:
     void SetRunnablePriority(int index);
     void SetRunnablePriorities();
     void ExpandRunnablePriorities(std::vector<std::vector<int>>& incompleteRunnablePriority, int iterator, int maxSize);
+    const std::vector<int> GetRunnablePriority(int index);
 
     // Sequence Case
     int GetNumberOfSequenceCase() { return static_cast<int>(runnablePriorities.size()); }
@@ -104,8 +110,8 @@ public:
     void DisplayRunnables();
 
     // Save to .json
-    void SaveJson();
-    void ParseDag();
+    void ParseDag(const std::string& jsonPath);
+    void SaveDag(const std::string& thisTime);
 
     void GenerateDag();
 };
