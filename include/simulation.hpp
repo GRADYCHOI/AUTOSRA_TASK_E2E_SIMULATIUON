@@ -78,8 +78,8 @@ public:
     void SaveDag();
     void SaveData();
 
-    rapidjson::Value SaveReactionTime();
-    rapidjson::Value SaveDataAge();
+    rapidjson::Value SaveReactionTime(rapidjson::Document::AllocatorType& allocator);
+    rapidjson::Value SaveDataAge(rapidjson::Document::AllocatorType& allocator);
 };
 
 #endif

@@ -84,7 +84,7 @@ void Simulation::Simulate() {
     }
 }
 
-void SetResult() {
+void Simulation::SetResult() {
     ResultInformation result = {this->dag->GetCurrentSequenceIndex(), this->GetReactionTime(), this->GetDataAge()};
     this->results.push_back(result);
 }
@@ -351,9 +351,9 @@ void Simulation::SaveData() {
 
     rapidjson::Value resultObject(rapidjson::kObjectType);
 
-    resultObject.AddMember("Reaction Time Ranking", this->SaveReactionTime(), allocator);
+    resultObject.AddMember("Reaction Time Ranking", this->SaveReactionTime(allocator), allocator);
 
-    resultObject.AddMember("Data Age Ranking", this->SaveDataAge(), allocator);
+    resultObject.AddMember("Data Age Ranking", this->SaveDataAge(allocator), allocator);
 
     // Save to json
     std::string thisTime = this->simulationTime;
@@ -373,7 +373,7 @@ void Simulation::SaveDag() {
     this->dag->SaveDag(this->simulationTime);
 }
 
-rapidjson::Value Simulation::SaveReactionTime() {
+rapidjson::Value Simulation::SaveReactionTime(rapidjson::Document::AllocatorType& allocator) {
     int rankingCount;
     rapidjson::Value reactionTimeArray(rapidjson::kArrayType);
 
@@ -397,7 +397,7 @@ rapidjson::Value Simulation::SaveReactionTime() {
             rapidjson::Value sequenceArray(rapidjson::kArrayType);
             int numberOfRunnables = task->GetNumberOfRunnables();
             for (int runnableIndex = 0; runnableIndex < numberOfRunnables; runnableIndex++) {
-                sequenceArray.PushBack(sequence[vectorPointer + runnableIndex]);
+                sequenceArray.PushBack(sequence[vectorPointer + runnableIndex], allocator);
             }
             vectorPointer += numberOfRunnables;
             taskObject.AddMember("Runnable Sequence", sequenceArray, allocator);
@@ -410,7 +410,7 @@ rapidjson::Value Simulation::SaveReactionTime() {
     }
 
     // Worst Reaction Time
-    int rankingCount = this->dag->GetNumberOfSequenceCase() + 1;
+    rankingCount = this->dag->GetNumberOfSequenceCase() + 1;
 
     for (auto &reactionTime : this->GetWorstReactionTime(5)) {
         rapidjson::Value worstReactionTimeObject(rapidjson::kObjectType);
@@ -430,7 +430,7 @@ rapidjson::Value Simulation::SaveReactionTime() {
             rapidjson::Value sequenceArray(rapidjson::kArrayType);
             int numberOfRunnables = task->GetNumberOfRunnables();
             for (int runnableIndex = 0; runnableIndex < numberOfRunnables; runnableIndex++) {
-                sequenceArray.PushBack(sequence[vectorPointer + runnableIndex]);
+                sequenceArray.PushBack(sequence[vectorPointer + runnableIndex], allocator);
             }
             vectorPointer += numberOfRunnables;
             taskObject.AddMember("Runnable Sequence", sequenceArray, allocator);
@@ -445,7 +445,7 @@ rapidjson::Value Simulation::SaveReactionTime() {
     return reactionTimeArray;
 }
 
-rapidjson::Value Simulation::SaveDataAge() {
+rapidjson::Value Simulation::SaveDataAge(rapidjson::Document::AllocatorType& allocator) {
     int rankingCount;
     rapidjson::Value dataAgeArray(rapidjson::kArrayType);
 
@@ -469,15 +469,16 @@ rapidjson::Value Simulation::SaveDataAge() {
             rapidjson::Value sequenceArray(rapidjson::kArrayType);
             int numberOfRunnables = task->GetNumberOfRunnables();
             for (int runnableIndex = 0; runnableIndex < numberOfRunnables; runnableIndex++) {
-                sequenceArray.PushBack(sequence[vectorPointer + runnableIndex]);
+                sequenceArray.PushBack(sequence[vectorPointer + runnableIndex], allocator);
             }
             vectorPointer += numberOfRunnables;
             taskObject.AddMember("Runnable Sequence", sequenceArray, allocator);
 
             bestDataAgeArray.PushBack(taskObject, allocator);
         }
+        bestDataAgeObject.AddMember("Sequence", bestDataAgeArray, allocator);
 
-        dataAgeArray.PushBack(runnableObject, allocator);
+        dataAgeArray.PushBack(bestDataAgeObject, allocator);
     }
 
     // Worst Data Age
@@ -500,15 +501,16 @@ rapidjson::Value Simulation::SaveDataAge() {
             rapidjson::Value sequenceArray(rapidjson::kArrayType);
             int numberOfRunnables = task->GetNumberOfRunnables();
             for (int runnableIndex = 0; runnableIndex < numberOfRunnables; runnableIndex++) {
-                sequenceArray.PushBack(sequence[vectorPointer + runnableIndex]);
+                sequenceArray.PushBack(sequence[vectorPointer + runnableIndex], allocator);
             }
             vectorPointer += numberOfRunnables;
             taskObject.AddMember("Runnable Sequence", sequenceArray, allocator);
 
             worstDataAgeArray.PushBack(taskObject, allocator);
         }
+        worstDataAgeObject.AddMember("Sequence", worstDataAgeArray, allocator);
 
-        dataAgeArray.PushBack(runnableObject, allocator);
+        dataAgeArray.PushBack(worstDataAgeObject, allocator);
     }
 
     return dataAgeArray;
