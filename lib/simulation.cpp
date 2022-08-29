@@ -53,14 +53,17 @@ void Simulation::ClearTables() {
     std::vector<std::vector<ExecutionInformation>>(this->numberOfRunnables, std::vector<ExecutionInformation>(this->maxCycle, initialExecutionInformation)).swap(this->runnableCommunications);
 
     std::clog << "[simulation.cpp] CheckPoint 2-5" << std::endl;
+    std::map<std::pair<int, int>, std::vector<ExecutionInformation>>().swap(this->processExecutions);
+
+    std::clog << "[simulation.cpp] CheckPoint 2-6" << std::endl;
 }
 
 void Simulation::Simulate() {
     int numberOfCase = this->dag->GetNumberOfSequenceCase();
-    std::cout << "[simulation.cpp] Number Of Case : " << numberOfCase << std::endl;
 
     for (int caseIndex = 0; caseIndex < numberOfCase; caseIndex++) {
-        std::cout << "[simulation.cpp] CheckPoint 1" << std::endl;
+        std::cout << "[simulation.cpp] Case : " << caseIndex << "/" << numberOfCase << std::endl;
+        std::clog << "[simulation.cpp] CheckPoint 1" << std::endl;
         this->dag->SetRunnablePriority(caseIndex);
 
         std::clog << "[simulation.cpp] CheckPoint 2" << std::endl;
