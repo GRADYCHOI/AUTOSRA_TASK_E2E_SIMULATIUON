@@ -29,6 +29,7 @@ public:
     ~RUNNABLE();
 
     int GetId() const;
+    int GetRealId() const;
     double GetExecutionTime() const;
     int GetStatus() const;
 

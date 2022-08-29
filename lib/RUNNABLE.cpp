@@ -31,6 +31,9 @@ void RUNNABLE::AddOutputRunnable(const std::shared_ptr<RUNNABLE> outputRunnable)
     this->SetStatus();
 }
 
+int RUNNABLE::GetRealId() const {
+    return this->realId;
+}
 
 int RUNNABLE::GetId() const {
     return this->id;
