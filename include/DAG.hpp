@@ -104,6 +104,7 @@ public:
     const std::vector<int> GetRunnablePriority(int index);
 
     // Sequence Case
+    const int GetCurrentSequenceIndex() const { return currentSequenceIndex; }
     int GetNumberOfSequenceCase() { return static_cast<int>(runnablePriorities.size()); }
 
     // Debugging

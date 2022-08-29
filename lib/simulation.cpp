@@ -78,13 +78,15 @@ void Simulation::Simulate() {
         this->SetProcessExecutions();
 
         std::clog << "[simulation.cpp] CheckPoint 7" << std::endl;
-        this->GetReactionTime();
+        this->SetResult();
 
         std::clog << "[simulation.cpp] CheckPoint 8" << std::endl;
-        //this->GetDataAge();
-
-        std::clog << "[simulation.cpp] CheckPoint 9" << std::endl;
     }
+}
+
+void SetResult() {
+    ResultInformation result = {this->dag->GetCurrentSequenceIndex(), this->GetReactionTime(), this->GetDataAge()};
+    this->results.push_back(result);
 }
 
 void Simulation::SetRunnableInformations() {
@@ -94,16 +96,13 @@ void Simulation::SetRunnableInformations() {
     // ## The order of Runnable is based on their IDs
     // 1 : RunnableInformation (taskId, priority, period, offset, executionTime)
     // --------------------------------------------------------------------------------------------------------------
-
     
     std::vector<int> runnablePriority = this->dag->GetRunnablePriority();
-
     
     for (auto &task : this->dag->GetTasks()) {
         for (auto &runnable : task->GetRunnables()) {
             std::clog << "[simulation.cpp] CheckPoint 3-1" << std::endl;
             int runnableId = runnable->GetId();
-
             std::clog << "[simulation.cpp] CheckPoint 3-2" << std::endl;
             this->runnableInformations[runnableId].taskId = task->GetId();
             std::clog << "[simulation.cpp] CheckPoint 3-3" << std::endl;
@@ -309,6 +308,42 @@ void Simulation::GetDataAge() {
             }
         }
     }*/
+}
+
+std::vector<ResultInformation> Simulation::GetBestReactionTime(int numberOfCase) {
+    std::sort(this->results.begin(), this->results.end(), [](ResultInformation a, ResultInformation b) { return a.reactionTime < b.reactionTime; });
+
+    std::vector<ResultInformation> tmpVector(numberOfCase);
+    std::copy(this->results.begin(), this->results.begin() + numberOfCase, tmpVector.begin());
+
+    return tmpVector;
+}
+
+std::vector<ResultInformation> Simulation::GetWorstReactionTime(int numberOfCase) {
+    std::sort(this->results.begin(), this->results.end(), [](ResultInformation a, ResultInformation b) { return a.reactionTime > b.reactionTime; });
+
+    std::vector<ResultInformation> tmpVector(numberOfCase);
+    std::copy(this->results.begin(), this->results.begin() + numberOfCase, tmpVector.begin());
+
+    return tmpVector;
+}
+
+std::vector<ResultInformation> Simulation::GetBestDataAge(int numberOfCase) {
+    std::sort(this->results.begin(), this->results.end(), [](ResultInformation a, ResultInformation b) { return a.dataAge < b.dataAge; });
+
+    std::vector<ResultInformation> tmpVector(numberOfCase);
+    std::copy(this->results.begin(), this->results.begin() + numberOfCase, tmpVector.begin());
+
+    return tmpVector;
+}
+
+std::vector<ResultInformation> Simulation::GetWorstDataAge(int numberOfCase) {
+    std::sort(this->results.begin(), this->results.end(), [](ResultInformation a, ResultInformation b) { return a.dataAge > b.dataAge; });
+
+    std::vector<ResultInformation> tmpVector(numberOfCase);
+    std::copy(this->results.begin(), this->results.begin() + numberOfCase, tmpVector.begin());
+
+    return tmpVector;
 }
 
 void Simulation::SaveData() {

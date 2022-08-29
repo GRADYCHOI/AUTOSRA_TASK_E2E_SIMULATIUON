@@ -62,6 +62,8 @@ public:
     }
     void SetProcessExecutions();
     void TraceProcess(int inputRunnableIndex, int inputCycle, int thisRunnableId, int thisCycle, int hyperPeriodCount, std::map<int, double>& path);
+    void SetResult();
+
     void GetReactionTime();
     void GetDataAge();
 
@@ -75,6 +77,9 @@ public:
 
     void SaveDAG();
     void SaveData();
+
+    rapidjson::Value SaveReactionTime();
+    rapidjson::Value SaveDataAge();
 };
 
 #endif
