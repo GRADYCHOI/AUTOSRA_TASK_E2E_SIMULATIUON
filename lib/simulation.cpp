@@ -146,7 +146,6 @@ void Simulation::SetRunnableExecutions() {
 
             int unitIndex = static_cast<int>(std::floor(releaseTime / unit));
             std::clog << "[simulation.cpp] CheckPoint 4-3" << std::endl;
-            std::cout << unit << std::endl;
 
             // Regard time-line
             while (emptyTimes[(unitIndex)] == 0.0) unitIndex++;
@@ -186,12 +185,13 @@ void Simulation::SetProcessExecutions() {
         int eachMaxCycle = this->hyperPeriod / this->runnableInformations[runnable->GetId()].period;
 
         for (int cycle = 0; cycle < eachMaxCycle; cycle++) {
-            this->TraceProcess(runnable->GetId(), cycle, runnable->GetId(), cycle, 0);
+            std::map<int, double> path;
+            this->TraceProcess(runnable->GetId(), cycle, runnable->GetId(), cycle, 0, path);
         }
     }
 }
 
-void Simulation::TraceProcess(int inputRunnableId, int inputCycle, int thisRunnableId, int thisCycle, int thisHyperPeriodCount) {
+void Simulation::TraceProcess(int inputRunnableId, int inputCycle, int thisRunnableId, int thisCycle, int thisHyperPeriodCount, std::map<int, double>& path) {
     // --------------------------------------------------------------------------------------------------------------
     // runnableExecutions : [maxCycle X numberOfRunnables]     Input
     // --------------------------------------------------------------------------------------------------------------
@@ -221,57 +221,62 @@ void Simulation::TraceProcess(int inputRunnableId, int inputCycle, int thisRunna
             this->processExecutions.insert(std::make_pair(std::make_pair(inputRunnableId, thisRunnableId), tmpVector));
         } else {
             ExecutionInformation tmpInfo = {this->runnableCommunications[inputRunnableId][inputCycle].startTime, this->runnableCommunications[thisRunnableId][thisCycle].endTime + thisHyperPeriodCount * this->hyperPeriod};
-            this->processExecutions[std::make_pair(inputRunnableId, thisRunnableId)].push_back(tmpInfo); //그냥 push back 말고 worst로 비교해서 넣기
+            if (static_cast<int>(this->processExecutions[std::make_pair(inputRunnableId, thisRunnableId)].size()) != thisCycle + 1) this->processExecutions[std::make_pair(inputRunnableId, thisRunnableId)].push_back(tmpInfo); //그냥 push back 말고 worst로 비교해서 넣기
+            else if (this->processExecutions[std::make_pair(inputRunnableId, thisRunnableId)][thisCycle].endTime < this->runnableCommunications[thisRunnableId][thisCycle].endTime) this->processExecutions[std::make_pair(inputRunnableId, thisRunnableId)][thisCycle].endTime = this->runnableCommunications[thisRunnableId][thisCycle].endTime;
         }
     } else {
-        for (auto &outputRunnable : this->dag->GetRunnable(thisRunnableId)->GetOutputRunnables()) {
-            int outputRunnableId = outputRunnable->GetId();
+        if (path.find(thisRunnableId) == path.end()) path.insert({thisRunnableId, -1.0});
+        if (this->runnableCommunications[thisRunnableId][thisCycle].startTime > path[thisRunnableId]) {
+            path[thisRunnableId] = runnableCommunications[thisRunnableId][thisCycle].startTime;
+            
+            for (auto &outputRunnable : this->dag->GetRunnable(thisRunnableId)->GetOutputRunnables()) {
+                int outputRunnableId = outputRunnable->GetId();
 
-            int tmpCycle = 0;
-            double hyperPeriodCount = 0;
-            int outputRunnableReadTime = this->runnableCommunications[outputRunnableId][tmpCycle].endTime;
+                int tmpCycle = 0;
+                double hyperPeriodCount = 0;
+                int outputRunnableReadTime = this->runnableCommunications[outputRunnableId][tmpCycle].endTime;
+                //std::cout << inputRunnableId << " " << thisRunnableId << " " << outputRunnableId << std::endl;
+                // If thisRunnable has hyperPeriod Count, outputRunnable have same hyperPeriod start.
 
-            // If thisRunnable has hyperPeriod Count, outputRunnable have same hyperPeriod start.
-            while ((this->runnableCommunications[thisRunnableId][thisCycle].startTime) > outputRunnableReadTime) {
-                tmpCycle++;
+                while ((this->runnableCommunications[thisRunnableId][thisCycle].startTime) > outputRunnableReadTime) {
+                    tmpCycle++;
 
-                if (tmpCycle == maxCycle || this->runnableCommunications[outputRunnableId][tmpCycle].endTime == -1.0) {
-                    outputRunnableReadTime = this->runnableCommunications[outputRunnableId][0].endTime + this->hyperPeriod;
+                    if (tmpCycle == maxCycle || this->runnableCommunications[outputRunnableId][tmpCycle].endTime == -1.0) {
+                        outputRunnableReadTime = this->runnableCommunications[outputRunnableId][0].endTime + this->hyperPeriod;
 
-                    tmpCycle = 0;
-                    hyperPeriodCount++;
-                } else {
-                    double inputStartTime = this->runnableCommunications[thisRunnableId][thisCycle].startTime;
-                    double outputEndTime = this->runnableCommunications[outputRunnableId][tmpCycle].endTime;
-                    double outputPeriod = this->runnableInformations[outputRunnableId].period;
-                    tmpCycle += (((inputStartTime - outputEndTime) / outputPeriod) > 4) ? (static_cast<int>((inputStartTime - outputEndTime) / outputPeriod) - 3) : 0;
+                        tmpCycle = 0;
+                        hyperPeriodCount++;
+                    } else {
+                        double inputStartTime = this->runnableCommunications[thisRunnableId][thisCycle].startTime;
+                        double outputEndTime = this->runnableCommunications[outputRunnableId][tmpCycle].endTime;
+                        double outputPeriod = this->runnableInformations[outputRunnableId].period;
+                        tmpCycle += (((inputStartTime - outputEndTime) / outputPeriod) > 4) ? (static_cast<int>((inputStartTime - outputEndTime) / outputPeriod) - 3) : 0;
 
-                    outputRunnableReadTime = this->runnableCommunications[outputRunnableId][tmpCycle].endTime;
+                        outputRunnableReadTime = this->runnableCommunications[outputRunnableId][tmpCycle].endTime;
+                    }
                 }
+                this->TraceProcess(inputRunnableId, inputCycle, outputRunnableId, tmpCycle, hyperPeriodCount, path);
             }
-
-            this->TraceProcess(inputRunnableId, inputCycle, outputRunnableId, tmpCycle, hyperPeriodCount);
         }
     }
 }
 
 void Simulation::GetReactionTime() {
     std::pair<int, int> WorstPair;
+    double WorstReactionTime =  0.0;
 
     for (auto &StoEs : processExecutions) {
-        double WorstReactionTime =  0.0;
 
         for (auto &StoE : StoEs.second) {
             double tmpThisReactionTime = StoE.endTime - StoE.startTime;
             if (WorstReactionTime < tmpThisReactionTime) {
                 WorstReactionTime = tmpThisReactionTime;
-                WorstPair.first = StoE.startTime;
-                WorstPair.second = StoE.endTime;
+                WorstPair.first = StoEs.first.first;
+                WorstPair.second = StoEs.first.second;
             }
         }
-
-        std::cout << "Worst Pair Input, Output Runnable : " << StoEs.first.first << " " << StoEs.first.second << ", Reaction Time : " << WorstReactionTime << std::endl;
     }
+    std::cout << "Worst Pair Input, Output Runnable : " << WorstPair.first << " " << WorstPair.second << ", Reaction Time : " << WorstReactionTime << std::endl;
 }
 
 void Simulation::GetDataAge() {

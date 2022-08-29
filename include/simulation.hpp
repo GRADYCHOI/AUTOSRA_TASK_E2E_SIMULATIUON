@@ -59,7 +59,7 @@ public:
         communication->GetCommunicationTable(this->runnableInformations, this->runnableExecutions, this->numberOfRunnables, this->maxCycle, this->runnableCommunications);
     }
     void SetProcessExecutions();
-    void TraceProcess(int inputRunnableIndex, int inputCycle, int thisRunnableId, int thisCycle, int hyperPeriodCount);
+    void TraceProcess(int inputRunnableIndex, int inputCycle, int thisRunnableId, int thisCycle, int hyperPeriodCount, std::map<int, double>& path);
     void GetReactionTime();
     void GetDataAge();
 
