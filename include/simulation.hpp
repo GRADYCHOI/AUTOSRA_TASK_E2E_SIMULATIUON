@@ -8,7 +8,9 @@
 #include <cmath>
 #include <limits.h>
 #include <cstring>
+#include <cstdio>
 #include <map>
+#include <fstream>
 #include "DAG.hpp"
 #include "communication.hpp"
 #include "simulation_types.hpp"
@@ -16,6 +18,7 @@
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"
 #include "rapidjson/prettywriter.h"
+#include "rapidjson/ostreamwrapper.h"
 
 
 class Simulation {
