@@ -4,3 +4,7 @@ build/
 .vscode/
 # ignore runtime file
 DAG_Simulation
+# ignore data folder
+data/
+# goorm ide
+goorm.manifest
