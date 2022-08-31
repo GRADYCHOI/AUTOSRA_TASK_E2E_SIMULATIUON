@@ -11,7 +11,7 @@ public:
     Communication() {}
     virtual ~Communication() {}
 
-    virtual void GetCommunicationTable(std::vector<RunnableInformation>& runnableInformations, std::vector<std::vector<ExecutionInformation>>& runnableExecutions, int numberOfRunnables, int maxCycle, std::vector<std::vector<ExecutionInformation>>& runnableCommunications) = 0;
+    virtual void GetCommunicationTable(std::vector<RunnableInformation>& runnableInformations, int numberOfRunnables, int maxCycle, std::vector<std::vector<ExecutionInformation>>& runnableCommunications) = 0;
 };
 
 class RunnableImplicit : public Communication {

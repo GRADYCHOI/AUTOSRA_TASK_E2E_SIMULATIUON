@@ -1,8 +1,7 @@
 #include "DAG.hpp"
 
 
-using namespace std;
-
+/*
 double LCM(double a, double b) {
     int tmp1 = static_cast<int>(a * 1000);
     int tmp2 = static_cast<int>(b * 1000);
@@ -15,92 +14,25 @@ double LCM(double a, double b) {
 
     return static_cast<double>(a * (b / (double)(tmp1 / 1000)));
 }
+*/
 
-DAG::~DAG() {
-    tasks.clear();
-    runnables.clear();
-}
+int DAG::InitializeMaxCycle() {
+    double minPeriod = DBL_MAX;
 
-std::vector<int> DAG::GetRunnablePriority() {
-    std::vector<std::pair<int, int>> tmpVector;
-    std::vector<int> result;
-    int index = 0;
-
-    for (auto &runnableId : this->runnablePriority) {
-        tmpVector.push_back(std::make_pair(index, runnableId));
-        index++;
-    }
-
-    std::sort(tmpVector.begin(), tmpVector.end(), [](std::pair<int, int> a, std::pair<int, int> b) { return a.second < b.second; });
-
-    for (auto &priorityMap : tmpVector) {
-        result.push_back(priorityMap.first);
-    }
-
-    return result;
-}
-
-std::vector<int> DAG::GetRunnableSequence(int index) {
-    return this->runnablePriorities[index];
-}
-
-std::vector<int> DAG::GetTaskPriority() {
-    std::vector<std::pair<int, int>> tmpVector;
-    std::vector<int> result;
-    int index = 0;
-
-    for (auto &taskId : this->taskPriority) {
-        tmpVector.push_back(std::make_pair(index, taskId));
-        index++;
-    }
-
-    std::sort(tmpVector.begin(), tmpVector.end(), [](std::pair<int, int> a, std::pair<int, int> b) { return a.second < b.second; });
-
-    for (auto &priorityMap : tmpVector) {
-        result.push_back(priorityMap.first);
-    }
-
-    return result;
-}
-
-std::vector<std::shared_ptr<TASK>> DAG::GetOrderOfPriorityTasks() {
-    std::vector<std::shared_ptr<TASK>> orderOfPriorityTasks;
-
-    for (auto &taskId : taskPriority) {
-        orderOfPriorityTasks.push_back(this->tasks[taskId]);
-    }
-
-    return orderOfPriorityTasks;
-}
-
-std::vector<std::shared_ptr<RUNNABLE>> DAG::GetOrderOfPriorityRunnables() {
-    std::vector<std::shared_ptr<RUNNABLE>> orderOfPriorityRunnables;
-
-    for (auto &runnableId : runnablePriority) {
-        orderOfPriorityRunnables.push_back(this->runnables[runnableId]);
-    }
-
-    return orderOfPriorityRunnables;
-}
-
-int DAG::GetMaxCycle() {
-    int minPeriod = INT_MAX;
-    int numberOfTasks = this->GetNumberOfTasks();
-
-    for (int taskIndex = 0; taskIndex < numberOfTasks; taskIndex++) {
-        if (minPeriod > this->tasks[taskIndex]->GetPeriod()) {
-            minPeriod = this->tasks[taskIndex]->GetPeriod();
+    for (auto &task : this->tasks_) {
+        if (minPeriod > task->GetPeriod()) {
+            minPeriod = task->GetPeriod();
         } 
     }
 
     return static_cast<int>(this->GetHyperPeriod() / minPeriod);
 }
 
-double DAG::GetHyperPeriod() {
+double DAG::InitializeHyperPeriod() {
     double tmpPeriod = this->GetOrderOfPriorityTasks()[0]->GetPeriod();
 
     for(auto& orderOfPriorityTasks : this->GetOrderOfPriorityTasks()) {
-        tmpPeriod = LCM(tmpPeriod, orderOfPriorityTasks->GetPeriod());
+        tmpPeriod = std::lcm(tmpPeriod, orderOfPriorityTasks->GetPeriod());
     }
 
     return tmpPeriod;
@@ -111,8 +43,11 @@ void DAG::SetInputRunnableList() {
     std::vector<std::shared_ptr<RUNNABLE>> tmpList;
     tmpList.swap(this->inputRunnables);
 
-    //std::copy_if(this->runnables.begin(), this->runnables.end(), std::back_inserter(this->inputRunnables), [](std::shared_ptr<RUNNABLE> runnable) { return runnable->GetId() == 0; });
-    for (auto &run : runnables) if (run->GetStatus() == 0) inputRunnables.push_back(run);
+    for (auto &run : runnables) {
+		if (run->GetStatus() == 0) {
+			inputRunnables.push_back(run);
+		}
+	}
 }
 
 void DAG::SetOutputRunnableList() {
@@ -120,29 +55,41 @@ void DAG::SetOutputRunnableList() {
     std::vector<std::shared_ptr<RUNNABLE>> tmpList;
     tmpList.swap(this->outputRunnables);
 
-    //std::copy_if(this->runnables.begin(), this->runnables.end(), std::back_inserter(this->outputRunnables), [](std::shared_ptr<RUNNABLE> runnable) { return runnable->GetId() == 1; });
-    for (auto &run : runnables) if (run->GetStatus() == 1) outputRunnables.push_back(run);
+    for (auto &run : runnables) {
+		if (run->GetStatus() == 1) {
+			outputRunnables.push_back(run);
+		}
+	}
 }
 
 void DAG::GenerateRunnables(int numberOfRunnables) {
-    std::cout << "Generate Runnables Start" << std::endl;
+    std::cout << "[Runnable Generation] Random Generation Start" << std::endl;
 
+	std::clog << "===============================================[Debug : Runnable Generation}===============================================" << std::endl;
     for (int runnableIndex = 0; runnableIndex < numberOfRunnables; runnableIndex++) {
         std::shared_ptr<RUNNABLE> runnable(new RUNNABLE(runnableIndex, runnableIndex, (double)(std::rand() % 100) / 1000));
         this->runnables.push_back(runnable);
-        //std::cout << "Runnable ID : " << runnable->GetId() << ", Execution Time : " << runnable->GetExecutionTime() << std::endl;
+        std::clog << "[DAG.cpp] Runnable ID : " << runnable->GetId() << ", Execution Time : " << runnable->GetExecutionTime() << std::endl;
     }
+	
+	std::clog << "===========================================================================================================================" << std::endl;
 
     this->RandomEdge();
     this->SetInputRunnableList();
     this->SetOutputRunnableList();
-    for (auto &run : inputRunnables) std::cout << run->GetId() << " " << run->GetStatus() << std::endl;
+	
+	std::clog << "=================================================[Debug : Runnable Status]=================================================" << std::endl;
+    for (auto &run : inputRunnables) std::clog << "DAG.cpp] Runnable ID : " run->GetId() << ", Status : " << run->GetStatus() << std::endl;
+	
+	std::cout << "[Runnable Generation] Random Generation End" << std::endl;
+	
+	std::clog << "===========================================================================================================================" << std::endl;
 }
 
 void DAG::RandomEdge() { //Runnable edge random generation
     int rate = -1;
 
-    std::cout << "Enter Edge rate(20~40) : ";
+    std::cout << "[Runnable Generation] Enter Edge Rate(20~40) : ";
     std::cin >> rate; 
 
     for (auto &runnable : this->runnables) {
@@ -155,31 +102,38 @@ void DAG::RandomEdge() { //Runnable edge random generation
 }
 
 void DAG::GenerateTasks(int numberOfTasks) {
+	std::cout << "[Task Generation] Generation Start" << std::endl;
     double tmpPeriod = -1.0;
     double tmpOffset = -1.0;
-    bool flag = true;
+    bool mappableFlag = false;
 
-    while(flag) {
+	std::clog << "=================================================[Debug : Task Generation}=================================================" << std::endl;
+    while(!mappableFlag) {
         for (int taskIndex = 0; taskIndex < numberOfTasks; taskIndex++) {
-            std::cout << taskIndex << " -th Task Period : ";
+            std::cout << "[Task Generation] " << taskIndex << " -th Task's Period : ";
             std::cin >> tmpPeriod;
-            std::cout << taskIndex << " -th Task Offset : ";
+            std::cout << "[Task Generation] " << taskIndex << " -th Task's Offset : ";
             std::cin >> tmpOffset;
             std::shared_ptr<TASK> task(new TASK(taskIndex, tmpPeriod, tmpOffset));
             this->tasks.push_back(task);
-            std::cout << "Task ID : " << tasks[taskIndex]->GetId() << ", Period : " << tasks[taskIndex]->GetPeriod() << std::endl;
+            std::clog << "[DAG.cpp] Task ID : " << tasks[taskIndex]->GetId() << ", Period : " << tasks[taskIndex]->GetPeriod() << ", Offset : " << tasks[taskIndex]->GetOffset() << std::endl;
         }
 
-        if (CheckMappable()) {
+        if (this->CheckMappable()) {
             std::cout << "This Mappable!" << std::endl;
-            flag = false;
+            mappableFlag = true;
         }
         else {
             std::cout << "Increse Tasks Period!" << std::endl;
             this->ClearTaskMapping();
             std::vector<std::shared_ptr<TASK>>().swap(this->tasks);
+			std::cout << "[Task Generation] ReGeneration Tasks" << std::endl;
         }
     }
+	
+	std::cout << "[Task Generation] Generation End" << std::endl;
+	
+	std::clog << "===========================================================================================================================" << std::endl;
 }
 
 bool DAG::CheckMappable() {
@@ -196,7 +150,7 @@ bool DAG::CheckMappable() {
         }
     }
 
-    return ((sumOfExecutionTimes / maxPeriod) < 0.5) ? true : false;
+    return ((sumOfExecutionTimes / maxPeriod) < UTILIZATION) ? true : false;
 }
 
 void DAG::ClearTaskMapping() {
@@ -215,14 +169,14 @@ double DAG::GetUtilization() {
     return tmpUtilization;
 }
 
-// TODO : 인 형 확인
 int DAG::CheckPrecedence(std::shared_ptr<RUNNABLE> runnable, int precedence) {
     precedence++;
-    //int runnableId = runnable->GetId();
-    //this->runnablePrecedence[runnableId] = (this->runnablePrecedence[runnableId] > precedence) ? this->runnablePrecedence[runnableId] : precedence;
-    if (runnablePrecedence[runnable->GetId()] < precedence) runnablePrecedence[runnable->GetId()] = precedence;
-    //std::cout << runnable->GetId() << " " << runnable->GetStatus() << std::endl;
-    if (runnable->GetStatus() == 2) {
+
+    if (runnablePrecedence[runnable->GetId()] < precedence) {
+		runnablePrecedence[runnable->GetId()] = precedence;
+	}
+	
+	if (runnable->GetStatus() == 2) {
         for (auto &outputRunnable : runnable->GetOutputRunnables()) {
             if (runnablePrecedence[outputRunnable->GetId()] < precedence+1) CheckPrecedence(outputRunnable, precedence);
         }
@@ -236,20 +190,22 @@ void DAG::SetRunnablePrecedence() {
     std::vector<int> tmpRunnablePrecedence(this->GetNumberOfRunnables(), 0);
     tmpRunnablePrecedence.swap(this->runnablePrecedence);
 
+	std::clog << "===============================================[Debug : Runnable Precedence]===============================================" << std::endl;
     for (auto &inputRunnable : this->inputRunnables) {
-        int precedence = 1;
-        this->runnablePrecedence[inputRunnable->GetId()] = precedence;
-        for (auto &outputRunnable : inputRunnable->GetOutputRunnables()) {
-            CheckPrecedence(outputRunnable, 0);
-        }
-            
-    }
-    for (auto &run : runnables)std::clog << run->GetId() << " " << run->GetStatus() << " " << runnablePrecedence[run->GetId()] << std::endl;
+		CheckPrecedence(inputRunnable, 1);
+	}
+
+    for (auto &runnable : runnables) {
+		std::clog << "[DAG.cpp] Runnable ID : " << runnable->GetId() << ", Status : " << runnable->GetStatus() << ", Precedence " << runnablePrecedence[runnable->GetId()] << std::endl;
+	}
+			
+	std::clog << "===========================================================================================================================" << std::endl;
 }
 
 void DAG::SetTaskPriority() {
     std::vector<std::pair<int, double>> tmpTaskArray; // ID, Period
 
+	std::clog << "==================================================[Debug : Task Priority]==================================================" << std::endl;
     for (auto &task : this->tasks) {
         tmpTaskArray.push_back(std::make_pair(task->GetId(), task->GetPeriod()));
     }
@@ -259,6 +215,8 @@ void DAG::SetTaskPriority() {
     for (auto &tmpTask : tmpTaskArray) {
         this->taskPriority.push_back(tmpTask.first);
     }
+	
+	std::clog << "===========================================================================================================================" << std::endl;
 }
 
 void DAG::SetRunnablePriority(int index) {

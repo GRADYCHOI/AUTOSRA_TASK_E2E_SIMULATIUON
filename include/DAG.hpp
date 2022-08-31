@@ -6,12 +6,14 @@
 #include <vector>
 #include <memory>
 #include <cmath>
-#include <limits.h>
+#include <limits>
 #include <cstring>
 #include <time.h>
 #include <stdlib.h>
+#include <floats.h>
 #include <cstdio>
 #include <map>
+#include <numeric>
 #include <fstream>
 #include "TASK.hpp"
 #include "mapping.hpp"
@@ -23,62 +25,69 @@
 #include "rapidjson/ostreamwrapper.h"
 
 
+#define UTILIZATION 0.67
+
 class DAG
 { 
 private:
-    int currentSequenceIndex = -1;
-
     // Command Pattern
     friend class Mapping;
-    std::unique_ptr<Mapping> mapping;
+    std::unique_ptr<Mapping> mapping_;
 
     // Sorted by ID
-    std::vector<std::shared_ptr<TASK>> tasks;
-    std::vector<std::shared_ptr<RUNNABLE>> runnables;
+    std::vector<std::shared_ptr<TASK>> tasks_;
+    std::vector<std::shared_ptr<RUNNABLE>> runnables_;
 
     // Sorted by ID
-    std::vector<std::shared_ptr<RUNNABLE>> inputRunnables;
-    std::vector<std::shared_ptr<RUNNABLE>> outputRunnables;
+    std::vector<std::shared_ptr<RUNNABLE>> inputRunnables_;
+    std::vector<std::shared_ptr<RUNNABLE>> outputRunnables_;
+	
+	// Sorted by ID (Because of duplicate numbers)
+    std::vector<int> runnablePrecedence_;
+	
+	// Sorted by Priority
+    std::vector<std::vector<int>> taskToRunnableSequences_;
 
-    // Sorted by Priority
-    std::vector<int> taskPriority;
-    std::vector<int> runnablePriority;
-    std::vector<std::vector<int>> runnablePriorities;
+	int InitializeMaxCycle();
+	double InitializeHyperPeriod();
+	
+	// Save Input/Output Runnable list
+    void SetInputRunnableList();
+    void SetOutputRunnableList();
+	
+	bool CheckMappable();
+    void ClearTaskMapping();
+    double GetUtilization();
 
-    // Sorted by ID (Because of duplicate numbers)
-    std::vector<int> runnablePrecedence;
 
 public:
     DAG() {}
-    ~DAG();
+    ~DAG() { tasks.clear(); runnables.clear(); }
 
-    std::shared_ptr<TASK> GetTask(const int index) const { return tasks[index]; }
-    std::shared_ptr<RUNNABLE> GetRunnable(const int index) const { return runnables[index]; }
-    std::vector<std::shared_ptr<TASK>> GetTasks() const { return tasks; }
-    std::vector<std::shared_ptr<RUNNABLE>> GetRunnables() const { return runnables; }
+	// Get Tasks & Runnables
+    std::vector<std::shared_ptr<TASK>> GetTasks() const { return tasks_; }
+    std::vector<std::shared_ptr<RUNNABLE>> GetRunnables() const { return runnables_; }
+	
+	std::shared_ptr<TASK> GetTask(const int index) const { return tasks_[index]; }
+    std::shared_ptr<RUNNABLE> GetRunnable(const int index) const { return runnables_[index]; }
+	
+	int GetNumberOfTasks() { return static_cast<int>(tasks_.size()); }
+    int GetNumberOfRunnables() { return static_cast<int>(runnables_.size()); }
 
-    std::vector<std::shared_ptr<TASK>> GetOrderOfPriorityTasks();
-    std::vector<std::shared_ptr<RUNNABLE>> GetOrderOfPriorityRunnables();
-
-    std::vector<std::shared_ptr<RUNNABLE>> GetInputRunnables() const { return inputRunnables; }
-    std::vector<std::shared_ptr<RUNNABLE>> GetOutputRunnables() const { return outputRunnables; }
-
-    int GetNumberOfInputRunnables() { return static_cast<int>(inputRunnables.size()); }
-    int GetNumberOfOutputRunnables() { return static_cast<int>(outputRunnables.size()); }
-
-    int GetNumberOfTasks() { return static_cast<int>(tasks.size()); }
-    int GetNumberOfRunnables() { return static_cast<int>(runnables.size()); }
-
-    int GetMaxCycle();
-    double GetHyperPeriod();
-
-    // Save Input/Output Runnable list
-    void SetInputRunnableList();
-    void SetOutputRunnableList();
+	// Get Input & Output Runnables
+    std::vector<std::shared_ptr<RUNNABLE>> GetInputRunnables() const { return inputRunnables_; }
+    std::vector<std::shared_ptr<RUNNABLE>> GetOutputRunnables() const { return outputRunnables_; }
+	
+	int GetNumberOfInputRunnables() { return static_cast<int>(inputRunnables_.size()); }
+    int GetNumberOfOutputRunnables() { return static_cast<int>(outputRunnables_.size()); }
+	
+	// Get Parameter (UnSafe Method)
+	int GetMaxCycle() { return (maxCycle_ != -1) ? maxCycle_ : InitializeMaxCycle(); }
+    double GetHyperPeriod(); { return (hyperPeriod_ != -1.0) hyperPeriod_ : InitializeeHyperPeriod(); }
 
     // Generate Runnables
     void GenerateRunnables(int numumberOfRunnables);
-    void RandomEdge(); 
+    void RandomEdge();
 
     // Generate Tasks
     void GenerateTasks(int numberOfTasks);
@@ -86,10 +95,6 @@ public:
     // Mapping
     void SetMapping(std::unique_ptr<Mapping>&& newMapping) { mapping = std::move(newMapping); }
     void DoMapping() { mapping->DoMapping(tasks, runnables); }
-
-    bool CheckMappable();
-    void ClearTaskMapping();
-    double GetUtilization();
 
     // Set Precedence
     int CheckPrecedence(std::shared_ptr<RUNNABLE> runnable, int precedence);
