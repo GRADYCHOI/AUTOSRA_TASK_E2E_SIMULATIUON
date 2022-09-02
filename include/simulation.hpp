@@ -11,6 +11,7 @@
 #include <cstdio>
 #include <map>
 #include <fstream>
+#include <numeric>
 #include "DAG.hpp"
 #include "communication.hpp"
 #include "simulation_types.hpp"
@@ -32,42 +33,46 @@ private:
     int maxCycle;
     double hyperPeriod;
 
-    int numberOfTasks;
-    int numberOfRunnables;
-    int numberOfInputRunnables;
-    int numberOfOutputRunnables;
+    int numberOfTasks_;
+    int numberOfRunnables_;
+    int numberOfInputRunnables_;
+    int numberOfOutputRunnables_;
 
-    std::string simulationTime;
+    // std::map<std::pair<int, int>, std::vector<ExecutionInformation>> processExecutions;
 
-    std::vector<RunnableInformation> runnableInformations;
-    std::vector<std::vector<ExecutionInformation>> runnableExecutions;
-    std::vector<std::vector<ExecutionInformation>> runnableCommunications;
-    std::map<std::pair<int, int>, std::vector<ExecutionInformation>> processExecutions;
-
+	// Store results of all cases
     std::vector<ResultInformation> results;
+	
+	// part of file name
+	std::string simulationTime;
 
     void Initialize();
     void ClearTables();
+	
+	void SetRunnableInformations();
+	
+	// Command Pattern
+	void SetRunnableCommunications() {
+        communication->GetCommunicationTable(this->runnableInformations, this->numberOfRunnables, this->maxCycle, this->runnableCommunications);
+    }
+	
+	void SetResult();
 
 public:
     Simulation(std::unique_ptr<DAG>&& newDag) { dag = std::move(newDag); Initialize(); }
-    ~Simulation() = default;
+    ~Simulation() {}
 
     void Simulate();
 
-    void SetRunnableInformations();
-    void SetRunnableExecutions();
-    void SetRunnableCommunications() {
-        communication->GetCommunicationTable(this->runnableInformations, this->runnableExecutions, this->numberOfRunnables, this->maxCycle, this->runnableCommunications);
-    }
+	// Command Pattern
+	void SetCommunication(std::unique_ptr<Communication>&& newCommunication) { communication = std::move(newCommunication); }
+	
     void SetProcessExecutions();
     void TraceProcess(int inputRunnableIndex, int inputCycle, int thisRunnableId, int thisCycle, int hyperPeriodCount, std::map<int, double>& path);
-    void SetResult();
+    
 
     double GetReactionTime();
     double GetDataAge();
-
-    void SetCommunication(std::unique_ptr<Communication>&& newCommunication) { communication = std::move(newCommunication); }
 
     std::vector<ResultInformation> GetBestReactionTime(int numberOfCase);
     std::vector<ResultInformation> GetWorstReactionTime(int numberOfCase);

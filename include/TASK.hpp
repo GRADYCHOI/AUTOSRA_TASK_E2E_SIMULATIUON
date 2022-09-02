@@ -16,6 +16,7 @@ private:
     double offset_ = -1.0;
 	
 	// Dynamic characters
+	int priority_ = -1;
 	double executionTime_ = -1.0;
     std::vector<std::shared_ptr<RUNNABLE>> runnables_;
 	
@@ -32,8 +33,10 @@ public:
     const double GetExecutionTime() { return executionTime_; }
     const int GetNumberOfRunnables() { return static_cast<int>(runnables_.size()); }
 
-    const std::vector<std::shared_ptr<RUNNABLE>> GetRunnables() const { return runnables_; }
+    const std::vector<std::shared_ptr<RUNNABLE>>& GetRunnables() const { return runnables_; }
 	const std::shared_ptr<RUNNABLE> GetRunnable(int index) const { return runnables_[index]; }
+	
+	void SetPriority(const int priority) { priority_ = priority; }
 
     void AddRunnable(const std::shared_ptr<RUNNABLE> runnable);
     void ClearMapping();

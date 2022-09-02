@@ -1,19 +1,6 @@
 #include "simulation.hpp"
 
 
-double GCD(double a, double b) {
-    int tmp1 = static_cast<int>(a * 1000);
-    int tmp2 = static_cast<int>(b * 1000);
-
-    while (tmp2 != 0) {
-    	int tmp3 = tmp1 % tmp2;
-        tmp1 = tmp2;
-        tmp2 = tmp3;
-    }
-
-    return static_cast<double>(tmp1/1000);
-}
-
 void Simulation::Initialize() {
     std::clog << "[simulation.cpp] CheckPoint 0" << std::endl;
     this->maxCycle = this->dag->GetMaxCycle();
@@ -40,43 +27,27 @@ void Simulation::Initialize() {
 
 void Simulation::ClearTables() {
     std::clog << "[simulation.cpp] CheckPoint 2-1" << std::endl;
-    RunnableInformation initialRunnableInformation = {-1, -1, -1, -1.0, -1.0, -1.0};
-    ExecutionInformation initialExecutionInformation = {-1.0, -1.0};
+    RunnableInformation initialRunnableInformation = {-1, -1, -1.0, -1.0, -1.0};
 
     std::clog << "[simulation.cpp] CheckPoint 2-2" << std::endl;
-    std::vector<RunnableInformation>(this->numberOfRunnables, initialRunnableInformation).swap(this->runnableInformations);
+    std::vector<RunnableInformation>(this->numberOfRunnables, initialRunnableInformation).swap(this->runnableInformations_);
 
     std::clog << "[simulation.cpp] CheckPoint 2-3" << std::endl;
-    std::vector<std::vector<ExecutionInformation>>(this->numberOfRunnables, std::vector<ExecutionInformation>(this->maxCycle, initialExecutionInformation)).swap(this->runnableExecutions);
-
-    std::clog << "[simulation.cpp] CheckPoint 2-4" << std::endl;
-    std::vector<std::vector<ExecutionInformation>>(this->numberOfRunnables, std::vector<ExecutionInformation>(this->maxCycle, initialExecutionInformation)).swap(this->runnableCommunications);
-
-    std::clog << "[simulation.cpp] CheckPoint 2-5" << std::endl;
-    std::map<std::pair<int, int>, std::vector<ExecutionInformation>>().swap(this->processExecutions);
-
-    std::clog << "[simulation.cpp] CheckPoint 2-6" << std::endl;
 }
 
 void Simulation::Simulate() {
-    int numberOfCase = this->dag->GetNumberOfSequenceCase();
+	std::vector<std::vector<std::vector<RUNNABLE>>> SeqeuencesPerTasks; // [Task][Number Of Case][Runnables]
+	
+	
+	
+    int numberOfCase = ;
+	
+	this->SetRunnableInformations();
+
 
     for (int caseIndex = 0; caseIndex < numberOfCase; caseIndex++) {
-        std::cout << "[simulation.cpp] Case : " << caseIndex << "/" << numberOfCase << std::endl;
-        std::clog << "[simulation.cpp] CheckPoint 1" << std::endl;
-        this->dag->SetRunnablePriority(caseIndex);
-
-        std::clog << "[simulation.cpp] CheckPoint 2" << std::endl;
-        this->ClearTables();
-
-        std::clog << "[simulation.cpp] CheckPoint 3" << std::endl;
-        this->SetRunnableInformations();
-
-        std::clog << "[simulation.cpp] CheckPoint 4" << std::endl;
-        this->SetRunnableExecutions();
-
         std::clog << "[simulation.cpp] CheckPoint 5" << std::endl;
-        this->SetRunnableCommunications();
+        std::vector<std::vector<CommunicationInformation>> = this->GetRunnableCommunications(this->RunnableInformations_, );
         
         std::clog << "[simulation.cpp] CheckPoint 6" << std::endl;
         this->SetProcessExecutions();
@@ -85,6 +56,13 @@ void Simulation::Simulate() {
         this->SetResult();
 
         std::clog << "[simulation.cpp] CheckPoint 8" << std::endl;
+		
+		std::system("clear");
+		std::cout << "===========================================================================================================================\n";
+		std::cout << "simulation Case     : " << std::setw(10) << caseIndex << "/" << << std::setw(10) numberOfCase << "\n";
+		std::cout << "Number Of Runnables : " << std::setw(10) << this->numberOfRunnables_ << "\n";
+		std::cout << "Number Of Tasks     : " << std::setw(10) << this->numberOfTasks_ << "\n";
+		std::cout << "===========================================================================================================================" << std::endl;
     }
 }
 
@@ -141,7 +119,7 @@ void Simulation::SetRunnableExecutions() {
 
     double unit = this->runnableInformations[0].period;
     for (auto &task : this->dag->GetTasks()) {
-        unit = GCD(unit, ((task->GetOffset() != 0.0) ? GCD(task->GetPeriod(), task->GetOffset()) : task->GetPeriod()));
+        unit = std::gcd(unit, ((task->GetOffset() != 0.0) ? std::gcd(task->GetPeriod(), task->GetOffset()) : task->GetPeriod()));
     }
 
     std::clog << "[simulation.cpp] CheckPoint 4-1" << std::endl;

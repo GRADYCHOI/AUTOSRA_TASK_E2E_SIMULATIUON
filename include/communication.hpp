@@ -16,17 +16,17 @@ public:
 
 class RunnableImplicit : public Communication {
 public:
-    void GetCommunicationTable(std::vector<RunnableInformation>& runnableInformations, std::vector<std::vector<ExecutionInformation>>& runnableExecutions, int numberOfRunnables, int maxCycle, std::vector<std::vector<ExecutionInformation>>& runnableCommunications);
+    void GetCommunicationTable(std::vector<RunnableInformation>& runnableInformations, int numberOfRunnables, int maxCycle, std::vector<std::vector<ExecutionInformation>>& runnableCommunications);
 };
 
 class TaskImplicit : public Communication {
 public:
-    void GetCommunicationTable(std::vector<RunnableInformation>& runnableInformations, std::vector<std::vector<ExecutionInformation>>& runnableExecutions, int numberOfRunnables, int maxCycle, std::vector<std::vector<ExecutionInformation>>& runnableCommunications);
+    void GetCommunicationTable(std::vector<RunnableInformation>& runnableInformations, int numberOfRunnables, int maxCycle, std::vector<std::vector<ExecutionInformation>>& runnableCommunications);
 };
 
 class LET : public Communication {
 public:
-    void GetCommunicationTable(std::vector<RunnableInformation>& runnableInformations, std::vector<std::vector<ExecutionInformation>>& runnableExecutions, int numberOfRunnables, int maxCycle, std::vector<std::vector<ExecutionInformation>>& runnableCommunications);
+    void GetCommunicationTable(std::vector<RunnableInformation>& runnableInformations, int numberOfRunnables, int maxCycle, std::vector<std::vector<ExecutionInformation>>& runnableCommunications);
 };
 
 #endif
