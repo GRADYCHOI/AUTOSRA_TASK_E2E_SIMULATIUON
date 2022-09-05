@@ -54,60 +54,109 @@ void RunnableImplicit::GetCommunicationTable(Simulation* simulationSelf, std::ve
 }
 
 void TaskImplicit::GetCommunicationTable(Simulation* simulationSelf, std::vector<std::vector<ExecutionInformation>>& runnableCommunications) {
-    std::vector<std::pair<int, int>> runnablePriority(numberOfRunnables);
-    std::vector<int> sameTaskMappedRunnables;
-    std::vector<ExecutionInformation> tmpInformation;
-
-    for (int runnableId = 0; runnableId < numberOfRunnables; runnableId++) {
-        runnablePriority[runnableId] = std::make_pair(runnableId, runnableInformations[runnableId].priority);
+    double unit = simulationSelf->runnableInformations[0].period;
+    for (auto &task : simulationSelf->dag_->GetTasks()) {
+        unit = std::gcd(unit, ((task->GetOffset() != 0.0) ? GCD(task->GetPeriod(), task->GetOffset()) : task->GetPeriod()));
     }
 
-    std::sort(runnablePriority.begin(), runnablePriority.end(), [](std::pair<int, int> a, std::pair<int, int> b) { return a.second < b.second; });
+    std::vector<double> emptyTimes((static_cast<int>(this->hyperPeriod / unit)), unit);
 
-    int taskId = runnableInformations[runnablePriority[0].first].taskId;
-    int preRunnableId = runnablePriority[0].first;
+    ExecutionInformation initialExecutionInformation = {-1.0, -1.0};
+    runnableCommunicatioins.resize(simulationSelf->numberOfRunnables_);
 
-    // First Runnable's ReadTime
-    std::copy(runnableExecutions[runnablePriority[0].first].begin(), runnableExecutions[runnablePriority[0].first].end(), tmpInformation.begin());
+    for (auto &task : simulationSelf->dag_->GetTasks()) {
+        int maxCycle = simulationSelf->hyperPeriod_ / task->GetPeriod();
+        double period = task->GetPeriod();
+        double offset = task->GetOffset();
+        double executionTime = task->GetExecutionTime();
 
-    for (auto &runnableId : runnablePriority) {
-        if (taskId != runnableInformations[runnableId.first].taskId) {
-            // Set Runnable Write Time
-            for (int cycle = 0; cycle < maxCycle; cycle++) {
-                tmpInformation[cycle].endTime = runnableExecutions[preRunnableId][cycle].endTime;
+        std::vector<ExecutionInformation> taskExecutionInformation(maxCycle, initialExecutionInformation);
+
+        for (int cycle = 0; cycle < maxCycle; cycle++) {
+            double releaseTime = period * cycle + offset;
+            double deadTime = period * (cycle + 1) + offset;
+
+            int unitIndex = static_cast<int>(std::floor(releaseTime / unit));
+
+            // Regard time-line
+            while (emptyTimes[(unitIndex)] == 0.0) unitIndex++;
+
+            // Set start time
+            this->runnableExecutions[runnableId][cycle].startTime = (static_cast<double>(unitIndex) * unit) + (1 - emptyTimes[unitIndex]);
+            if (this->runnableExecutions[runnableId][cycle].startTime > deadTime) {
+                std::cerr << "[Scheduling Error] : This sequence can't scheduling";
+                throw runnable;
             }
-
-            // Save R/W Time
-            for (auto &index : sameTaskMappedRunnables) {
-                std::copy(tmpInformation.begin(), tmpInformation.end(), runnableCommunications[index].begin());
-            }
-            sameTaskMappedRunnables.clear();
-
-            // Set Runnable Read Time
-            std::copy(runnableExecutions[runnableId.first].begin(), runnableExecutions[runnableId.first].end(), tmpInformation.begin());
-
-            taskId = runnableInformations[runnableId.first].taskId;
-        } else {
-            sameTaskMappedRunnables.push_back(runnableId.first);
         }
 
-        preRunnableId = runnableId.first;
+        for (auto &runnable : task->GetRunnables()) {
+            int runnableId = runnable->GetId();
+            runnableCommunications[runnableId].push_back(std::vector<ExecutionInformation>(maxCycle, initialExecutionInformation));
+
+            for (int cycle = 0; cycle < maxCycle; cycle++) {
+                runnableCommunications[runnableId][0][cycle].startTime = taskStartTime;
+                runnableCommunications[runnableId][0][cycle].endTime = taskEndTime;
+            }
+        }
     }
 
-    // Memcpy last Task's Runnables
-    for (int cycle = 0; cycle < maxCycle; cycle++) {
-        tmpInformation[cycle].endTime = runnableExecutions[preRunnableId][cycle].endTime;
-    }
-    for (auto &index : sameTaskMappedRunnables) {
-        std::copy(tmpInformation.begin(), tmpInformation.end(), runnableCommunications[index].begin());
+    // 참고용
+    for (auto &runnable : this->dag->GetOrderOfPriorityRunnables()) {
+        int runnableId = runnable->GetId();
+        int runnableMaxCycle = static_cast<int>(this->hyperPeriod) / this->runnableInformations[runnableId].period;
+
+        for (int cycle = 0; cycle < runnableMaxCycle; cycle++) {
+            double releaseTime = this->runnableInformations[runnableId].period * cycle + this->runnableInformations[runnableId].offset;
+            double deadTime = this->runnableInformations[runnableId].period * (cycle + 1) + this->runnableInformations[runnableId].offset;
+
+            int unitIndex = static_cast<int>(std::floor(releaseTime / unit));
+
+            // Regard time-line
+            while (emptyTimes[(unitIndex)] == 0.0) unitIndex++;
+
+            // Set start time
+            this->runnableExecutions[runnableId][cycle].startTime = (static_cast<double>(unitIndex) * unit) + (1 - emptyTimes[unitIndex]);
+            if (this->runnableExecutions[runnableId][cycle].startTime > deadTime) {
+                std::cerr << "[Scheduling Error] : This sequence can't scheduling";
+                throw runnable;
+            }
+
+            // Set end time
+            double executionTime = this->runnableInformations[runnableId].executionTime;
+
+            while (executionTime) {
+                if (emptyTimes[unitIndex] < executionTime) {
+                    executionTime -= emptyTimes[unitIndex];
+                    emptyTimes[unitIndex] = 0.0;
+
+                    unitIndex++;
+                } else {
+                    this->runnableExecutions[runnableId][cycle].endTime = (static_cast<double>(unitIndex) * unit) + executionTime;
+                    emptyTimes[unitIndex] -= executionTime;
+                    executionTime = 0.0;
+                }
+            }
+        }
     }
 }
 
-void LET::GetCommunicationTable(Simulation* simulationSelf, std::vector<std::vector<ExecutionInformation>>& runnableCommunications) {
-    for (int runnableId = 0; runnableId < numberOfRunnables; runnableId++) {
-        for (int cycle = 0; cycle < maxCycle; cycle++) {
-            runnableCommunications[runnableId][cycle].startTime = runnableInformations[runnableId].period * cycle + runnableInformations[runnableId].offset;
-            runnableCommunications[runnableId][cycle].endTime = runnableInformations[runnableId].period * (cycle + 1) + runnableInformations[runnableId].offset;
+void LET::GetCommunicationTable(Simulation* simulationSelf, std::vector<std::vecot<int>>& numberOfCases, std::vector<std::vector<std::vector<<ExecutionInformation>>>& runnableCommunications) {
+    ExecutionInformation initialExecutionInformation = {-1.0, -1.0};
+    runnableCommunicatioins.resize(simulationSelf->numberOfRunnables_);
+
+    for (auto &task : simulationSelf->dag_->GetTasks()) {
+        int maxCycle = simulationSelf->hyperPeriod_ / task->GetPeriod();
+        double period = task->GetPeriod();
+        double offset = task->GetOffset();
+
+        for (auto &runnable : task->GetRunnables()) {
+            int runnableId = runnable->GetId();
+            runnableCommunications[runnableId].push_back(std::vector<ExecutionInformation>(maxCycle, initialExecutionInformation));
+
+            for (int cycle = 0; cycle < maxCycle; cycle++) {
+                runnableCommunications[runnableId][0][cycle].startTime = period * cycle + offset;
+                runnableCommunications[runnableId][0][cycle].endTime = period * (cycle + 1) + offset;
+            }
         }
     }
 }
