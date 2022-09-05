@@ -1,11 +1,59 @@
 #include "communication.hpp"
 
 
-void RunnableImplicit::GetCommunicationTable(std::vector<RunnableInformation>& runnableInformations, std::vector<std::vector<ExecutionInformation>>& runnableExecutions, int numberOfRunnables, int maxCycle, std::vector<std::vector<ExecutionInformation>>& runnableCommunications) {
+void RunnableImplicit::GetCommunicationTable(Simulation* simulationSelf, std::vector<std::vector<ExecutionInformation>>& runnableCommunications) {
+    std::vector<std::vector<std::shared_ptr<RUNNABLE>>> sequence; // [Priority][Runnable]
+	sequence.reserve(simulationSelf->numberOfRunnables_);
+
+    for (auto &task : simulationSelf->dag->GetTaskPriority()) {
+        // sort by precedence in same task
+        int numberOfRunnables = task->GetNumberOfRunnables();
+        std::vector<std::shared_ptr<RUNNABLE>> runnableList(numberOfRunnables);
+
+        for (auto &runnable : task->GetRunnables()) {
+            runnableList.push_back(runnable);
+        }
+
+        std::sort(runnableList.begin(), runnableList.end(), [](std::shared_ptr<Runnable> a, std::shared_ptr<Runnable> b) { return a->GetPrecedence() < b->GetPprecedence(); });
+
+        // compress same precedence in vector
+        std::vector<std::vector<std::shared_ptr<RUNNABLE>>> sequencePerTask;
+
+        for (auto &runnable : runnableList) {
+            if (sequencePerTask.back()[0]->GetPrecedence() == runnable->GetPrecedence()) {
+                sequencePerTask.back().push_back(runnable);
+            } else {
+                sequencePerTask.push_back(std::vector<std::shared_ptr<RUNNABLE>>(runnable, 1));
+            }
+        }
+
+        // add seqeunce
+        sequence.append(sequencePerTask);
+    }
+
+    int numberOfCase = 1;
+    std::vector<int> numberOfCasePerPriority(static_cast<int>(sequence.size()));
+    std::vector<std::shared_ptr<RUNNABLE>> allCasePerPriority(numberOfPermutation);
+
+    for (auto samePriorityRunnables : sequence) {
+        int numberOfPermutation = simulationSelf->GetNumberOfPermutation(static_cast<int>(samePriorityRunnables.size()));
+        
+        numberOfCase *= numberOfPermutation;
+        numberOfCasePerPriority.push_back(numberOfPermutation);
+
+        std::sort(samePriorityRunnables.begin(), samePriorityRunnables.end(), [](std::shared_ptr<RUNNABLE> a, std::shared_ptr<RUNNABLE> b) { return a->GetId() < b->GetId(); });
+
+        do {
+            allCasePerPriority.push_back(samePriorityRunnables);
+        } while (std::next_permutation(samePriorityRunnables.begin(), samePriorityRunnables.end(), [](std::shared_ptr<RUNNABLE> a, std::shared_ptr<RUNNABLE> b) { return a->GetId() < b->GetId(); }));
+    }
+	
+    std::vector<std::vector<std::vector<double>>> executionInformationPerPriority;
+    
     std::copy(runnableExecutions.begin(), runnableExecutions.end(), runnableCommunications.begin());
 }
 
-void TaskImplicit::GetCommunicationTable(std::vector<RunnableInformation>& runnableInformations, std::vector<std::vector<ExecutionInformation>>& runnableExecutions, int numberOfRunnables, int maxCycle, std::vector<std::vector<ExecutionInformation>>& runnableCommunications) {
+void TaskImplicit::GetCommunicationTable(Simulation* simulationSelf, std::vector<std::vector<ExecutionInformation>>& runnableCommunications) {
     std::vector<std::pair<int, int>> runnablePriority(numberOfRunnables);
     std::vector<int> sameTaskMappedRunnables;
     std::vector<ExecutionInformation> tmpInformation;
@@ -55,7 +103,7 @@ void TaskImplicit::GetCommunicationTable(std::vector<RunnableInformation>& runna
     }
 }
 
-void LET::GetCommunicationTable(std::vector<RunnableInformation>& runnableInformations, std::vector<std::vector<ExecutionInformation>>& runnableExecutions, int numberOfRunnables, int maxCycle, std::vector<std::vector<ExecutionInformation>>& runnableCommunications) {
+void LET::GetCommunicationTable(Simulation* simulationSelf, std::vector<std::vector<ExecutionInformation>>& runnableCommunications) {
     for (int runnableId = 0; runnableId < numberOfRunnables; runnableId++) {
         for (int cycle = 0; cycle < maxCycle; cycle++) {
             runnableCommunications[runnableId][cycle].startTime = runnableInformations[runnableId].period * cycle + runnableInformations[runnableId].offset;

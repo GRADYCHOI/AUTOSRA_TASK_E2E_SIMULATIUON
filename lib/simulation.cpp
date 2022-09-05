@@ -35,27 +35,33 @@ void Simulation::ClearTables() {
     std::clog << "[simulation.cpp] CheckPoint 2-3" << std::endl;
 }
 
+int Simulation::GetNumberOfPermutation(int number) {
+    int tmpNumber = 1;
+
+    for (int count = number; count > 0; count--) {
+        tmpNumber *= count;
+    }
+
+    return tmpNumber;
+}
+
 void Simulation::Simulate() {
-	std::vector<std::vector<std::vector<RUNNABLE>>> SeqeuencesPerTasks; // [Task][Number Of Case][Runnables]
-	
-	
-	
-    int numberOfCase = ;
-	
-	this->SetRunnableInformations();
+    std::vector<std::vector<std::vector<double>>> runnableCommunications; // [Priority][Case][Cycle]
+    this->GetRunnableCommunications(runnableCommunications);
 
 
+	
+	
+
+    int numberOfCase = 1;
+    for (auto &schedulingPriority : runnableCommunications) {
+        numberOfCase *= static_cast<int>(schedulingPriority.size()); // number of case
+    }
+
+    this->results_.reserve(numberOfCase);
     for (int caseIndex = 0; caseIndex < numberOfCase; caseIndex++) {
-        std::clog << "[simulation.cpp] CheckPoint 5" << std::endl;
-        std::vector<std::vector<CommunicationInformation>> = this->GetRunnableCommunications(this->RunnableInformations_, );
-        
-        std::clog << "[simulation.cpp] CheckPoint 6" << std::endl;
-        this->SetProcessExecutions();
-
-        std::clog << "[simulation.cpp] CheckPoint 7" << std::endl;
-        this->SetResult();
-
-        std::clog << "[simulation.cpp] CheckPoint 8" << std::endl;
+        ResultInformation result = this->GetResult(caseIndex, runnableCommunications);
+        this->results_.push_back(result);
 		
 		std::system("clear");
 		std::cout << "===========================================================================================================================\n";

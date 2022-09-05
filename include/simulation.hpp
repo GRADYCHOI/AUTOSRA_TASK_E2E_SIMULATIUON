@@ -28,10 +28,10 @@ private:
 
     // Command Method Pattern
     friend class Communication;
-    std::unique_ptr<Communication> communication;
+    std::unique_ptr<Communication> communication_;
 
-    int maxCycle;
-    double hyperPeriod;
+    int maxCycle_;
+    double hyperPeriod_;
 
     int numberOfTasks_;
     int numberOfRunnables_;
@@ -41,22 +41,25 @@ private:
     // std::map<std::pair<int, int>, std::vector<ExecutionInformation>> processExecutions;
 
 	// Store results of all cases
-    std::vector<ResultInformation> results;
+    std::vector<ResultInformation> results_;
 	
 	// part of file name
-	std::string simulationTime;
+	std::string simulationTime_;
 
     void Initialize();
     void ClearTables();
 	
-	void SetRunnableInformations();
+	std::vector<RunnableInformation> GetRunnableInformations();
 	
 	// Command Pattern
-	void SetRunnableCommunications() {
-        communication->GetCommunicationTable(this->runnableInformations, this->numberOfRunnables, this->maxCycle, this->runnableCommunications);
+	void GetRunnableCommunications(std::vector<std::vector<std::vector<double>>>& runnableCommunications) {
+        communication_->GetCommunicationTable(this, runnableCommunications);
     }
 	
-	void SetResult();
+    double GetReactionTime(std::vector<std::vector<std::vector<double>>>& runnableCommunications);
+    double GetDataAge(std::vector<std::vector<std::vector<double>>>& runnableCommunications);
+
+	void SetResult(std::vector<std::vector<std::vector<double>>>& runnableCommunications);
 
 public:
     Simulation(std::unique_ptr<DAG>&& newDag) { dag = std::move(newDag); Initialize(); }
@@ -70,10 +73,6 @@ public:
     void SetProcessExecutions();
     void TraceProcess(int inputRunnableIndex, int inputCycle, int thisRunnableId, int thisCycle, int hyperPeriodCount, std::map<int, double>& path);
     
-
-    double GetReactionTime();
-    double GetDataAge();
-
     std::vector<ResultInformation> GetBestReactionTime(int numberOfCase);
     std::vector<ResultInformation> GetWorstReactionTime(int numberOfCase);
 

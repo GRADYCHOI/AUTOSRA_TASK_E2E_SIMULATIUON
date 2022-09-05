@@ -88,8 +88,8 @@ public:
     const int GetNumberOfOutputRunnables() { return static_cast<int>(outputRunnables_.size()); }
 	
 	// Priority
-    const std::vector<TASK>& GetTaskPriority() const { return taskOfPriority_; }
-	const std::vector<std::vector<RUNNABLE>>& GetRunnableOfPrecedence() const { return runnablesOfPrecedence_; }
+    const std::vector<std::shared_ptr<TASK>>& GetTaskPriority() const { return taskOfPriority_; }
+	const std::vector<std::vector<std::shared_ptr<RUNNABLE>>>& GetRunnableOfPrecedence() const { return runnablesOfPrecedence_; }
 	
 	// Get Parameter (UnSafe Method)
 	const int GetMaxCycle() { return (maxCycle_ != -1) ? maxCycle_ : InitializeMaxCycle(); }
