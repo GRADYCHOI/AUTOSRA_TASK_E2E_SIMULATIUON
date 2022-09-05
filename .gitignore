@@ -4,3 +4,5 @@ build/
 .vscode/
 # ignore runtime file
 DAG_Simulation
+# ignore data folder
+data/
