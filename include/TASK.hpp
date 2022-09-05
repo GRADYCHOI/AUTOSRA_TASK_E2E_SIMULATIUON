@@ -30,6 +30,7 @@ public:
     const double GetPeriod() const { return period_; }
     const double GetOffset() const { return offset_; }
     
+    const int GetPriority() const { return priority_; }
     const double GetExecutionTime() { return executionTime_; }
     const int GetNumberOfRunnables() { return static_cast<int>(runnables_.size()); }
 

@@ -1,17 +1,18 @@
 #include "communication.hpp"
 
 
-void RunnableImplicit::GetCommunicationTable(Simulation* simulationSelf, std::vector<std::vector<ExecutionInformation>>& runnableCommunications) {
+void RunnableImplicit::GetCommunicationTable(Simulation* simulationSelf, std::vector<std::vector<std::vector<int>>>& runnablePermutation, std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications) {
     std::vector<std::vector<std::shared_ptr<RUNNABLE>>> sequence; // [Priority][Runnable]
 	sequence.reserve(simulationSelf->numberOfRunnables_);
 
-    for (auto &task : simulationSelf->dag->GetTaskPriority()) {
+    // Same Priority Runnables
+    for (auto &task : simulationSelf->dag_->GetTaskPriority()) {
         // sort by precedence in same task
         int numberOfRunnables = task->GetNumberOfRunnables();
         std::vector<std::shared_ptr<RUNNABLE>> runnableList(numberOfRunnables);
 
         for (auto &runnable : task->GetRunnables()) {
-            runnableList.push_back(runnable);
+            runnableList.emplace_back(runnable);
         }
 
         std::sort(runnableList.begin(), runnableList.end(), [](std::shared_ptr<Runnable> a, std::shared_ptr<Runnable> b) { return a->GetPrecedence() < b->GetPprecedence(); });
@@ -21,40 +22,126 @@ void RunnableImplicit::GetCommunicationTable(Simulation* simulationSelf, std::ve
 
         for (auto &runnable : runnableList) {
             if (sequencePerTask.back()[0]->GetPrecedence() == runnable->GetPrecedence()) {
-                sequencePerTask.back().push_back(runnable);
+                sequencePerTask.back().emplace_back(runnable);
             } else {
-                sequencePerTask.push_back(std::vector<std::shared_ptr<RUNNABLE>>(runnable, 1));
+                sequencePerTask.emplace_back(std::vector<std::shared_ptr<RUNNABLE>>(1, runnable));
             }
         }
 
         // add seqeunce
-        sequence.append(sequencePerTask);
+        sequence.insert(sequence.end(), sequencePerTask.begin(), sequencePerTask.end());
     }
 
+    // Permutation in Same Priority Runnables
     int numberOfCase = 1;
     std::vector<int> numberOfCasePerPriority(static_cast<int>(sequence.size()));
-    std::vector<std::shared_ptr<RUNNABLE>> allCasePerPriority(numberOfPermutation);
+    std::vector<std::vector<std::shared_ptr<RUNNABLE>>> allCasePerPriority(numberOfPermutation);
 
     for (auto samePriorityRunnables : sequence) {
         int numberOfPermutation = simulationSelf->GetNumberOfPermutation(static_cast<int>(samePriorityRunnables.size()));
-        
-        numberOfCase *= numberOfPermutation;
-        numberOfCasePerPriority.push_back(numberOfPermutation);
 
         std::sort(samePriorityRunnables.begin(), samePriorityRunnables.end(), [](std::shared_ptr<RUNNABLE> a, std::shared_ptr<RUNNABLE> b) { return a->GetId() < b->GetId(); });
 
-        do {
-            allCasePerPriority.push_back(samePriorityRunnables);
-        } while (std::next_permutation(samePriorityRunnables.begin(), samePriorityRunnables.end(), [](std::shared_ptr<RUNNABLE> a, std::shared_ptr<RUNNABLE> b) { return a->GetId() < b->GetId(); }));
+        if (static_cast<int>(samePriorityRunnables.size()) > 1) {
+            std::vector<std::vector<int>> tmpRunnablePermutation;
+
+            do {
+                std::vector<int> tmpRunnables;
+                for (auto &runnable : samePriorityRunnables) {
+                    tmpRunnables.emplace_back(runnable->GetId());
+                }
+                tmpRunnablePermutation.emplace_back(tmpRunnables);
+
+                allCasePerPriority.emplace_back(samePriorityRunnables);
+            } while (std::next_permutation(samePriorityRunnables.begin(), samePriorityRunnables.end(), [](std::shared_ptr<RUNNABLE> a, std::shared_ptr<RUNNABLE> b) { return a->GetId() < b->GetId(); }));
+
+            runnablePermutation.emplace_back(tmpRunnablePermutation);
+        } else {
+            std::vector<int> tmpRunnables;
+            for (auto &runnable : samePriorityRunnables) {
+                tmpRunnables.emplace_back(runnable->GetId());
+            }
+            runnablePermutation.emplace_back(std::vector<std::vector<int>>(1, tmpRunnables));
+
+            allCasePerPriority.emplace_back(samePriorityRunnables);
+        }
     }
-	
-    std::vector<std::vector<std::vector<double>>> executionInformationPerPriority;
+
     
-    std::copy(runnableExecutions.begin(), runnableExecutions.end(), runnableCommunications.begin());
+
+    // Set Release Time in Runnables
+    ExecutionInformation initialExecutionInformation = {-1.0, -1.0};
+    std::vector<std::vector<ExecutionInformation>> runnableReleaseTimes(simulationSelf->numberOfRunnables_);
+
+    for (auto &task : simulationSelf->dag_->GetTasks()) {
+        int maxCycle = simulationSelf->hyperPeriod_ / task->GetPeriod();
+        double period = task->GetPeriod();
+        double offset = task->GetOffset();
+
+        for (auto &runnable : task->GetRunnables()) {
+            int runnableId = runnable->GetId();
+            runnableReleaseTimes[runnableId].swap(std::vector<ExecutionInformation>(maxCycle, initialExecutionInformation));
+
+            for (int cycle = 0; cycle < maxCycle; cycle++) {
+                runnableReleaseTimes[runnableId][cycle].startTime = period * cycle + offset;
+                runnableReleaseTimes[runnableId][cycle].endTime = period * (cycle + 1) + offset;
+            }
+        }
+    }
+
+    // Set Execution Times
+    double unit = simulationSelf->dag_->GetTask(0)->GetPeriod();
+    for (auto &task : simulationSelf->dag_->GetTasks()) {
+        unit = std::gcd(unit, ((task->GetOffset() != 0.0) ? GCD(task->GetPeriod(), task->GetOffset()) : task->GetPeriod()));
+    }
+
+    std::vector<double> emptyTimes((static_cast<int>(simulationSelf->GetHyperPeriod() / unit)), unit);
+
+    runnableCommunicatioins.resize(this->numberOfRunnables_);
+    for (auto &oneCaseSequence : allCasePerPriority) {
+        for (auto &runnable : oneCaseSequence) {
+            int runnableId = runnable->GetId();
+            int maxCycle = static_cast<int>(runnableReleaseTimes[runnableId].size());
+            runnableCommunications[runnableId].emplace_back(runnableReleaseTimes[runnableId]);
+
+            for (int cycle = 0; cycle < maxCycle; cycle++) {
+                int unitIndex = static_cast<int>(std::floor((runnableReleaseTimes[runnableId].back())[cycle] / unit));
+
+                // Regard time-line
+                while (emptyTimes[(unitIndex)] == 0.0) unitIndex++;
+
+                // Set start time
+                (runnableReleaseTimes[runnableId].back())[cycle].startTime = (static_cast<double>(unitIndex) * unit) + (1 - emptyTimes[unitIndex]);
+
+                // Set end time
+                double executionTime = runnable->GetExecutionTime();
+
+                while (executionTime) {
+                    if (emptyTimes[unitIndex] < executionTime) {
+                        executionTime -= emptyTimes[unitIndex];
+                        emptyTimes[unitIndex] = 0.0;
+
+                        unitIndex++;
+                    } else {
+                        (runnableReleaseTimes[runnableId].back())[cycle].endTime = (static_cast<double>(unitIndex) * unit) + executionTime;
+                        emptyTimes[unitIndex] -= executionTime;
+                        executionTime = 0.0;
+                    }
+                }
+
+                if (cycle != (maxCycle - 1)) {
+                    if ((runnableReleaseTimes[runnableId].back())[cycle + 1].startTime < (runnableReleaseTimes[runnableId].back())[cycle].endTime) {
+                        std::cerr << "[Scheduling Error] : This sequence can't scheduling";
+                        throw runnable;
+                    }
+                }
+            }
+        }
+    }
 }
 
-void TaskImplicit::GetCommunicationTable(Simulation* simulationSelf, std::vector<std::vector<ExecutionInformation>>& runnableCommunications) {
-    double unit = simulationSelf->runnableInformations[0].period;
+void TaskImplicit::GetCommunicationTable(Simulation* simulationSelf, std::vector<std::vector<std::vector<int>>>& runnablePermutation, std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications) {
+    double unit = simulationSelf->dag_->GetTask(0)->GetPeriod();
     for (auto &task : simulationSelf->dag_->GetTasks()) {
         unit = std::gcd(unit, ((task->GetOffset() != 0.0) ? GCD(task->GetPeriod(), task->GetOffset()) : task->GetPeriod()));
     }
@@ -82,48 +169,10 @@ void TaskImplicit::GetCommunicationTable(Simulation* simulationSelf, std::vector
             while (emptyTimes[(unitIndex)] == 0.0) unitIndex++;
 
             // Set start time
-            this->runnableExecutions[runnableId][cycle].startTime = (static_cast<double>(unitIndex) * unit) + (1 - emptyTimes[unitIndex]);
-            if (this->runnableExecutions[runnableId][cycle].startTime > deadTime) {
-                std::cerr << "[Scheduling Error] : This sequence can't scheduling";
-                throw runnable;
-            }
-        }
-
-        for (auto &runnable : task->GetRunnables()) {
-            int runnableId = runnable->GetId();
-            runnableCommunications[runnableId].push_back(std::vector<ExecutionInformation>(maxCycle, initialExecutionInformation));
-
-            for (int cycle = 0; cycle < maxCycle; cycle++) {
-                runnableCommunications[runnableId][0][cycle].startTime = taskStartTime;
-                runnableCommunications[runnableId][0][cycle].endTime = taskEndTime;
-            }
-        }
-    }
-
-    // 참고용
-    for (auto &runnable : this->dag->GetOrderOfPriorityRunnables()) {
-        int runnableId = runnable->GetId();
-        int runnableMaxCycle = static_cast<int>(this->hyperPeriod) / this->runnableInformations[runnableId].period;
-
-        for (int cycle = 0; cycle < runnableMaxCycle; cycle++) {
-            double releaseTime = this->runnableInformations[runnableId].period * cycle + this->runnableInformations[runnableId].offset;
-            double deadTime = this->runnableInformations[runnableId].period * (cycle + 1) + this->runnableInformations[runnableId].offset;
-
-            int unitIndex = static_cast<int>(std::floor(releaseTime / unit));
-
-            // Regard time-line
-            while (emptyTimes[(unitIndex)] == 0.0) unitIndex++;
-
-            // Set start time
-            this->runnableExecutions[runnableId][cycle].startTime = (static_cast<double>(unitIndex) * unit) + (1 - emptyTimes[unitIndex]);
-            if (this->runnableExecutions[runnableId][cycle].startTime > deadTime) {
-                std::cerr << "[Scheduling Error] : This sequence can't scheduling";
-                throw runnable;
-            }
+            double startTime = (static_cast<double>(unitIndex) * unit) + (1 - emptyTimes[unitIndex]);
+            double endTime;
 
             // Set end time
-            double executionTime = this->runnableInformations[runnableId].executionTime;
-
             while (executionTime) {
                 if (emptyTimes[unitIndex] < executionTime) {
                     executionTime -= emptyTimes[unitIndex];
@@ -131,16 +180,29 @@ void TaskImplicit::GetCommunicationTable(Simulation* simulationSelf, std::vector
 
                     unitIndex++;
                 } else {
-                    this->runnableExecutions[runnableId][cycle].endTime = (static_cast<double>(unitIndex) * unit) + executionTime;
+                    endTime = (static_cast<double>(unitIndex) * unit) + executionTime;
                     emptyTimes[unitIndex] -= executionTime;
                     executionTime = 0.0;
                 }
             }
+
+            if (endTime > deadTime) {
+                std::cerr << "[Scheduling Error] : This sequence can't scheduling";
+                throw runnable;
+            }
+
+            taskExecutionInformation[cycle].startTime = startTime;
+            taskExecutionInformation[cycle].endTime = endTime;
+        }
+
+        for (auto &runnable : task->GetRunnables()) {
+            int runnableId = runnable->GetId();
+            runnableCommunicatioins[runnableId].emplace_back(taskExecutionInformation);
         }
     }
 }
 
-void LET::GetCommunicationTable(Simulation* simulationSelf, std::vector<std::vecot<int>>& numberOfCases, std::vector<std::vector<std::vector<<ExecutionInformation>>>& runnableCommunications) {
+void LET::GetCommunicationTable(Simulation* simulationSelf, std::vector<std::vector<std::vector<int>>>& runnablePermutation, std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications) {
     ExecutionInformation initialExecutionInformation = {-1.0, -1.0};
     runnableCommunicatioins.resize(simulationSelf->numberOfRunnables_);
 
@@ -151,7 +213,7 @@ void LET::GetCommunicationTable(Simulation* simulationSelf, std::vector<std::vec
 
         for (auto &runnable : task->GetRunnables()) {
             int runnableId = runnable->GetId();
-            runnableCommunications[runnableId].push_back(std::vector<ExecutionInformation>(maxCycle, initialExecutionInformation));
+            runnableCommunications[runnableId].emplace_back(std::vector<ExecutionInformation>(maxCycle, initialExecutionInformation));
 
             for (int cycle = 0; cycle < maxCycle; cycle++) {
                 runnableCommunications[runnableId][0][cycle].startTime = period * cycle + offset;

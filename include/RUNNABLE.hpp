@@ -31,7 +31,7 @@ public:
 
     const int GetId() const { return id_; }
     const int GetRealId() const { return realId_; }
-    const double GetExecutionTime() const { return executionTime_; }
+    double GetExecutionTime() const { return executionTime_; }
     const int GetStatus() const { return status_; }
 	
 	const int GetPrecedence() const { return precedence_; }
