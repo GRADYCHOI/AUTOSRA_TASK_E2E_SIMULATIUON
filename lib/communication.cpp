@@ -141,6 +141,8 @@ void RunnableImplicit::GetCommunicationTable(Simulation* simulationSelf, std::ve
 }
 
 void TaskImplicit::GetCommunicationTable(Simulation* simulationSelf, std::vector<std::vector<std::vector<int>>>& runnablePermutation, std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications) {
+    runnablePermutation.reserve(simulationSelf->numberOfRunnables_);
+
     double unit = simulationSelf->dag_->GetTask(0)->GetPeriod();
     for (auto &task : simulationSelf->dag_->GetTasks()) {
         unit = std::gcd(unit, ((task->GetOffset() != 0.0) ? GCD(task->GetPeriod(), task->GetOffset()) : task->GetPeriod()));
@@ -197,12 +199,17 @@ void TaskImplicit::GetCommunicationTable(Simulation* simulationSelf, std::vector
 
         for (auto &runnable : task->GetRunnables()) {
             int runnableId = runnable->GetId();
+
+            runnablePermutation.emplace_back(std::vector<int>(1, runnableId));
+
             runnableCommunicatioins[runnableId].emplace_back(taskExecutionInformation);
         }
     }
 }
 
 void LET::GetCommunicationTable(Simulation* simulationSelf, std::vector<std::vector<std::vector<int>>>& runnablePermutation, std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications) {
+    runnablePermutation.reserve(simulationSelf->numberOfRunnables_);
+
     ExecutionInformation initialExecutionInformation = {-1.0, -1.0};
     runnableCommunicatioins.resize(simulationSelf->numberOfRunnables_);
 
@@ -213,6 +220,9 @@ void LET::GetCommunicationTable(Simulation* simulationSelf, std::vector<std::vec
 
         for (auto &runnable : task->GetRunnables()) {
             int runnableId = runnable->GetId();
+
+            runnablePermutation.emplace_back(std::vector<int>(1, runnableId));
+
             runnableCommunications[runnableId].emplace_back(std::vector<ExecutionInformation>(maxCycle, initialExecutionInformation));
 
             for (int cycle = 0; cycle < maxCycle; cycle++) {

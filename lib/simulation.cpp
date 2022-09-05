@@ -46,21 +46,21 @@ int Simulation::GetNumberOfPermutation(int number) {
 }
 
 void Simulation::Simulate() {
-    std::vector<std::vector<std::vector<double>>> runnableCommunications; // [Priority][Case][Cycle]
-    this->GetRunnableCommunications(runnableCommunications);
+    std::vector<std::vector<ExecutionInformation>> runnableExecutions; // [ID][Time]
+    std::vector<std::vector<std::vector<ExecutionInformation>>> runnableCommunications; // [ID][Case][Time]
+    std::vector<std::vector<std::vector<int>>> runnablePermutation;  // [Priority][Case][ID]
 
-
-	
-	
+    // TODO : Make Get Runnable Executions function
+    this->GetRunnableCommunications(runnablePermutation, runnableCommunications);
 
     int numberOfCase = 1;
-    for (auto &schedulingPriority : runnableCommunications) {
+    for (auto &schedulingPriority : runnablePermutation) {
         numberOfCase *= static_cast<int>(schedulingPriority.size()); // number of case
     }
 
     this->results_.reserve(numberOfCase);
     for (int caseIndex = 0; caseIndex < numberOfCase; caseIndex++) {
-        ResultInformation result = this->GetResult(caseIndex, runnableCommunications);
+        ResultInformation result = this->GetResult(caseIndex, runnablePermutation, runnableCommunications);
         this->results_.push_back(result);
 		
 		std::system("clear");
@@ -72,111 +72,14 @@ void Simulation::Simulate() {
     }
 }
 
-void Simulation::SetResult() {
-    ResultInformation result = {this->dag->GetCurrentSequenceIndex(), this->GetReactionTime(), this->GetDataAge()};
-    this->results.push_back(result);
+void Simulation::GetResult(int caseIndex, std::vector<std::vector<std::vector<int>>>& runnablePermutation, std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunicatioins) {
+
+
+    ResultInformation result = {, this->GetReactionTime(), this->GetDataAge()};
+    return result;
 }
 
-void Simulation::SetRunnableInformations() {
-    // --------------------------------------------------------------------------------------------------------------
-    // runnableInformations : [1 X numberOfRunnables]     Output
-    // --------------------------------------------------------------------------------------------------------------
-    // ## The order of Runnable is based on their IDs
-    // 1 : RunnableInformation (taskId, priority, period, offset, executionTime)
-    // --------------------------------------------------------------------------------------------------------------
-    
-    std::vector<int> runnablePriority = this->dag->GetRunnablePriority();
-    
-    for (auto &task : this->dag->GetTasks()) {
-        for (auto &runnable : task->GetRunnables()) {
-            std::clog << "[simulation.cpp] CheckPoint 3-1" << std::endl;
-            int runnableId = runnable->GetId();
-            std::clog << "[simulation.cpp] CheckPoint 3-2" << std::endl;
-            this->runnableInformations[runnableId].taskId = task->GetId();
-            std::clog << "[simulation.cpp] CheckPoint 3-3" << std::endl;
-            this->runnableInformations[runnableId].priority = runnablePriority[runnableId];
-            std::clog << "[simulation.cpp] CheckPoint 3-4" << std::endl;
-            this->runnableInformations[runnableId].status = runnable->GetStatus();
-            std::clog << "[simulation.cpp] CheckPoint 3-5" << std::endl;
-            this->runnableInformations[runnableId].period = task->GetPeriod();
-            std::clog << "[simulation.cpp] CheckPoint 3-6" << std::endl;
-            this->runnableInformations[runnableId].offset = task->GetOffset();
-            std::clog << "[simulation.cpp] CheckPoint 3-7" << std::endl;
-            this->runnableInformations[runnableId].executionTime = runnable->GetExecutionTime();
-            std::clog << "[simulation.cpp] CheckPoint 3-7" << std::endl;
-        }
-    }
-}
-
-void Simulation::SetRunnableExecutions() {
-    // --------------------------------------------------------------------------------------------------------------
-    // runnableInformations : [1 X numberOfRunnables]     Input
-    // --------------------------------------------------------------------------------------------------------------
-    // ## The order of Runnable is based on their IDs
-    // 1 : RunnableInformation (taskId, priority, period, offset, executionTime)
-    // --------------------------------------------------------------------------------------------------------------
-    // runnableExecutions : [maxCycle X numberOfRunnables]     Output
-    // --------------------------------------------------------------------------------------------------------------
-    // ## The order of Runnable is based on their IDs
-    // 1 : First Cycle's ExecutionInformation (startTime, endTime)
-    // 2 : Second Cycle's ExecutionInformation (startTime, endTime)
-    // ..
-    // --------------------------------------------------------------------------------------------------------------
-
-    double unit = this->runnableInformations[0].period;
-    for (auto &task : this->dag->GetTasks()) {
-        unit = std::gcd(unit, ((task->GetOffset() != 0.0) ? std::gcd(task->GetPeriod(), task->GetOffset()) : task->GetPeriod()));
-    }
-
-    std::clog << "[simulation.cpp] CheckPoint 4-1" << std::endl;
-    std::vector<double> emptyTimes((static_cast<int>(this->hyperPeriod / unit)), unit);
-
-    for (auto &runnable : this->dag->GetOrderOfPriorityRunnables()) {
-        int runnableId = runnable->GetId();
-        int runnableMaxCycle = static_cast<int>(this->hyperPeriod) / this->runnableInformations[runnableId].period;
-        std::clog << "[simulation.cpp] CheckPoint 4-2" << std::endl;
-
-        for (int cycle = 0; cycle < runnableMaxCycle; cycle++) {
-            double releaseTime = this->runnableInformations[runnableId].period * cycle + this->runnableInformations[runnableId].offset;
-            double deadTime = this->runnableInformations[runnableId].period * (cycle + 1) + this->runnableInformations[runnableId].offset;
-
-            int unitIndex = static_cast<int>(std::floor(releaseTime / unit));
-            std::clog << "[simulation.cpp] CheckPoint 4-3" << std::endl;
-
-            // Regard time-line
-            while (emptyTimes[(unitIndex)] == 0.0) unitIndex++;
-            std::clog << "[simulation.cpp] CheckPoint 4-4" << std::endl;
-
-            // Set start time
-            this->runnableExecutions[runnableId][cycle].startTime = (static_cast<double>(unitIndex) * unit) + (1 - emptyTimes[unitIndex]);
-            if (this->runnableExecutions[runnableId][cycle].startTime > deadTime) {
-                std::cerr << "[Scheduling Error] : This sequence can't scheduling";
-                throw runnable;
-            }
-            std::clog << "[simulation.cpp] CheckPoint 4-5" << std::endl;
-
-            // Set end time
-            double executionTime = this->runnableInformations[runnableId].executionTime;
-
-            while (executionTime) {
-                std::clog << "[simulation.cpp] CheckPoint 4-6" << std::endl;
-                if (emptyTimes[unitIndex] < executionTime) {
-                    executionTime -= emptyTimes[unitIndex];
-                    emptyTimes[unitIndex] = 0.0;
-
-                    unitIndex++;
-                } else {
-                    this->runnableExecutions[runnableId][cycle].endTime = (static_cast<double>(unitIndex) * unit) + executionTime;
-                    emptyTimes[unitIndex] -= executionTime;
-                    executionTime = 0.0;
-                }
-            }
-            std::clog << "[simulation.cpp] CheckPoint 4-7" << std::endl;
-        }
-    }
-}
-
-void Simulation::SetProcessExecutions() {
+void Simulation::SetProcessExecutions(std::vector<std::vector<ExecutionInformation>>& ) {
     for (auto &runnable : this->dag->GetInputRunnables()) {
         int eachMaxCycle = this->hyperPeriod / this->runnableInformations[runnable->GetId()].period;
 

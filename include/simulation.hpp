@@ -52,8 +52,8 @@ private:
 	std::vector<RunnableInformation> GetRunnableInformations();
 	
 	// Command Pattern
-	void GetRunnableCommunications(std::vector<std::vector<std::vector<double>>>& runnableCommunications) {
-        communication_->GetCommunicationTable(this, runnableCommunications);
+	void GetRunnableCommunications(std::vector<std::vector<std::vector<int>>>& runnablePermutation, std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications) {
+        communication_->GetCommunicationTable(this, runnablePermutation, runnableCommunications);
     }
 	
     double GetReactionTime(std::vector<std::vector<std::vector<double>>>& runnableCommunications);
