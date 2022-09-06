@@ -17,16 +17,16 @@ private:
 	
 	// Dynamic characters
 	int precedence_ = -1;
-    std::vector<std::weak_ptr<RUNNABLE>> inputRunnables;
-    std::vector<std::shared_ptr<RUNNABLE>> outputRunnables;
+    std::vector<std::weak_ptr<RUNNABLE>> inputRunnables_;
+    std::vector<std::shared_ptr<RUNNABLE>> outputRunnables_;
 
-    void SetStatus() { status = (outputRunnables.size()) ? ((inputRunnables.size()) ? 2 : 1) : 0; }
+    void SetStatus() { status_ = (outputRunnables_.size()) ? ((inputRunnables_.size()) ? 2 : 1) : 0; }
 	
     void AddInputRunnable(const std::weak_ptr<RUNNABLE> inputRunnable) { this->inputRunnables_.push_back(inputRunnable); this->SetStatus(); }
     void AddOutputRunnable(const std::shared_ptr<RUNNABLE> outputRunnable) { this->outputRunnables_.push_back(outputRunnable); this->SetStatus(); }
 
 public:
-    RUNNABLE(int id, int realId, double executionTime) : id(id), realId(realId), executionTime((executionTime == 0.0) ? 0.01 : executionTime) {}
+    RUNNABLE(int id, int realId, double executionTime) : id_(id), realId_(realId), executionTime_((executionTime == 0.0) ? 0.01 : executionTime) {}
     ~RUNNABLE() {}
 
     const int GetId() const { return id_; }
@@ -35,14 +35,14 @@ public:
     const int GetStatus() const { return status_; }
 	
 	const int GetPrecedence() const { return precedence_; }
-    const int GetNumberOfInputRunnables() { return static_cast<int>(inputRunnables.size()); }
-    const int GetNumberOfOutputRunnables() { return static_cast<int>(outputRunnables.size()); }
+    const int GetNumberOfInputRunnables() { return static_cast<int>(inputRunnables_.size()); }
+    const int GetNumberOfOutputRunnables() { return static_cast<int>(outputRunnables_.size()); }
 
-    const std::shared_ptr<RUNNABLE> GetInputRunnable(int index) { return intputRunnable[index].lock(); }
+    const std::shared_ptr<RUNNABLE> GetInputRunnable(int index) { return inputRunnables_[index].lock(); }
     const std::vector<std::shared_ptr<RUNNABLE>> GetInputRunnables();
 
-    const std::shared_ptr<RUNNABLE> GetOutputRunnable(int index) const { return outputRunnables[index]; }
-    const std::vector<std::shared_ptr<RUNNABLE>>& GetOutputRunnables() const { return outputRunnables; }
+    const std::shared_ptr<RUNNABLE> GetOutputRunnable(int index) const { return outputRunnables_[index]; }
+    const std::vector<std::shared_ptr<RUNNABLE>>& GetOutputRunnables() const { return outputRunnables_; }
 	
 	void SetPrecedence(const int precedence) { precedence_ = precedence; }
 

@@ -2,6 +2,7 @@
 
 #define __DAG_HPP__
 
+#include <iostream>
 #include <algorithm>
 #include <vector>
 #include <memory>
@@ -10,7 +11,7 @@
 #include <cstring>
 #include <time.h>
 #include <stdlib.h>
-#include <floats.h>
+#include <float.h>
 #include <cstdio>
 #include <map>
 #include <numeric>
@@ -68,7 +69,7 @@ private:
 
 public:
     DAG() {}
-    ~DAG() { tasks.clear(); runnables.clear(); }
+    ~DAG() { tasks_.clear(); runnables_.clear(); }
 
 	// Get Tasks & Runnables
     const std::vector<std::shared_ptr<TASK>>& GetTasks() const { return tasks_; }
@@ -86,21 +87,13 @@ public:
 	
 	const int GetNumberOfInputRunnables() { return static_cast<int>(inputRunnables_.size()); }
     const int GetNumberOfOutputRunnables() { return static_cast<int>(outputRunnables_.size()); }
-	
-	// Priority
-    const std::vector<std::shared_ptr<TASK>>& GetTaskPriority() const { return taskOfPriority_; }
-	const std::vector<std::vector<std::shared_ptr<RUNNABLE>>>& GetRunnableOfPrecedence() const { return runnablesOfPrecedence_; }
-	
-	// Get Parameter (UnSafe Method)
-	const int GetMaxCycle() { return (maxCycle_ != -1) ? maxCycle_ : InitializeMaxCycle(); }
-    const double GetHyperPeriod(); { return (hyperPeriod_ != -1.0) hyperPeriod_ : InitializeeHyperPeriod(); }
 
 	// Generate Command
 	void GenerateDag();
 
     // Mapping
-    void SetMapping(std::unique_ptr<Mapping>&& newMapping) { mapping = std::move(newMapping); }
-    void DoMapping() { mapping->DoMapping(tasks, runnables); }
+    void SetMapping(std::unique_ptr<Mapping>&& newMapping) { mapping_ = std::move(newMapping); }
+    void DoMapping() { mapping_->DoMapping(tasks_, runnables_); }
 
     // Set Precedence
     void SetRunnablePrecedence();
