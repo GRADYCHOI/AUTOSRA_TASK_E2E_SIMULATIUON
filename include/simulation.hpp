@@ -28,6 +28,7 @@ private:
 
     // Command Method Pattern
     friend class Communication;
+    std::unique_ptr<Communication> execution_ = std::unique_ptr<Communication>(new RunnableImplicit());
     std::unique_ptr<Communication> communication_;
 
     int maxCycle_;
@@ -40,6 +41,8 @@ private:
 
     // std::map<std::pair<int, int>, std::vector<ExecutionInformation>> processExecutions;
 
+    std::vector<std::vector<int>> sequence_;
+
 	// Store results of all cases
     std::vector<ResultInformation> results_;
 	
@@ -47,19 +50,28 @@ private:
 	std::string simulationTime_;
 
     void Initialize();
-    void ClearTables();
-	
-	std::vector<RunnableInformation> GetRunnableInformations();
+
+    void GetRunnableExecutions(std::vector<std::vector<std::vector<int>>>& runnablePermutation, std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableExecutions) {
+        execution_->GetCommunicationTable(this, runnablePermutation, runnableExecutions);
+    }
 	
 	// Command Pattern
 	void GetRunnableCommunications(std::vector<std::vector<std::vector<int>>>& runnablePermutation, std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications) {
         communication_->GetCommunicationTable(this, runnablePermutation, runnableCommunications);
     }
 	
-    double GetReactionTime(std::vector<std::vector<std::vector<double>>>& runnableCommunications);
-    double GetDataAge(std::vector<std::vector<std::vector<double>>>& runnableCommunications);
+    double GetReactionTime(std::map<std::pair<int, int>, std::vector<ExecutionInformation>>& processExecutions);
+    double GetDataAge(std::vector<int> executionPermutationPointer,
+                      std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableExecutions,
+                      std::map<std::pair<int, int>, std::vector<ExecutionInformation>>& processExecutions);
 
-	void SetResult(std::vector<std::vector<std::vector<double>>>& runnableCommunications);
+    void SetSequence(int numberOfCase, std::vector<std::vector<std::vector<int>>>& runnableExecutionPermutation);
+
+	ResultInformation GetResult(int caseIndex,
+                                std::vector<std::vector<std::vector<int>>>& runnableExecutionPermutation,
+                                std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableExecutions,
+                                std::vector<std::vector<std::vector<int>>>& runnableCommunicationPermutation,
+                                std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunicatioins);
 
 public:
     Simulation(std::unique_ptr<DAG>&& newDag) { dag = std::move(newDag); Initialize(); }
@@ -70,14 +82,24 @@ public:
 	// Command Pattern
 	void SetCommunication(std::unique_ptr<Communication>&& newCommunication) { communication = std::move(newCommunication); }
 	
-    void SetProcessExecutions();
-    void TraceProcess(int inputRunnableIndex, int inputCycle, int thisRunnableId, int thisCycle, int hyperPeriodCount, std::map<int, double>& path);
+    void SetProcessExecutions(std::vector<int>& executionPermutationPointer,
+                              std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableExecutions,
+                              std::vector<int>& communicationPermutationPointer,
+                              std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunicatoins,
+                              std::map<std::pair<int, int>, std::vector<ExecutionInformation>>& processExecutions);
+    void TraceProcess(std::vector<int> executionPermutationPointer,
+                      std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableExecutions,
+                      std::vector<int> communicationPermutationPointer,
+                      std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications,
+                      int inputRunnableId,
+                      int inputCycle,
+                      int thisRunnableId,
+                      int thisCycle,
+                      int thisHyperPeriodCount,
+                      std::vector<int>& worstCyclePerRunnable);
     
-    std::vector<ResultInformation> GetBestReactionTime(int numberOfCase);
-    std::vector<ResultInformation> GetWorstReactionTime(int numberOfCase);
-
-    std::vector<ResultInformation> GetBestDataAge(int numberOfCase);
-    std::vector<ResultInformation> GetWorstDataAge(int numberOfCase);
+    std::vector<ResultInformation> GetBestReactionTime();
+    std::vector<ResultInformation> GetBestDataAge();
 
     void SaveDag();
     void SaveData();
