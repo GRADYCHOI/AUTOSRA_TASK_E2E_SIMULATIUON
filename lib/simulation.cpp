@@ -49,7 +49,7 @@ void Simulation::Simulate() {
     this->GetRunnableExecutions(runnableExecutionPermutation, runnableExecutions);
 
     std::cout << "[Simulation] Get Runnable Communication Times" << std::endl;
-    this->GetRunnableCommunications(runnableCommunicationPermutation, runnableCommunications);
+    this->GetRunnableExecutions(runnableCommunicationPermutation, runnableCommunications);
 
     int numberOfCase = 1;
     for (auto &schedulingPriority : runnableExecutionPermutation) {
@@ -75,6 +75,8 @@ void Simulation::Simulate() {
         std::cout << " - Utilization                : " << this->dag_->GetUtilization() << "\n";
 		std::cout << "===========================================================================================================================" << std::endl;
     }
+
+    this->SetSequence(numberOfCase, runnableExecutionPermutation);
 }
 
 void Simulation::SetSequence(int numberOfCase,
@@ -82,13 +84,16 @@ void Simulation::SetSequence(int numberOfCase,
     this->sequence_.reserve(numberOfCase);
 
     for (int caseIndex = 0; caseIndex < numberOfCase; caseIndex++) {
-        std::vector<int> executionPermutationPointer(this->numberOfRunnables_);
+        int caseNumber = caseIndex;
+        std::vector<int> executionPermutationPointer;
+        executionPermutationPointer.reserve(this->numberOfRunnables_);
+
         for (auto &executionPermutation : runnableExecutionPermutation) {
-            int permutationPointerNumber = caseIndex % static_cast<int>(executionPermutation.size());
-            caseIndex /= static_cast<int>(executionPermutation.size());
+            int permutationPointerNumber = caseNumber % static_cast<int>(executionPermutation.size());
+            caseNumber /= static_cast<int>(executionPermutation.size());
             
             for (auto &runnableId : executionPermutation[permutationPointerNumber]) {
-                executionPermutationPointer[runnableId] = permutationPointerNumber;
+                executionPermutationPointer.emplace_back(runnableId);
             }
         }
 
@@ -326,13 +331,13 @@ double Simulation::GetDataAge(std::vector<int> executionPermutationPointer,
 }
 
 std::vector<ResultInformation>& Simulation::GetBestReactionTime() {
-    std::sort(this->results_.begin(), this->results_.end(), [](ResultInformation a, ResultInformation b) { return a.reactionTime < b.reactionTime; });
+    std::sort(this->results_.begin(), this->results_.end(), [](ResultInformation& a, ResultInformation& b) { return a.reactionTime < b.reactionTime; });
 
     return this->results_;
 }
 
 std::vector<ResultInformation>& Simulation::GetBestDataAge() {
-    std::sort(this->results_.begin(), this->results_.end(), [](ResultInformation a, ResultInformation b) { return a.dataAge < b.dataAge; });
+    std::sort(this->results_.begin(), this->results_.end(), [](ResultInformation& a, ResultInformation& b) { return a.dataAge < b.dataAge; });
 
     return this->results_;
 }
@@ -381,37 +386,29 @@ rapidjson::Value Simulation::SaveReactionTime(rapidjson::Document::AllocatorType
         bestReactionTimeObject.AddMember("Ranking", ++rankingCount, allocator);
         bestReactionTimeObject.AddMember("Reaction Time", reactionTime.reactionTime, allocator);
 
-        std::clog << "[simulation.cpp] Checkpoint 9-1-3" << std::endl;
-
         std::vector<int> sequence = this->sequence_[reactionTime.sequenceIndex];
-        std::clog << "[simulation.cpp] Checkpoint 9-1-4" << std::endl;
+
         int vectorPointer = 0;
         for (auto &task : this->dag_->GetTasks()) {
-            std::clog << "[simulation.cpp] Checkpoint 9-1-5" << std::endl;
             rapidjson::Value taskObject(rapidjson::kObjectType);
             taskObject.AddMember("Period", task->GetPeriod(), allocator);
             taskObject.AddMember("Offset", task->GetOffset(), allocator);
-            std::clog << "[simulation.cpp] Checkpoint 9-1-6" << std::endl;
 
             rapidjson::Value sequenceArray(rapidjson::kArrayType);
             int numberOfRunnables = task->GetNumberOfRunnables();
-            std::clog << "[simulation.cpp] Checkpoint 9-1-7" << std::endl;
+
             for (int runnableIndex = 0; runnableIndex < numberOfRunnables; runnableIndex++) {
                 sequenceArray.PushBack(sequence[vectorPointer + runnableIndex], allocator);
             }
-            std::clog << "[simulation.cpp] Checkpoint 9-1-8" << std::endl;
+
             vectorPointer += numberOfRunnables;
             taskObject.AddMember("Runnable Sequence", sequenceArray, allocator);
-            std::clog << "[simulation.cpp] Checkpoint 9-1-9" << std::endl;
 
             bestReactionTimeArray.PushBack(taskObject, allocator);
-            std::clog << "[simulation.cpp] Checkpoint 9-1-10" << std::endl;
         }
         bestReactionTimeObject.AddMember("Sequence", bestReactionTimeArray, allocator);
-        std::clog << "[simulation.cpp] Checkpoint 9-1-11" << std::endl;
 
         reactionTimeArray.PushBack(bestReactionTimeObject, allocator);
-        std::clog << "[simulation.cpp] Checkpoint 9-1-12" << std::endl;
     }
 
     return reactionTimeArray;
@@ -429,7 +426,7 @@ rapidjson::Value Simulation::SaveDataAge(rapidjson::Document::AllocatorType& all
         rapidjson::Value bestDataAgeArray(rapidjson::kArrayType);
 
         bestDataAgeObject.AddMember("Ranking", ++rankingCount, allocator);
-        bestDataAgeObject.AddMember("Reaction Time", dataAge.dataAge, allocator);
+        bestDataAgeObject.AddMember("Data Age", dataAge.dataAge, allocator);
 
         std::vector<int> sequence = this->sequence_[dataAge.sequenceIndex];
         int vectorPointer = 0;

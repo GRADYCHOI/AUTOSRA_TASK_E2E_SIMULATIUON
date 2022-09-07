@@ -54,23 +54,20 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    std::clog << "[main.cpp] CheckPoint 1" << std::endl;
     dag->SetTaskPriority();
-    std::clog << "[main.cpp] CheckPoint 2" << std::endl;
     dag->SetRunnablePrecedence();
-    std::clog << "[main.cpp] CheckPoint 3" << std::endl;
     dag->DoMapping();
-    std::clog << "[main.cpp] CheckPoint 4" << std::endl;
+
     std::unique_ptr<Simulation> simulation(new Simulation(dag));
-    std::clog << "[main.cpp] CheckPoint 5" << std::endl;
     simulation->SetCommunication(std::unique_ptr<Communication>(new RunnableImplicit()));
-    std::clog << "[main.cpp] CheckPoint 6" << std::endl;
     
     simulation->Simulate();
-    std::clog << "[main.cpp] CheckPoint 7" << std::endl;
-
+    
+    std::clog << "[main.cpp] CheckPoint 1" << std::endl;
     simulation->SaveDag();
+    std::clog << "[main.cpp] CheckPoint 2" << std::endl;
     simulation->SaveData();
+    std::clog << "[main.cpp] CheckPoint 3" << std::endl;
     
     return 0;
 }
