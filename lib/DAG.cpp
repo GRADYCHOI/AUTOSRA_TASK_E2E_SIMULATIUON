@@ -2,7 +2,7 @@
 
 
 /*
-double LCM(double a, double b) {
+float LCM(float a, float b) {
     int tmp1 = static_cast<int>(a * 1000);
     int tmp2 = static_cast<int>(b * 1000);
 
@@ -12,12 +12,12 @@ double LCM(double a, double b) {
         tmp2 = tmp3;
     }
 
-    return static_cast<double>(a * (b / (double)(tmp1 / 1000)));
+    return static_cast<float>(a * (b / (float)(tmp1 / 1000)));
 }
 */
 
 const int DAG::GetMaxCycle() {
-    double minPeriod = DBL_MAX;
+    float minPeriod = DBL_MAX;
 
     for (auto &task : this->tasks_) {
         if (minPeriod > task->GetPeriod()) {
@@ -28,11 +28,11 @@ const int DAG::GetMaxCycle() {
     return static_cast<int>(this->GetHyperPeriod() / minPeriod);
 }
 
-const double DAG::GetHyperPeriod() {
-    double tmpPeriod = this->GetTasksPriority()[0]->GetPeriod();
+const float DAG::GetHyperPeriod() {
+    float tmpPeriod = this->GetTasksPriority()[0]->GetPeriod();
 
     for(auto& orderOfPriorityTasks : this->GetTasksPriority()) {
-        tmpPeriod = static_cast<double>(std::lcm(static_cast<int>(tmpPeriod * 100000), static_cast<int>(orderOfPriorityTasks->GetPeriod() * 100000)) / 100000);
+        tmpPeriod = static_cast<float>(std::lcm(static_cast<int>(tmpPeriod * 100000), static_cast<int>(orderOfPriorityTasks->GetPeriod() * 100000)) / 100000);
     }
 
     return tmpPeriod;
@@ -82,7 +82,7 @@ void DAG::GenerateRunnables(int numberOfRunnables) {
 
 	std::clog << "===============================================[Debug : Runnable Generation}===============================================" << std::endl;
     for (int runnableIndex = 0; runnableIndex < numberOfRunnables; runnableIndex++) {
-        std::shared_ptr<RUNNABLE> runnable(new RUNNABLE(runnableIndex, runnableIndex, (double)(std::rand() % 100) / 1000));
+        std::shared_ptr<RUNNABLE> runnable(new RUNNABLE(runnableIndex, runnableIndex, (float)(std::rand() % 100) / 1000));
         this->runnables_.push_back(runnable);
         std::clog << "[DAG.cpp] Runnable ID : " << runnable->GetId() << ", Execution Time : " << runnable->GetExecutionTime() << std::endl;
     }
@@ -118,8 +118,8 @@ void DAG::RandomEdge() { //Runnable edge random generation
 
 void DAG::GenerateTasks(int numberOfTasks) {
 	std::cout << "[Task Generation] Generation Start" << std::endl;
-    double tmpPeriod = -1.0;
-    double tmpOffset = -1.0;
+    float tmpPeriod = -1.0;
+    float tmpOffset = -1.0;
     bool mappableFlag = false;
 
 	std::clog << "=================================================[Debug : Task Generation}=================================================" << std::endl;
@@ -152,8 +152,8 @@ void DAG::GenerateTasks(int numberOfTasks) {
 }
 
 bool DAG::CheckMappable() {
-    double sumOfExecutionTimes = 0.0;
-    double maxPeriod = 0.0;
+    float sumOfExecutionTimes = 0.0;
+    float maxPeriod = 0.0;
 
     for (auto &runnable : this->runnables_) {
         sumOfExecutionTimes += runnable->GetExecutionTime();
@@ -174,8 +174,8 @@ void DAG::ClearTaskMapping() {
     }
 }
 
-double DAG::GetUtilization() {
-    double tmpUtilization = 0.0;
+float DAG::GetUtilization() {
+    float tmpUtilization = 0.0;
 
     for (auto &task : this->tasks_) {
         tmpUtilization += (task->GetExecutionTime() / task->GetPeriod());
@@ -185,7 +185,7 @@ double DAG::GetUtilization() {
 }
 
 void DAG::SetTaskPriority() {
-    std::vector<std::pair<int, double>> tmpTaskArray; // ID, Period
+    std::vector<std::pair<int, float>> tmpTaskArray; // ID, Period
 	tmpTaskArray.reserve(this->GetNumberOfTasks());
 
 	std::clog << "==================================================[Debug : Task Priority]==================================================" << std::endl;
@@ -194,7 +194,7 @@ void DAG::SetTaskPriority() {
         std::clog << "[DAG.cpp] Task ID : " << task->GetId() << ", Period : " << task->GetPeriod() << ", Offset : " << task->GetOffset() << std::endl;
     }
 
-    std::sort(tmpTaskArray.begin(), tmpTaskArray.end(), [](std::pair<int, double> a, std::pair<int, double> b) { return a.second < b.second; });
+    std::sort(tmpTaskArray.begin(), tmpTaskArray.end(), [](std::pair<int, float> a, std::pair<int, float> b) { return a.second < b.second; });
     std::clog << "[DAG.cpp] Sort Fin " << std::endl;
 
     int taskSize = static_cast<int>(tmpTaskArray.size());
@@ -267,6 +267,7 @@ void DAG::SaveDag(std::string thisTime) {
         runnableObject.AddMember("ID", runnable->GetRealId(), allocator);
         runnableObject.AddMember("Execution Time", runnable->GetExecutionTime(), allocator);
         runnableObject.AddMember("Status", runnable->GetStatus(), allocator);
+        runnableObject.AddMember("Precedence", runnable->GetPrecedence(), allocator);
 
         for (auto &inputRunnable : runnable->GetInputRunnables()) {
             inputRunnableArray.PushBack(inputRunnable->GetRealId(), allocator);
@@ -322,7 +323,7 @@ void DAG::ParseDag(std::string jsonPath) {
 
     int runnableIndex = 0;
     for (auto &runnable : doc["Runnables"].GetArray()) {
-        std::shared_ptr<RUNNABLE> tmpRunnable(new RUNNABLE(runnableIndex, runnable["ID"].GetInt(), runnable["Execution Time"].GetDouble()));
+        std::shared_ptr<RUNNABLE> tmpRunnable(new RUNNABLE(runnableIndex, runnable["ID"].GetInt(), runnable["Execution Time"].GetFloat()));
         this->runnables_.push_back(tmpRunnable);
         idToRealId.push_back(runnable["ID"].GetInt());
         runnableIndex++;
@@ -342,7 +343,7 @@ void DAG::ParseDag(std::string jsonPath) {
 	
 	int taskIndex = 0;
 	for (auto &task : doc["Tasks"].GetArray()) {
-        std::shared_ptr<TASK> tmpTask(new TASK(taskIndex, task["Period"].GetDouble(), task["Offset"].GetDouble()));
+        std::shared_ptr<TASK> tmpTask(new TASK(taskIndex, task["Period"].GetFloat(), task["Offset"].GetFloat()));
         this->tasks_.push_back(tmpTask);
         taskIndex++;
     }

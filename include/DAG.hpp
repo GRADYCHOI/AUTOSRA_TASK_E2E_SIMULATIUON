@@ -45,7 +45,7 @@ private:
 	
 	// initializer
 	int InitializeMaxCycle();
-	double InitializeHyperPeriod();
+	float InitializeHyperPeriod();
 	
 	// Save Input/Output Runnable list
     void SetInputRunnableList();
@@ -90,7 +90,7 @@ public:
     const int GetNumberOfOutputRunnables() { return static_cast<int>(outputRunnables_.size()); }
 
     const int GetMaxCycle();
-    const double GetHyperPeriod();
+    const float GetHyperPeriod();
 
 	// Generate Command
 	void GenerateDag();
@@ -103,7 +103,7 @@ public:
     void SetTaskPriority();
     void SetRunnablePrecedence();
 
-    double GetUtilization();
+    float GetUtilization();
 
     // Save to .json
     void ParseDag(std::string jsonPath);

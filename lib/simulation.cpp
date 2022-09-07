@@ -225,9 +225,9 @@ void Simulation::TraceProcess(std::vector<int> executionPermutationPointer,
 
                 int tmpCycle = 0;
                 int maxCycle = static_cast<int>(runnableCommunications[outputRunnableId][communicationPermutationPointer[outputRunnableId]].size());
-                double hyperPeriodCount = 0;
-                double thisRunnableWriteTime = runnableCommunications[thisRunnableId][communicationPermutationPointer[thisRunnableId]][thisCycle].endTime;
-                double outputRunnableReadTime = runnableCommunications[outputRunnableId][communicationPermutationPointer[outputRunnableId]][tmpCycle].startTime;
+                float hyperPeriodCount = 0;
+                float thisRunnableWriteTime = runnableCommunications[thisRunnableId][communicationPermutationPointer[thisRunnableId]][thisCycle].endTime;
+                float outputRunnableReadTime = runnableCommunications[outputRunnableId][communicationPermutationPointer[outputRunnableId]][tmpCycle].startTime;
 
                 while (thisRunnableWriteTime > outputRunnableReadTime) {
                     tmpCycle++;
@@ -248,12 +248,12 @@ void Simulation::TraceProcess(std::vector<int> executionPermutationPointer,
     }
 }
 
-double Simulation::GetReactionTime(std::map<std::pair<int, int>, std::vector<ExecutionInformation>>& processExecutions) {
-    double WorstReactionTime =  0.0;
+float Simulation::GetReactionTime(std::map<std::pair<int, int>, std::vector<ExecutionInformation>>& processExecutions) {
+    float WorstReactionTime =  0.0;
 
     for (auto &InputToOutputRunnable : processExecutions) {
         for (auto &StartToEndTime : InputToOutputRunnable.second) {
-            double tmpThisReactionTime = StartToEndTime.endTime - StartToEndTime.startTime;
+            float tmpThisReactionTime = StartToEndTime.endTime - StartToEndTime.startTime;
             if (WorstReactionTime < tmpThisReactionTime) {
                 WorstReactionTime = tmpThisReactionTime;
             }
@@ -263,14 +263,14 @@ double Simulation::GetReactionTime(std::map<std::pair<int, int>, std::vector<Exe
     return WorstReactionTime;
 }
 
-double Simulation::GetDataAge(std::vector<int> executionPermutationPointer,
+float Simulation::GetDataAge(std::vector<int> executionPermutationPointer,
                               std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableExecutions,
                               std::map<std::pair<int, int>, std::vector<ExecutionInformation>>& processExecutions) {
-    double WorstDataAge = 0.0;
+    float WorstDataAge = 0.0;
 
     for (auto &ouputRunnable : this->dag_->GetOutputRunnables()) {
         int runnableId = ouputRunnable->GetId();
-        double biggestEndTime = 0.0; 
+        float biggestEndTime = 0.0; 
 
         for (auto &StoEs : processExecutions) {
             if (StoEs.first.second == runnableId) {
@@ -285,12 +285,12 @@ double Simulation::GetDataAge(std::vector<int> executionPermutationPointer,
         int hyperPeriodCount = std::ceil(biggestEndTime/this->hyperPeriod_);
 
         // Reacted time
-        std::vector<double> endTimes;
+        std::vector<float> endTimes;
         endTimes.reserve(hyperPeriodCount * this->maxCycle_);
         for (auto &StoEs : processExecutions) {
             if (StoEs.first.second == runnableId) {
                 for (auto &StoE : StoEs.second) {
-                    double tmpEndTime = StoE.endTime;
+                    float tmpEndTime = StoE.endTime;
                     while (tmpEndTime <= biggestEndTime) {
                         endTimes.emplace_back(tmpEndTime);
                         tmpEndTime += this->hyperPeriod_;
@@ -300,7 +300,7 @@ double Simulation::GetDataAge(std::vector<int> executionPermutationPointer,
         }
 
         // just output time
-        std::vector<double> endTimeTable;
+        std::vector<float> endTimeTable;
         endTimeTable.reserve(hyperPeriodCount * this->maxCycle_);
         for (int count = 0; count < hyperPeriodCount; count++) {
             for (auto &executionTime : runnableExecutions[runnableId]) {

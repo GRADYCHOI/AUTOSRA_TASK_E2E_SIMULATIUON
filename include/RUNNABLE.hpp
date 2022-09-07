@@ -12,7 +12,7 @@ private:
 	// Inherent characters
     int id_ = -1;
     int realId_ = -1;
-    double executionTime_ = -1.0;
+    float executionTime_ = -1.0;
     int status_ = 0; // 0 = input runnable, 1 = output runnable, 2 = middle runnable
 	
 	// Dynamic characters
@@ -26,12 +26,12 @@ private:
     void AddOutputRunnable(const std::shared_ptr<RUNNABLE> outputRunnable) { this->outputRunnables_.push_back(outputRunnable); this->SetStatus(); }
 
 public:
-    RUNNABLE(int id, int realId, double executionTime) : id_(id), realId_(realId), executionTime_((executionTime == 0.0) ? 0.01 : executionTime) {}
+    RUNNABLE(int id, int realId, float executionTime) : id_(id), realId_(realId), executionTime_((executionTime == 0.0) ? 0.01 : executionTime) {}
     ~RUNNABLE() {}
 
     const int GetId() const { return id_; }
     const int GetRealId() const { return realId_; }
-    double GetExecutionTime() const { return executionTime_; }
+    float GetExecutionTime() const { return executionTime_; }
     const int GetStatus() const { return status_; }
 	
 	const int GetPrecedence() const { return precedence_; }

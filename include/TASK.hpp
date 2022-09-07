@@ -12,26 +12,26 @@ class TASK {
 private:
 	// Inherent characters
     int id_ = -1;
-    double period_ = -1.0;
-    double offset_ = -1.0;
+    float period_ = -1.0;
+    float offset_ = -1.0;
 	
 	// Dynamic characters
 	int priority_ = -1;
-	double executionTime_ = -1.0;
+	float executionTime_ = -1.0;
     std::vector<std::shared_ptr<RUNNABLE>> runnables_;
 	
 	void SetExecutionTime();
 
 public:
-    TASK(int id, double period, double offset) : id_(id), period_(period), offset_(offset) {}
+    TASK(int id, float period, float offset) : id_(id), period_(period), offset_(offset) {}
     ~TASK() {}
 
     const int GetId() const { return id_; }
-    const double GetPeriod() const { return period_; }
-    const double GetOffset() const { return offset_; }
+    const float GetPeriod() const { return period_; }
+    const float GetOffset() const { return offset_; }
     
     const int GetPriority() const { return priority_; }
-    const double GetExecutionTime() { return executionTime_; }
+    const float GetExecutionTime() { return executionTime_; }
     const int GetNumberOfRunnables() { return static_cast<int>(runnables_.size()); }
 
     const std::vector<std::shared_ptr<RUNNABLE>>& GetRunnables() const { return runnables_; }
