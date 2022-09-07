@@ -15,7 +15,7 @@ void TASK::AddRunnable(const std::shared_ptr<RUNNABLE> runnable) {
     bool searchFlag = false;
     
     for (auto &existRunnable : this->runnables_) {
-        if (runnables->GetId() == existRunnable->GetId()) {
+        if (runnable->GetId() == existRunnable->GetId()) {
             searchFlag = true;
             break;
         }
@@ -24,6 +24,8 @@ void TASK::AddRunnable(const std::shared_ptr<RUNNABLE> runnable) {
     if (!searchFlag) {
         this->runnables_.push_back(runnable);
     }
+
+    SetExecutionTime();
 }
 
 void TASK::ClearMapping() {

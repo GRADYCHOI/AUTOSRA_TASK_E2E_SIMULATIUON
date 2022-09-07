@@ -12,6 +12,7 @@
 #include <map>
 #include <fstream>
 #include <numeric>
+#include <iomanip>
 #include "DAG.hpp"
 #include "communication.hpp"
 #include "simulation_types.hpp"
@@ -24,7 +25,7 @@
 
 class Simulation {
 private:
-    std::unique_ptr<DAG> dag;
+    std::shared_ptr<DAG> dag_;
 
     // Command Method Pattern
     friend class Communication;
@@ -51,13 +52,15 @@ private:
 
     void Initialize();
 
+    const int GetNumberOfPermutation(int number);
+
     void GetRunnableExecutions(std::vector<std::vector<std::vector<int>>>& runnablePermutation, std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableExecutions) {
-        execution_->GetCommunicationTable(this, runnablePermutation, runnableExecutions);
+        execution_->GetCommunicationTable(dag_, numberOfRunnables_, hyperPeriod_, runnablePermutation, runnableExecutions);
     }
 	
 	// Command Pattern
 	void GetRunnableCommunications(std::vector<std::vector<std::vector<int>>>& runnablePermutation, std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications) {
-        communication_->GetCommunicationTable(this, runnablePermutation, runnableCommunications);
+        communication_->GetCommunicationTable(dag_, numberOfRunnables_, hyperPeriod_, runnablePermutation, runnableCommunications);
     }
 	
     double GetReactionTime(std::map<std::pair<int, int>, std::vector<ExecutionInformation>>& processExecutions);
@@ -71,21 +74,21 @@ private:
                                 std::vector<std::vector<std::vector<int>>>& runnableExecutionPermutation,
                                 std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableExecutions,
                                 std::vector<std::vector<std::vector<int>>>& runnableCommunicationPermutation,
-                                std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunicatioins);
+                                std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications);
 
 public:
-    Simulation(std::unique_ptr<DAG>&& newDag) { dag = std::move(newDag); Initialize(); }
+    Simulation(std::shared_ptr<DAG> newDag) { dag_ = newDag; Initialize(); }
     ~Simulation() {}
 
     void Simulate();
 
 	// Command Pattern
-	void SetCommunication(std::unique_ptr<Communication>&& newCommunication) { communication = std::move(newCommunication); }
+	void SetCommunication(std::unique_ptr<Communication>&& newCommunication) { communication_ = std::move(newCommunication); }
 	
     void SetProcessExecutions(std::vector<int>& executionPermutationPointer,
                               std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableExecutions,
                               std::vector<int>& communicationPermutationPointer,
-                              std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunicatoins,
+                              std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications,
                               std::map<std::pair<int, int>, std::vector<ExecutionInformation>>& processExecutions);
     void TraceProcess(std::vector<int> executionPermutationPointer,
                       std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableExecutions,
@@ -96,10 +99,11 @@ public:
                       int thisRunnableId,
                       int thisCycle,
                       int thisHyperPeriodCount,
-                      std::vector<int>& worstCyclePerRunnable);
+                      std::vector<int>& worstCyclePerRunnable,
+                      std::map<std::pair<int, int>, std::vector<ExecutionInformation>>& processExecutions);
     
-    std::vector<ResultInformation> GetBestReactionTime();
-    std::vector<ResultInformation> GetBestDataAge();
+    std::vector<ResultInformation>& GetBestReactionTime();
+    std::vector<ResultInformation>& GetBestDataAge();
 
     void SaveDag();
     void SaveData();

@@ -6,27 +6,29 @@
 #include "simulation_types.hpp"
 
 
+class Simulation;
+
 class Communication {
 public:
     Communication() {}
     virtual ~Communication() {}
 
-    virtual void GetCommunicationTable(std::vector<RunnableInformation>& runnableInformations, int numberOfRunnables, int maxCycle, std::vector<std::vector<ExecutionInformation>>& runnableCommunications) = 0;
+    virtual void GetCommunicationTable(std::shared_ptr<DAG>& dag, int numberOfRunnables, double hyperPeriod, std::vector<std::vector<std::vector<int>>>& runnablePermutation, std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications) = 0;
 };
 
 class RunnableImplicit : public Communication {
 public:
-    void GetCommunicationTable(std::vector<RunnableInformation>& runnableInformations, int numberOfRunnables, int maxCycle, std::vector<std::vector<ExecutionInformation>>& runnableCommunications);
+    void GetCommunicationTable(std::shared_ptr<DAG>& dag, int numberOfRunnables, double hyperPeriod, std::vector<std::vector<std::vector<int>>>& runnablePermutation, std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications);
 };
 
 class TaskImplicit : public Communication {
 public:
-    void GetCommunicationTable(std::vector<RunnableInformation>& runnableInformations, int numberOfRunnables, int maxCycle, std::vector<std::vector<ExecutionInformation>>& runnableCommunications);
+    void GetCommunicationTable(std::shared_ptr<DAG>& dag, int numberOfRunnables, double hyperPeriod, std::vector<std::vector<std::vector<int>>>& runnablePermutation, std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications);
 };
 
 class LET : public Communication {
 public:
-    void GetCommunicationTable(std::vector<RunnableInformation>& runnableInformations, int numberOfRunnables, int maxCycle, std::vector<std::vector<ExecutionInformation>>& runnableCommunications);
+    void GetCommunicationTable(std::shared_ptr<DAG>& dag, int numberOfRunnables, double hyperPeriod, std::vector<std::vector<std::vector<int>>>& runnablePermutation, std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications);
 };
 
 #endif

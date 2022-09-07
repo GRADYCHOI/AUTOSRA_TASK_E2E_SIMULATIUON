@@ -20,7 +20,7 @@ private:
     std::vector<std::weak_ptr<RUNNABLE>> inputRunnables_;
     std::vector<std::shared_ptr<RUNNABLE>> outputRunnables_;
 
-    void SetStatus() { status_ = (outputRunnables_.size()) ? ((inputRunnables_.size()) ? 2 : 1) : 0; }
+    void SetStatus() { status_ = (inputRunnables_.size()) ? ((outputRunnables_.size()) ? 2 : 1) : 0; }
 	
     void AddInputRunnable(const std::weak_ptr<RUNNABLE> inputRunnable) { this->inputRunnables_.push_back(inputRunnable); this->SetStatus(); }
     void AddOutputRunnable(const std::shared_ptr<RUNNABLE> outputRunnable) { this->outputRunnables_.push_back(outputRunnable); this->SetStatus(); }

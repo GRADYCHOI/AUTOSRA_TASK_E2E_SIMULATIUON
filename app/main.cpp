@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
     bool dag_file = false;
     int mappingStrategy = 0;
 
-    std::unique_ptr<DAG> dag(new DAG());
+    std::shared_ptr<DAG> dag(new DAG());
 
     if (argc > 1) {
         try {
@@ -55,22 +55,19 @@ int main(int argc, char *argv[]) {
     }
 
     std::clog << "[main.cpp] CheckPoint 1" << std::endl;
-    dag->DoMapping();
+    dag->SetTaskPriority();
     std::clog << "[main.cpp] CheckPoint 2" << std::endl;
     dag->SetRunnablePrecedence();
     std::clog << "[main.cpp] CheckPoint 3" << std::endl;
-    dag->SetTaskPriority();
+    dag->DoMapping();
     std::clog << "[main.cpp] CheckPoint 4" << std::endl;
-    dag->SetRunnablePriorities();
+    std::unique_ptr<Simulation> simulation(new Simulation(dag));
     std::clog << "[main.cpp] CheckPoint 5" << std::endl;
-
-    std::unique_ptr<Simulation> simulation(new Simulation(std::move(dag)));
-    std::clog << "[main.cpp] CheckPoint 6" << std::endl;
     simulation->SetCommunication(std::unique_ptr<Communication>(new RunnableImplicit()));
-    std::clog << "[main.cpp] CheckPoint 7" << std::endl;
+    std::clog << "[main.cpp] CheckPoint 6" << std::endl;
     
     simulation->Simulate();
-    std::clog << "[main.cpp] CheckPoint 8" << std::endl;
+    std::clog << "[main.cpp] CheckPoint 7" << std::endl;
 
     simulation->SaveDag();
     simulation->SaveData();

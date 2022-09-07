@@ -61,10 +61,9 @@ private:
 	// Utilization
 	bool CheckMappable();
     void ClearTaskMapping();
-    double GetUtilization();
 	
 	// Set Precedence
-    int CheckPrecedence(std::vector<int>& precedenceOfRunnables, std::shared_ptr<RUNNABLE> runnable, int precedence);
+    void CheckPrecedence(std::vector<int>& precedenceOfRunnables, const std::shared_ptr<RUNNABLE>& runnable, int precedence);
 
 
 public:
@@ -84,9 +83,14 @@ public:
 	// Get Input & Output Runnables
     const std::vector<std::shared_ptr<RUNNABLE>>& GetInputRunnables() const { return inputRunnables_; }
     const std::vector<std::shared_ptr<RUNNABLE>>& GetOutputRunnables() const { return outputRunnables_; }
+
+    const std::vector<std::shared_ptr<TASK>> GetTasksPriority();
 	
 	const int GetNumberOfInputRunnables() { return static_cast<int>(inputRunnables_.size()); }
     const int GetNumberOfOutputRunnables() { return static_cast<int>(outputRunnables_.size()); }
+
+    const int GetMaxCycle();
+    const double GetHyperPeriod();
 
 	// Generate Command
 	void GenerateDag();
@@ -95,8 +99,11 @@ public:
     void SetMapping(std::unique_ptr<Mapping>&& newMapping) { mapping_ = std::move(newMapping); }
     void DoMapping() { mapping_->DoMapping(tasks_, runnables_); }
 
-    // Set Precedence
+    // Set Priority
+    void SetTaskPriority();
     void SetRunnablePrecedence();
+
+    double GetUtilization();
 
     // Save to .json
     void ParseDag(std::string jsonPath);
