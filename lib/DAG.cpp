@@ -259,16 +259,31 @@ void DAG::ResetMappedRunnablePriority() {
         int precedence = 0;
 
         for (auto &run : task->GetRunnables()) run->SetPriorityInTask(priority++);
-        for (auto &run : task->GetRunnables()) {
-            int sameprecedence = 0;
-            if (run->GetPrecedence() == precedence) {
-                for (auto &run2 : task->GetRunnables()) {
-                    if ((run->GetPrecedence() == run2->GetPrecedence()) && (run->GetTask() <= run2->GetTask())) {
-                        int tmp = run->Get
-                    } 
-                }
+        while (precedence <= maxPrecedence) {
+            for (auto &run : task->GetRunnables()) {
 
+                if (run->GetPrecedence() == precedence) {
+                    int maxOutputRunnableTaskPriority = ((int)tasks_.size() +1);
+                    for (auto &out : run->GetOutputRunnables()) { // 기준 러너블의 아웃풋러너블 중 highest priority task를 찾음.
+                        if (out->GetTask()->GetPriority() < maxOutputRunnableTaskPriority) maxOutputRunnableTaskPriority = out->GetTask()->GetPriority();
+                    }
+
+                    for (auto &run2 : task->GetRunnables()) {
+                        if (run->GetPrecedence() == run2->GetPrecedence()) {
+                            int maxCompareOutputRunnableTaskPriority = ((int)tasks_.size() + 1);
+                            for (auto &out : run2->GetOutputRunnables()) { // 비교할 러너블의 아웃풋러너블중 highest priority task를 찾음.
+                                if (out->GetTask()->GetPriority() < maxCompareOutputRunnableTaskPriority) maxCompareOutputRunnableTaskPriority = out->GetTask()->GetPriority();
+                            }
+                            if ((maxOutputRunnableTaskPriority > maxCompareOutputRunnableTaskPriority) && (task->GetPriority() >maxCompareOutputRunnableTaskPriority)) {
+                                int tmp = run->GetPriority();
+                                run->SetPriorityInTask(run2->GetPriority());
+                                run2->SetPriorityInTask(tmp);
+                            }
+                        } 
+                    }
+                }
             }
+            precedence++;
         }
     }
 }
