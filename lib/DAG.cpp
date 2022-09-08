@@ -264,8 +264,8 @@ void DAG::ResetMappedRunnablePriority() {
                             }
                             if (run2->GetStatus() == 1) continue;
                             if ((maxOutputRunnableTaskPriority > maxCompareOutputRunnableTaskPriority) && (task->GetPriority() >maxCompareOutputRunnableTaskPriority)) {
-                                int tmp = run->GetPriority();
-                                run->SetPriorityInTask(run2->GetPriority());
+                                int tmp = run->GetPriorityInTask();
+                                run->SetPriorityInTask(run2->GetPriorityInTask());
                                 run2->SetPriorityInTask(tmp);
                                 std::cout << "change! task : " << task->GetId() << " runnable : " << run->GetId() << " " << maxOutputRunnableTaskPriority << " -> " << run2->GetId() << " " << maxCompareOutputRunnableTaskPriority << std::endl;
                             }
@@ -280,7 +280,7 @@ void DAG::ResetMappedRunnablePriority() {
     for (auto &task : this->tasks_) {
         std::cout << "task : " << task->GetId() << std::endl;
         for (auto &run : task->GetRunnables()) {
-            std::cout << "runnable : " << run->GetId() << " " << run->GetPriority() << std::endl;
+            std::cout << "runnable : " << run->GetId() << " " << run->GetPriorityInTask() << std::endl;
         }
     }
 }
@@ -304,6 +304,7 @@ void DAG::SaveDag(std::string thisTime) {
         runnableObject.AddMember("Execution Time", static_cast<float>(runnable->GetExecutionTime()) / 1000, allocator);
         runnableObject.AddMember("Status", runnable->GetStatus(), allocator);
         runnableObject.AddMember("Precedence", runnable->GetPrecedence(), allocator);
+        runnableObject.AddMember("Priority in Task", runnable->GetPriorityInTask(), allocator);
 
         for (auto &inputRunnable : runnable->GetInputRunnables()) {
             inputRunnableArray.PushBack(inputRunnable->GetRealId(), allocator);
