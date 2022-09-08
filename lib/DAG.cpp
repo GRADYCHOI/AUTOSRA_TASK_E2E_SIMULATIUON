@@ -301,7 +301,7 @@ void DAG::SaveDag(std::string thisTime) {
         rapidjson::Value outputRunnableArray(rapidjson::kArrayType);
 
         runnableObject.AddMember("ID", runnable->GetRealId(), allocator);
-        runnableObject.AddMember("Execution Time", static_cast<float>(runnable->GetExecutionTime()) / 1000, allocator);
+        runnableObject.AddMember("Execution Time", static_cast<float>(runnable->GetExecutionTime()) / 1000.0f, allocator);
         runnableObject.AddMember("Status", runnable->GetStatus(), allocator);
         runnableObject.AddMember("Precedence", runnable->GetPrecedence(), allocator);
         runnableObject.AddMember("Priority in Task", runnable->GetPriorityInTask(), allocator);
@@ -323,8 +323,8 @@ void DAG::SaveDag(std::string thisTime) {
     for (auto &task : this->tasks_) {
         rapidjson::Value taskObject(rapidjson::kObjectType);
 
-        taskObject.AddMember("Period", static_cast<float>(task->GetPeriod()) / 1000, allocator);
-        taskObject.AddMember("Offset", static_cast<float>(task->GetOffset()) / 1000, allocator);
+        taskObject.AddMember("Period", static_cast<float>(task->GetPeriod()) / 1000.0f, allocator);
+        taskObject.AddMember("Offset", static_cast<float>(task->GetOffset()) / 1000.0f, allocator);
 
         taskArray.PushBack(taskObject, allocator);
     }
@@ -360,7 +360,7 @@ void DAG::ParseDag(std::string jsonPath) {
 
     int runnableIndex = 0;
     for (auto &runnable : doc["Runnables"].GetArray()) {
-        std::shared_ptr<RUNNABLE> tmpRunnable(new RUNNABLE(runnableIndex, runnable["ID"].GetInt(), static_cast<int>(runnable["Execution Time"].GetFloat() * 1000)));
+        std::shared_ptr<RUNNABLE> tmpRunnable(new RUNNABLE(runnableIndex, runnable["ID"].GetInt(), static_cast<int>(runnable["Execution Time"].GetFloat() * 1000.0f)));
         this->runnables_.push_back(tmpRunnable);
         idToRealId.push_back(runnable["ID"].GetInt());
         runnableIndex++;
@@ -380,7 +380,7 @@ void DAG::ParseDag(std::string jsonPath) {
 	
 	int taskIndex = 0;
 	for (auto &task : doc["Tasks"].GetArray()) {
-        std::shared_ptr<TASK> tmpTask(new TASK(taskIndex, static_cast<int>(task["Period"].GetFloat() * 1000), static_cast<int>(task["Offset"].GetFloat() * 1000)));
+        std::shared_ptr<TASK> tmpTask(new TASK(taskIndex, static_cast<int>(task["Period"].GetFloat() * 1000.0f), static_cast<int>(task["Offset"].GetFloat() * 1000.0f)));
         this->tasks_.push_back(tmpTask);
         taskIndex++;
     }

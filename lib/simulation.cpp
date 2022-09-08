@@ -12,7 +12,7 @@ void Simulation::Initialize() {
     //std::system("clear");
     std::cout << "===========================================================================================================================\n";
     std::cout << " - Max Cycle                  : " << this->maxCycle_ << "\n";
-    std::cout << " - Hyper Period               : " << static_cast<float>(this->hyperPeriod_) / 1000 << "\n";
+    std::cout << " - Hyper Period               : " << static_cast<float>(this->hyperPeriod_) / 1000.0f << "\n";
     std::cout << " - Number Of Tasks            : " << this->numberOfTasks_ << "\n";
     std::cout << " - Number Of Runanbles        : " << this->numberOfRunnables_ << "\n";
     std::cout << " - Number Of Input Runnables  : " << this->numberOfInputRunnables_ << "\n";
@@ -81,10 +81,10 @@ void Simulation::Simulate(int communicationMethod) {
 		//std::system("clear");
 		std::cout << "===========================================================================================================================\n";
         std::cout << " - Simulation Case            : " << std::setw(10) << caseIndex << "/" << std::setw(10) << numberOfCase << "\n";
-        std::cout << " - Reaction Time              : " << std::setw(10) << static_cast<float>(result.reactionTime) / 1000 << "\n";
-        std::cout << " - Data Age                   : " << std::setw(10) << static_cast<float>(result.dataAge) / 1000 << "\n";
+        std::cout << " - Reaction Time              : " << std::setw(10) << static_cast<float>(result.reactionTime) / 1000.0f << "\n";
+        std::cout << " - Data Age                   : " << std::setw(10) << static_cast<float>(result.dataAge) / 1000.0f << "\n";
         std::cout << " - Max Cycle                  : " << this->maxCycle_ << "\n";
-        std::cout << " - Hyper Period               : " << static_cast<float>(this->hyperPeriod_) / 1000 << "\n";
+        std::cout << " - Hyper Period               : " << static_cast<float>(this->hyperPeriod_) / 1000.0f << "\n";
         std::cout << " - Number Of Tasks            : " << this->numberOfTasks_ << "\n";
         std::cout << " - Number Of Runanbles        : " << this->numberOfRunnables_ << "\n";
         std::cout << " - Number Of Input Runnables  : " << this->numberOfInputRunnables_ << "\n";
@@ -401,16 +401,16 @@ rapidjson::Value Simulation::SaveReactionTime(rapidjson::Document::AllocatorType
         rapidjson::Value bestReactionTimeArray(rapidjson::kArrayType);
 
         bestReactionTimeObject.AddMember("Ranking", ++rankingCount, allocator);
-        bestReactionTimeObject.AddMember("Reaction Time", static_cast<float>(reactionTime.reactionTime) / 1000, allocator);
+        bestReactionTimeObject.AddMember("Reaction Time", static_cast<float>(reactionTime.reactionTime) / 1000.0f, allocator);
 
         std::vector<int> sequence = this->sequence_[reactionTime.sequenceIndex];
 
         int vectorPointer = 0;
         for (auto &task : this->dag_->GetTasks()) {
             rapidjson::Value taskObject(rapidjson::kObjectType);
-            taskObject.AddMember("Period", static_cast<float>(task->GetPeriod()) / 1000, allocator);
-            taskObject.AddMember("Offset", static_cast<float>(task->GetOffset()) / 1000, allocator);
-            taskObject.AddMember("Execution Time", static_cast<float>(task->GetExecutionTime()) / 1000, allocator);
+            taskObject.AddMember("Period", static_cast<float>(task->GetPeriod()) / 1000.0f, allocator);
+            taskObject.AddMember("Offset", static_cast<float>(task->GetOffset()) / 1000.0f, allocator);
+            taskObject.AddMember("Execution Time", static_cast<float>(task->GetExecutionTime()) / 1000.0f, allocator);
 
             rapidjson::Value sequenceArray(rapidjson::kArrayType);
             int numberOfRunnables = task->GetNumberOfRunnables();
@@ -444,14 +444,14 @@ rapidjson::Value Simulation::SaveDataAge(rapidjson::Document::AllocatorType& all
         rapidjson::Value bestDataAgeArray(rapidjson::kArrayType);
 
         bestDataAgeObject.AddMember("Ranking", ++rankingCount, allocator);
-        bestDataAgeObject.AddMember("Data Age", static_cast<float>(dataAge.dataAge) / 1000, allocator);
+        bestDataAgeObject.AddMember("Data Age", static_cast<float>(dataAge.dataAge) / 1000.0f, allocator);
 
         std::vector<int> sequence = this->sequence_[dataAge.sequenceIndex];
         int vectorPointer = 0;
         for (auto &task : this->dag_->GetTasks()) {
             rapidjson::Value taskObject(rapidjson::kObjectType);
-            taskObject.AddMember("Period", static_cast<float>(task->GetPeriod()) / 1000, allocator);
-            taskObject.AddMember("Offset", static_cast<float>(task->GetOffset()) / 1000, allocator);
+            taskObject.AddMember("Period", static_cast<float>(task->GetPeriod()) / 1000.0f, allocator);
+            taskObject.AddMember("Offset", static_cast<float>(task->GetOffset()) / 1000.0f, allocator);
 
             rapidjson::Value sequenceArray(rapidjson::kArrayType);
             int numberOfRunnables = task->GetNumberOfRunnables();
