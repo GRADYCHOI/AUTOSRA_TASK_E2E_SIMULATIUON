@@ -248,6 +248,32 @@ void DAG::CheckPrecedence(std::vector<int>& precedenceOfRunnables, const std::sh
     }
 }
 
+void DAG::ResetMappedRunnablePriority() {
+    std::clog << "============================================[Debug : Mapped Runnable Sequence Reset]============================================" << "\n";
+    int maxPrecedence = 0;
+    for (auto &run : this->runnables_) {
+        if (maxPrecedence < run->GetPrecedence()) maxPrecedence = run->GetPrecedence();
+    }
+
+    for (auto &task : this->tasks_) {
+        int priority = 0;
+        int precedence = 0;
+
+        for (auto &run : task->GetRunnables()) run->SetPriorityInTask(priority++);
+        for (auto &run : task->GetRunnables()) {
+            int sameprecedence = 0;
+            if (run->GetPrecedence() == precedence) {
+                for (auto &run2 : task->GetRunnables()) {
+                    if ((run->GetPrecedence() == run2->GetPrecedence()) && (run->GetTask() <= run2->GetTask())) {
+                        int tmp = run->Get
+                    } 
+                }
+
+            }
+        }
+    }
+}
+
 /* Save File & Parsing File Section */
 
 void DAG::SaveDag(std::string thisTime) {

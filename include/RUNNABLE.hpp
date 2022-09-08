@@ -38,6 +38,7 @@ public:
     const int GetRealId() const { return realId_; }
     float GetExecutionTime() const { return executionTime_; }
     const int GetStatus() const { return status_; }
+    int GetPriority() const { return priorityInTask_; }
 
     const std::shared_ptr<TASK> GetTask() { return task_.lock(); }
 	
