@@ -246,7 +246,7 @@ void Simulation::TraceProcess(std::vector<int> executionPermutationPointer,
                 int thisRunnableWriteTime = runnableCommunications[thisRunnableId][communicationPermutationPointer[thisRunnableId]][thisCycle].endTime;
                 int outputRunnableReadTime = runnableCommunications[outputRunnableId][communicationPermutationPointer[outputRunnableId]][tmpCycle].startTime;
 
-                while (thisRunnableWriteTime >= outputRunnableReadTime) {
+                while (thisRunnableWriteTime > outputRunnableReadTime) {
                     tmpCycle++;
 
                     if (tmpCycle == maxCycle) {
