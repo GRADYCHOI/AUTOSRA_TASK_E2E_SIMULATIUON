@@ -12,8 +12,8 @@ int GetNumberOfPermutation(int number) {
 }
 
 float GCD(float a, float b) {
-    unsigned long long int tmp1 = static_cast<unsigned long long int>(a * 1e+5f);
-    unsigned long long int tmp2 = static_cast<unsigned long long int>(b * 1e+5f);
+    unsigned long long int tmp1 = static_cast<unsigned long long int>(static_cast<double>(a) * 1e+10f);
+    unsigned long long int tmp2 = static_cast<unsigned long long int>(static_cast<double>(b) * 1e+10f);
 
     while (tmp2 != 0) {
     	unsigned long long int tmp3 = tmp1 % tmp2;
@@ -21,7 +21,7 @@ float GCD(float a, float b) {
         tmp2 = tmp3;
     }
 
-    return static_cast<float>(tmp1) * 1e-5f;
+    return static_cast<float>(static_cast<double>(tmp1) * 1e-10f);
 }
 
 void RunnableImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numberOfRunnables, float hyperPeriod, std::vector<std::vector<std::vector<int>>>& runnablePermutation, std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications) {

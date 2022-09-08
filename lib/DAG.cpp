@@ -2,9 +2,8 @@
 
 
 float LCM(float a, float b) {
-    std::cout << "LCM" << std::endl;
-    unsigned long long int tmp1 = static_cast<unsigned long long int>(a * 1e+5f);
-    unsigned long long int tmp2 = static_cast<unsigned long long int>(b * 1e+5f);
+    unsigned long long int tmp1 = static_cast<unsigned long long int>(static_cast<double>(a) * 1e+10f);
+    unsigned long long int tmp2 = static_cast<unsigned long long int>(static_cast<double>(b) * 1e+10f);
 
     while (tmp2 != 0) {
     	unsigned long long int tmp3 = tmp1 % tmp2;
@@ -12,7 +11,7 @@ float LCM(float a, float b) {
         tmp2 = tmp3;
     }
 
-    return static_cast<float>(static_cast<unsigned long long int>(a * 1e+5f) * (static_cast<unsigned long long int>(b * 1e+5f) / tmp1)) * 1e-5f;
+    return static_cast<float>(static_cast<double>(static_cast<unsigned long long int>(static_cast<double>(a) * 1e+10f) * (static_cast<unsigned long long int>(static_cast<double>(b) * 1e+10f) / tmp1)) * 1e-10f);
 }
 
 const int DAG::GetMaxCycle() {
