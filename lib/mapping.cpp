@@ -18,24 +18,13 @@ void RateMapping::DoMapping(std::vector<std::shared_ptr<TASK>>& tasks, std::vect
     }
 
     for (auto &runnable : runnables) {
-        bool map = true;
-        while (map) {
-            //std::cout << runnable->GetId() << std::endl;
+        while (true) {
             int ran = std::rand() % static_cast<int>(tasks.size());
-            float rate = (double)taskRate[ran]/100;
-            //std::cout << ran << std::endl;
-            for (auto &task : tasks) {
-                //std::cout << ran << std::endl;
-                if (task->GetId() == ran) {
-                    //std::cout << ran << std::endl;
-                    //std::cout << task->GetId() << " task runnables : " << task->GetNumberOfRunnables() << " , rate : " << rate << " " << runnables.size() << " " << rate * runnables.size() << std::endl;
-                    if (task->GetNumberOfRunnables() < std::ceil(rate * runnables.size())) {
-                        std::cout << task->GetId() << " task runnables : " << task->GetNumberOfRunnables() << " , rate : " << taskRate[ran] << " " << runnables.size() << " " << rate * runnables.size() << std::endl;
-                        task->AddRunnable(runnable);
-                        map = false;
-                    }
-                }
+            if (tasks[ran] ->GetNumberOfRunnables() <= (int)(taskRate[ran] * runnables.size())) {
+                tasks[ran]->AddRunnable(runnable);
+                break;
             }
+            std::cout << "!!!" << std::endl;
         }
     }
 
