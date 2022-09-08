@@ -1,20 +1,6 @@
 #include "simulation.hpp"
 
 
-// TODO : Convert to GCD algorithm
-float GCD(float a, float b) {
-    unsigned long long int tmp1 = static_cast<unsigned long long int>(a * 1e+19);
-    unsigned long long int tmp2 = static_cast<unsigned long long int>(b * 1e+19);
-
-    while (tmp2 != 0) {
-    	unsigned long long int tmp3 = tmp1 % tmp2;
-        tmp1 = tmp2;
-        tmp2 = tmp3;
-    }
-
-    return static_cast<float>((static_cast<unsigned long long int>(a * 1e+19) * (static_cast<unsigned long long int>(b * 1e+19) / tmp1)) * 1e-19);
-}
-
 void Simulation::Initialize() {
     this->maxCycle_ = this->dag_->GetMaxCycle();
     this->hyperPeriod_ = this->dag_->GetHyperPeriod();
@@ -23,6 +9,7 @@ void Simulation::Initialize() {
     this->numberOfInputRunnables_ = this->dag_->GetNumberOfInputRunnables();
     this->numberOfOutputRunnables_ = this->dag_->GetNumberOfOutputRunnables();
 
+    std::system("clear");
     std::cout << "===========================================================================================================================\n";
     std::cout << " - Max Cycle                  : " << this->maxCycle_ << "\n";
     std::cout << " - Hyper Period               : " << this->hyperPeriod_<< "\n";
@@ -43,28 +30,28 @@ void Simulation::Initialize() {
     this->simulationTime_ = std::to_string(pTimeInfo->tm_year + 1900) + "_" + std::to_string(pTimeInfo->tm_mon + 1) + "_" + std::to_string(pTimeInfo->tm_mday) + "_" + std::to_string(pTimeInfo->tm_hour) + "_" + std::to_string(pTimeInfo->tm_min);
 }
 
-void GetRunnableScheduleInformations(int communicationMethod;
-                                     std::vector<std::vector<std::vector<int>>>& runnableExecutionPermutation,
-                                     std::vector<std::vector<std::vector<int>>>& runnableCommunicationPermutation,
-                                     std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableExecutions,
-                                     std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications) {
+void Simulation::GetRunnableScheduleInformations(int communicationMethod,
+                                                 std::vector<std::vector<std::vector<int>>>& runnableExecutionPermutation,
+                                                 std::vector<std::vector<std::vector<int>>>& runnableCommunicationPermutation,
+                                                 std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableExecutions,
+                                                 std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications) {
     std::cout << "[Simulation] Get Runnable Execution Times" << std::endl;
     this->GetRunnableExecutions(runnableExecutionPermutation, runnableExecutions);
     
     switch (communicationMethod) {
-        case RunnableImplicit:
+        case RunnableImplicitMethod:
             runnableCommunicationPermutation = runnableExecutionPermutation;
             runnableCommunications = runnableExecutions;
             break;
 
-        case TaskImplicit:
+        case TaskImplicitMethod:
             this->SetCommunication(std::unique_ptr<Communication>(new TaskImplicit()));
 
             std::cout << "[Simulation] Get Runnable Communication Times" << std::endl;
             this->GetRunnableCommunications(runnableCommunicationPermutation, runnableCommunications);
             break;
 
-        case LET:
+        case LETMethod:
             this->SetCommunication(std::unique_ptr<Communication>(new LET()));
 
             std::cout << "[Simulation] Get Runnable Communication Times" << std::endl;
@@ -79,7 +66,7 @@ void Simulation::Simulate(int communicationMethod) {
     std::vector<std::vector<std::vector<ExecutionInformation>>> runnableExecutions; // [ID][Case][Time]
     std::vector<std::vector<std::vector<ExecutionInformation>>> runnableCommunications; // [ID][Case][Time]
 
-    this->GetRunnableScheduleInformations(communicationMethod, runnableExecutionPermutation, runnableExecutions, runnableCommunicationPermutation, runnableCommunications);
+    this->GetRunnableScheduleInformations(communicationMethod, runnableExecutionPermutation, runnableCommunicationPermutation, runnableExecutions, runnableCommunications);
 
     int numberOfCase = 1;
     for (auto &schedulingPriority : runnableExecutionPermutation) {
@@ -91,7 +78,7 @@ void Simulation::Simulate(int communicationMethod) {
         ResultInformation result = this->GetResult(caseIndex, runnableExecutionPermutation, runnableExecutions, runnableCommunicationPermutation, runnableCommunications);
         this->results_.push_back(result);
 		
-		//std::system("clear");
+		std::system("clear");
 		std::cout << "===========================================================================================================================\n";
         std::cout << " - Simulation Case            : " << std::setw(10) << caseIndex << "/" << std::setw(10) << numberOfCase << "\n";
         std::cout << " - Reaction Time              : " << std::setw(10) << result.reactionTime << "\n";

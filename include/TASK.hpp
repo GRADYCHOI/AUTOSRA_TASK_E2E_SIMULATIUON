@@ -8,7 +8,7 @@
 #include <memory>
 
 
-class TASK {
+class TASK : public std::enable_shared_from_this<TASK> {
 private:
 	// Inherent characters
     int id_ = -1;
@@ -41,6 +41,8 @@ public:
 
     void AddRunnable(const std::shared_ptr<RUNNABLE> runnable);
     void ClearMapping();
+
+    std::shared_ptr<TASK> GetSharedPtr() { return shared_from_this(); }
 };
 
 #endif

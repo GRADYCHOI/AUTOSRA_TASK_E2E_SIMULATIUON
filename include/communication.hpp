@@ -6,8 +6,6 @@
 #include "simulation_types.hpp"
 
 
-class Simulation;
-
 class Communication {
 public:
     Communication() {}

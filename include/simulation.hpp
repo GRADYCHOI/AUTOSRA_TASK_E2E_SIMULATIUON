@@ -22,9 +22,9 @@
 #include "rapidjson/prettywriter.h"
 #include "rapidjson/ostreamwrapper.h"
 
-#define RunnableImplicit 100
-#define TaskImplicit 101
-#define LET 102
+const int RunnableImplicitMethod = 100;
+const int TaskImplicitMethod = 101;
+const int LETMethod = 102;
 
 class Simulation {
 private:
@@ -57,6 +57,12 @@ private:
 
     const int GetNumberOfPermutation(int number);
 
+    void GetRunnableScheduleInformations(int communicationMethod,
+                                         std::vector<std::vector<std::vector<int>>>& runnableExecutionPermutation,
+                                         std::vector<std::vector<std::vector<int>>>& runnableCommunicationPermutation,
+                                         std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableExecutions,
+                                         std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications);
+
     void GetRunnableExecutions(std::vector<std::vector<std::vector<int>>>& runnablePermutation, std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableExecutions) {
         execution_->GetCommunicationTable(dag_, numberOfRunnables_, hyperPeriod_, runnablePermutation, runnableExecutions);
     }
@@ -83,7 +89,7 @@ public:
     Simulation(std::shared_ptr<DAG> newDag) { dag_ = newDag; Initialize(); }
     ~Simulation() {}
 
-    void Simulate();
+    void Simulate(int communicationMethod);
 
 	// Command Pattern
 	void SetCommunication(std::unique_ptr<Communication>&& newCommunication) { communication_ = std::move(newCommunication); }

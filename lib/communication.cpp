@@ -11,6 +11,19 @@ int GetNumberOfPermutation(int number) {
     return tmpNumber;
 }
 
+float GCD(float a, float b) {
+    unsigned long long int tmp1 = static_cast<unsigned long long int>(a * 1e+5f);
+    unsigned long long int tmp2 = static_cast<unsigned long long int>(b * 1e+5f);
+
+    while (tmp2 != 0) {
+    	unsigned long long int tmp3 = tmp1 % tmp2;
+        tmp1 = tmp2;
+        tmp2 = tmp3;
+    }
+
+    return static_cast<float>(tmp1) * 1e-5f;
+}
+
 void RunnableImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numberOfRunnables, float hyperPeriod, std::vector<std::vector<std::vector<int>>>& runnablePermutation, std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications) {
     std::vector<std::vector<std::shared_ptr<RUNNABLE>>> sequence; // [Priority][Runnable]
 	sequence.reserve(numberOfRunnables);
@@ -58,7 +71,7 @@ void RunnableImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numb
     std::vector<std::vector<std::shared_ptr<RUNNABLE>>> allCasePerPriority(numberOfCase);
 
     for (auto samePriorityRunnables : sequence) {
-        int numberOfPermutation = GetNumberOfPermutation(static_cast<int>(samePriorityRunnables.size()));
+        //int numberOfPermutation = GetNumberOfPermutation(static_cast<int>(samePriorityRunnables.size()));
 
         std::sort(samePriorityRunnables.begin(), samePriorityRunnables.end(), [](std::shared_ptr<RUNNABLE> a, std::shared_ptr<RUNNABLE> b) { return a->GetId() < b->GetId(); });
 
@@ -110,7 +123,7 @@ void RunnableImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numb
     // Set Execution Times
     float unit = dag->GetTask(0)->GetPeriod();
     for (auto &task : dag->GetTasks()) {
-        unit = static_cast<float>(std::gcd(static_cast<int>(unit * 100000), ((task->GetOffset() != 0.0) ? std::gcd(static_cast<int>(task->GetPeriod() * 100000), static_cast<int>(task->GetOffset() * 100000)) : static_cast<int>(task->GetPeriod() * 100000))) / 100000);
+        unit = static_cast<float>(GCD(static_cast<int>(unit), ((task->GetOffset() != 0.0) ? GCD(static_cast<int>(task->GetPeriod()), static_cast<int>(task->GetOffset())) : static_cast<int>(task->GetPeriod()))));
     }
 
     std::vector<float> emptyTimes((static_cast<int>(hyperPeriod / unit)), unit);
@@ -161,7 +174,7 @@ void TaskImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numberOf
 
     float unit = dag->GetTask(0)->GetPeriod();
     for (auto &task : dag->GetTasks()) {
-        unit = static_cast<float>(std::gcd(static_cast<int>(unit * 100000), ((task->GetOffset() != 0.0) ? std::gcd(static_cast<int>(task->GetPeriod() * 100000), static_cast<int>(task->GetOffset() * 100000)) : static_cast<int>(task->GetPeriod() * 100000))) / 100000);
+        unit = static_cast<float>(GCD(static_cast<int>(unit), ((task->GetOffset() != 0.0) ? GCD(static_cast<int>(task->GetPeriod()), static_cast<int>(task->GetOffset())) : static_cast<int>(task->GetPeriod()))));
     }
 
     std::vector<float> emptyTimes((static_cast<int>(hyperPeriod / unit)), unit);

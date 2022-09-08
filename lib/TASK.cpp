@@ -23,6 +23,7 @@ void TASK::AddRunnable(const std::shared_ptr<RUNNABLE> runnable) {
 
     if (!searchFlag) {
         this->runnables_.push_back(runnable);
+        runnable->SetTask(this->GetSharedPtr());
     }
 
     SetExecutionTime();

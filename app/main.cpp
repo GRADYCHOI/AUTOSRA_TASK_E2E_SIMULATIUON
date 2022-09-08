@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
 
     std::unique_ptr<Simulation> simulation(new Simulation(dag));
     
-    simulation->Simulate(RunnableImplicit);
+    simulation->Simulate(RunnableImplicitMethod);
     
     std::clog << "[main.cpp] CheckPoint 1" << std::endl;
     simulation->SaveDag();

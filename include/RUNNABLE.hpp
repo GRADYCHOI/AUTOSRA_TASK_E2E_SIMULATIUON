@@ -6,17 +6,22 @@
 #include <memory>
 
 
-class RUNNABLE : public std::enable_shared_from_this<RUNNABLE>
-{ 
+class TASK;
+
+class RUNNABLE : public std::enable_shared_from_this<RUNNABLE> { 
 private:
 	// Inherent characters
     int id_ = -1;
     int realId_ = -1;
     float executionTime_ = -1.0;
     int status_ = 0; // 0 = input runnable, 1 = output runnable, 2 = middle runnable
+
+    // mapped Task
+    std::weak_ptr<TASK> task_; 
 	
 	// Dynamic characters
 	int precedence_ = -1;
+    int priorityInTask_ = -1;
     std::vector<std::weak_ptr<RUNNABLE>> inputRunnables_;
     std::vector<std::shared_ptr<RUNNABLE>> outputRunnables_;
 
@@ -33,6 +38,8 @@ public:
     const int GetRealId() const { return realId_; }
     float GetExecutionTime() const { return executionTime_; }
     const int GetStatus() const { return status_; }
+
+    const std::shared_ptr<TASK> GetTask() { return task_.lock(); }
 	
 	const int GetPrecedence() const { return precedence_; }
     const int GetNumberOfInputRunnables() { return static_cast<int>(inputRunnables_.size()); }
@@ -45,11 +52,14 @@ public:
     const std::vector<std::shared_ptr<RUNNABLE>>& GetOutputRunnables() const { return outputRunnables_; }
 	
 	void SetPrecedence(const int precedence) { precedence_ = precedence; }
+    void SetPriorityInTask(const int priority) { priorityInTask_ = priority; }
+
+    void SetTask(const std::weak_ptr<TASK> task) { task_ = task; }
 
     void LinkInputRunnable(const std::weak_ptr<RUNNABLE> inputRunnable);
     void LinkOutputRunnable(const std::shared_ptr<RUNNABLE> outputRunnable);
 
-    std::shared_ptr<RUNNABLE> GetSharedPtr();
+    std::shared_ptr<RUNNABLE> GetSharedPtr() { return shared_from_this(); }
 };
 
 #endif

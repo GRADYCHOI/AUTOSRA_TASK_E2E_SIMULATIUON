@@ -2,16 +2,17 @@
 
 
 float LCM(float a, float b) {
-    unsigned long long tmp1 = static_cast<unsigned long long>(a * 1e+19f);
-    unsigned long long tmp2 = static_cast<unsigned long long>(b * 1e+19f);
+    std::cout << "LCM" << std::endl;
+    unsigned long long int tmp1 = static_cast<unsigned long long int>(a * 1e+5f);
+    unsigned long long int tmp2 = static_cast<unsigned long long int>(b * 1e+5f);
 
     while (tmp2 != 0) {
-    	unsigned long long tmp3 = tmp1 % tmp2;
+    	unsigned long long int tmp3 = tmp1 % tmp2;
         tmp1 = tmp2;
         tmp2 = tmp3;
     }
 
-    return static_cast<float>(a * (b / (float)(tmp1 * 1e-19f)));
+    return static_cast<float>(static_cast<unsigned long long int>(a * 1e+5f) * (static_cast<unsigned long long int>(b * 1e+5f) / tmp1)) * 1e-5f;
 }
 
 const int DAG::GetMaxCycle() {
@@ -30,7 +31,7 @@ const float DAG::GetHyperPeriod() {
     float tmpPeriod = this->GetTasksPriority()[0]->GetPeriod();
 
     for(auto& orderOfPriorityTasks : this->GetTasksPriority()) {
-        tmpPeriod = static_cast<float>(std::lcm(static_cast<int>(tmpPeriod * 100000), static_cast<int>(orderOfPriorityTasks->GetPeriod() * 100000)) / 100000);
+        tmpPeriod = LCM(static_cast<int>(tmpPeriod), static_cast<int>(orderOfPriorityTasks->GetPeriod()));
     }
 
     return tmpPeriod;

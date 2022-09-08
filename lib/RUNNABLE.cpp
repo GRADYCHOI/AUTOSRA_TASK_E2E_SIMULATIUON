@@ -45,7 +45,3 @@ void RUNNABLE::LinkOutputRunnable(const std::shared_ptr<RUNNABLE> outputRunnable
         outputRunnable->AddInputRunnable(this->GetSharedPtr());
     }
 }
-
-std::shared_ptr<RUNNABLE> RUNNABLE::GetSharedPtr() {
-    return shared_from_this();
-}
