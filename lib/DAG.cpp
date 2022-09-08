@@ -267,7 +267,7 @@ void DAG::ResetMappedRunnablePriority() {
                                 int tmp = run->GetPriority();
                                 run->SetPriorityInTask(run2->GetPriority());
                                 run2->SetPriorityInTask(tmp);
-                                std::cout << "change! task : " << task->GetId() << " runnable : " << run->GetId() << " -> " << run2->GetId() << std::endl;
+                                std::cout << "change! task : " << task->GetId() << " runnable : " << run->GetId() << " " << maxOutputRunnableTaskPriority << " -> " << run2->GetId() << " " << maxCompareOutputRunnableTaskPriority << std::endl;
                             }
                         } 
                     }
