@@ -234,6 +234,47 @@ void DAG::CheckPrecedence(std::vector<int>& precedenceOfRunnables, const std::sh
     }
 }
 
+void DAG::ResetMappedRunnablePriority() {
+    std::clog << "============================================[Debug : Mapped Runnable Sequence Reset]============================================" << "\n";
+    int maxPrecedence = 0;
+    for (auto &run : this->runnables_) {
+        if (maxPrecedence < run->GetPrecedence()) maxPrecedence = run->GetPrecedence();
+    }
+
+    for (auto &task : this->tasks_) {
+        int priority = 0;
+        int precedence = 0;
+
+        for (auto &run : task->GetRunnables()) run->SetPriorityInTask(priority++);
+        while (precedence <= maxPrecedence) {
+            for (auto &run : task->GetRunnables()) {
+
+                if (run->GetPrecedence() == precedence) {
+                    int maxOutputRunnableTaskPriority = ((int)tasks_.size() +1);
+                    for (auto &out : run->GetOutputRunnables()) { // 기준 러너블의 아웃풋러너블 중 highest priority task를 찾음.
+                        if (out->GetTask()->GetPriority() < maxOutputRunnableTaskPriority) maxOutputRunnableTaskPriority = out->GetTask()->GetPriority();
+                    }
+
+                    for (auto &run2 : task->GetRunnables()) {
+                        if (run->GetPrecedence() == run2->GetPrecedence()) {
+                            int maxCompareOutputRunnableTaskPriority = ((int)tasks_.size() + 1);
+                            for (auto &out : run2->GetOutputRunnables()) { // 비교할 러너블의 아웃풋러너블중 highest priority task를 찾음.
+                                if (out->GetTask()->GetPriority() < maxCompareOutputRunnableTaskPriority) maxCompareOutputRunnableTaskPriority = out->GetTask()->GetPriority();
+                            }
+                            if ((maxOutputRunnableTaskPriority > maxCompareOutputRunnableTaskPriority) && (task->GetPriority() >maxCompareOutputRunnableTaskPriority)) {
+                                int tmp = run->GetPriority();
+                                run->SetPriorityInTask(run2->GetPriority());
+                                run2->SetPriorityInTask(tmp);
+                            }
+                        } 
+                    }
+                }
+            }
+            precedence++;
+        }
+    }
+}
+
 /* Save File & Parsing File Section */
 
 void DAG::SaveDag(std::string thisTime) {
