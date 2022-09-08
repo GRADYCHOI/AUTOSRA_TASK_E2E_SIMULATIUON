@@ -1,6 +1,20 @@
 #include "simulation.hpp"
 
 
+// TODO : Convert to GCD algorithm
+float GCD(float a, float b) {
+    unsigned long long int tmp1 = static_cast<unsigned long long int>(a * 1e+19);
+    unsigned long long int tmp2 = static_cast<unsigned long long int>(b * 1e+19);
+
+    while (tmp2 != 0) {
+    	unsigned long long int tmp3 = tmp1 % tmp2;
+        tmp1 = tmp2;
+        tmp2 = tmp3;
+    }
+
+    return static_cast<float>((static_cast<unsigned long long int>(a * 1e+19) * (static_cast<unsigned long long int>(b * 1e+19) / tmp1)) * 1e-19);
+}
+
 void Simulation::Initialize() {
     this->maxCycle_ = this->dag_->GetMaxCycle();
     this->hyperPeriod_ = this->dag_->GetHyperPeriod();
@@ -29,27 +43,43 @@ void Simulation::Initialize() {
     this->simulationTime_ = std::to_string(pTimeInfo->tm_year + 1900) + "_" + std::to_string(pTimeInfo->tm_mon + 1) + "_" + std::to_string(pTimeInfo->tm_mday) + "_" + std::to_string(pTimeInfo->tm_hour) + "_" + std::to_string(pTimeInfo->tm_min);
 }
 
-const int Simulation::GetNumberOfPermutation(int number) {
-    int tmpNumber = 1;
-
-    for (int count = number; count > 0; count--) {
-        tmpNumber *= count;
-    }
-
-    return tmpNumber;
-}
-
-void Simulation::Simulate() {
-    std::vector<std::vector<std::vector<int>>> runnableExecutionPermutation;  // [Priority][Case][ID]
-    std::vector<std::vector<std::vector<int>>> runnableCommunicationPermutation;  // [Priority][Case][ID]
-    std::vector<std::vector<std::vector<ExecutionInformation>>> runnableExecutions; // [ID][Time]
-    std::vector<std::vector<std::vector<ExecutionInformation>>> runnableCommunications; // [ID][Case][Time]
-
+void GetRunnableScheduleInformations(int communicationMethod;
+                                     std::vector<std::vector<std::vector<int>>>& runnableExecutionPermutation,
+                                     std::vector<std::vector<std::vector<int>>>& runnableCommunicationPermutation,
+                                     std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableExecutions,
+                                     std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications) {
     std::cout << "[Simulation] Get Runnable Execution Times" << std::endl;
     this->GetRunnableExecutions(runnableExecutionPermutation, runnableExecutions);
+    
+    switch (communicationMethod) {
+        case RunnableImplicit:
+            runnableCommunicationPermutation = runnableExecutionPermutation;
+            runnableCommunications = runnableExecutions;
+            break;
 
-    std::cout << "[Simulation] Get Runnable Communication Times" << std::endl;
-    this->GetRunnableExecutions(runnableCommunicationPermutation, runnableCommunications);
+        case TaskImplicit:
+            this->SetCommunication(std::unique_ptr<Communication>(new TaskImplicit()));
+
+            std::cout << "[Simulation] Get Runnable Communication Times" << std::endl;
+            this->GetRunnableCommunications(runnableCommunicationPermutation, runnableCommunications);
+            break;
+
+        case LET:
+            this->SetCommunication(std::unique_ptr<Communication>(new LET()));
+
+            std::cout << "[Simulation] Get Runnable Communication Times" << std::endl;
+            this->GetRunnableCommunications(runnableCommunicationPermutation, runnableCommunications);
+            break;
+    }
+}
+
+void Simulation::Simulate(int communicationMethod) {
+    std::vector<std::vector<std::vector<int>>> runnableExecutionPermutation;  // [Priority][Case][ID]
+    std::vector<std::vector<std::vector<int>>> runnableCommunicationPermutation;  // [Priority][Case][ID]
+    std::vector<std::vector<std::vector<ExecutionInformation>>> runnableExecutions; // [ID][Case][Time]
+    std::vector<std::vector<std::vector<ExecutionInformation>>> runnableCommunications; // [ID][Case][Time]
+
+    this->GetRunnableScheduleInformations(communicationMethod, runnableExecutionPermutation, runnableExecutions, runnableCommunicationPermutation, runnableCommunications);
 
     int numberOfCase = 1;
     for (auto &schedulingPriority : runnableExecutionPermutation) {

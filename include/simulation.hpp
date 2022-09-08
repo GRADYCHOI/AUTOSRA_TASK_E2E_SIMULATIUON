@@ -22,6 +22,9 @@
 #include "rapidjson/prettywriter.h"
 #include "rapidjson/ostreamwrapper.h"
 
+#define RunnableImplicit 100
+#define TaskImplicit 101
+#define LET 102
 
 class Simulation {
 private:
