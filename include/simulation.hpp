@@ -36,7 +36,7 @@ private:
     std::unique_ptr<Communication> communication_;
 
     int maxCycle_;
-    float hyperPeriod_;
+    int hyperPeriod_;
 
     int numberOfTasks_;
     int numberOfRunnables_;
@@ -72,8 +72,8 @@ private:
         communication_->GetCommunicationTable(dag_, numberOfRunnables_, hyperPeriod_, runnablePermutation, runnableCommunications);
     }
 	
-    float GetReactionTime(std::map<std::pair<int, int>, std::vector<ExecutionInformation>>& processExecutions);
-    float GetDataAge(std::vector<int> executionPermutationPointer,
+    int GetReactionTime(std::map<std::pair<int, int>, std::vector<ExecutionInformation>>& processExecutions);
+    int GetDataAge(std::vector<int> executionPermutationPointer,
                       std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableExecutions,
                       std::map<std::pair<int, int>, std::vector<ExecutionInformation>>& processExecutions);
 

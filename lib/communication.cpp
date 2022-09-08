@@ -11,20 +11,7 @@ int GetNumberOfPermutation(int number) {
     return tmpNumber;
 }
 
-float GCD(float a, float b) {
-    unsigned long long int tmp1 = static_cast<unsigned long long int>(static_cast<double>(a) * 1e+10f);
-    unsigned long long int tmp2 = static_cast<unsigned long long int>(static_cast<double>(b) * 1e+10f);
-
-    while (tmp2 != 0) {
-    	unsigned long long int tmp3 = tmp1 % tmp2;
-        tmp1 = tmp2;
-        tmp2 = tmp3;
-    }
-
-    return static_cast<float>(static_cast<double>(tmp1) * 1e-10f);
-}
-
-void RunnableImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numberOfRunnables, float hyperPeriod, std::vector<std::vector<std::vector<int>>>& runnablePermutation, std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications) {
+void RunnableImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numberOfRunnables, int hyperPeriod, std::vector<std::vector<std::vector<int>>>& runnablePermutation, std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications) {
     std::vector<std::vector<std::shared_ptr<RUNNABLE>>> sequence; // [Priority][Runnable]
 	sequence.reserve(numberOfRunnables);
 
@@ -101,13 +88,13 @@ void RunnableImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numb
     }
 
     // Set Release Time in Runnables
-    ExecutionInformation initialExecutionInformation = {-1.0, -1.0};
+    ExecutionInformation initialExecutionInformation = {-1, -1};
     std::vector<std::vector<ExecutionInformation>> runnableReleaseTimes(numberOfRunnables);
 
     for (auto &task : dag->GetTasks()) {
         int maxCycle = static_cast<int>(hyperPeriod / task->GetPeriod());
-        float period = task->GetPeriod();
-        float offset = task->GetOffset();
+        int period = task->GetPeriod();
+        int offset = task->GetOffset();
 
         for (auto &runnable : task->GetRunnables()) {
             int runnableId = runnable->GetId();
@@ -121,12 +108,12 @@ void RunnableImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numb
     }
 
     // Set Execution Times
-    float unit = dag->GetTask(0)->GetPeriod();
+    int unit = dag->GetTask(0)->GetPeriod();
     for (auto &task : dag->GetTasks()) {
-        unit = static_cast<float>(GCD(static_cast<int>(unit), ((task->GetOffset() != 0.0) ? GCD(static_cast<int>(task->GetPeriod()), static_cast<int>(task->GetOffset())) : static_cast<int>(task->GetPeriod()))));
+        unit = std::gcd(unit, ((task->GetOffset() != 0) ? std::gcd(task->GetPeriod(), task->GetOffset()) : task->GetPeriod()));
     }
 
-    std::vector<float> emptyTimes((static_cast<int>(hyperPeriod / unit)), unit);
+    std::vector<int> emptyTimes((hyperPeriod / unit), unit);
 
     runnableCommunications.resize(numberOfRunnables);
     for (auto &oneCaseSequence : allCasePerPriority) {
@@ -142,10 +129,10 @@ void RunnableImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numb
                 while (emptyTimes[(unitIndex)] == 0.0) unitIndex++;
 
                 // Set start time
-                runnableCommunications[runnableId].back()[cycle].startTime = (static_cast<float>(unitIndex) * unit) + (1 - emptyTimes[unitIndex]);
+                runnableCommunications[runnableId].back()[cycle].startTime = (unitIndex * unit) + (1 - emptyTimes[unitIndex]);
 
                 // Set end time
-                float executionTime = runnable->GetExecutionTime();
+                int executionTime = runnable->GetExecutionTime();
 
                 while (executionTime) {
                     if (emptyTimes[unitIndex] < executionTime) {
@@ -154,7 +141,7 @@ void RunnableImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numb
 
                         unitIndex++;
                     } else {
-                        runnableCommunications[runnableId].back()[cycle].endTime = (static_cast<float>(unitIndex) * unit) + executionTime;
+                        runnableCommunications[runnableId].back()[cycle].endTime = (unitIndex * unit) + executionTime;
                         emptyTimes[unitIndex] -= executionTime;
                         executionTime = 0.0;
                     }
@@ -169,30 +156,30 @@ void RunnableImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numb
     }
 }
 
-void TaskImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numberOfRunnables, float hyperPeriod, std::vector<std::vector<std::vector<int>>>& runnablePermutation, std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications) {
+void TaskImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numberOfRunnables, int hyperPeriod, std::vector<std::vector<std::vector<int>>>& runnablePermutation, std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications) {
     runnablePermutation.reserve(numberOfRunnables);
 
-    float unit = dag->GetTask(0)->GetPeriod();
+    int unit = dag->GetTask(0)->GetPeriod();
     for (auto &task : dag->GetTasks()) {
-        unit = static_cast<float>(GCD(static_cast<int>(unit), ((task->GetOffset() != 0.0) ? GCD(static_cast<int>(task->GetPeriod()), static_cast<int>(task->GetOffset())) : static_cast<int>(task->GetPeriod()))));
+        unit = std::gcd(unit, ((task->GetOffset() != 0) ? std::gcd(task->GetPeriod(), task->GetOffset()) : task->GetPeriod()));
     }
 
-    std::vector<float> emptyTimes((static_cast<int>(hyperPeriod / unit)), unit);
+    std::vector<int> emptyTimes((hyperPeriod / unit), unit);
 
-    ExecutionInformation initialExecutionInformation = {-1.0, -1.0};
+    ExecutionInformation initialExecutionInformation = {-1, -1};
     runnableCommunications.resize(numberOfRunnables);
 
     for (auto &task : dag->GetTasksPriority()) {
         int maxCycle = static_cast<int>(hyperPeriod / task->GetPeriod());
-        float period = task->GetPeriod();
-        float offset = task->GetOffset();
-        float executionTime = task->GetExecutionTime();
+        int period = task->GetPeriod();
+        int offset = task->GetOffset();
+        int executionTime = task->GetExecutionTime();
 
         std::vector<ExecutionInformation> taskExecutionInformation(maxCycle, initialExecutionInformation);
 
         for (int cycle = 0; cycle < maxCycle; cycle++) {
-            float releaseTime = period * cycle + offset;
-            float deadTime = period * (cycle + 1) + offset;
+            int releaseTime = period * cycle + offset;
+            int deadTime = period * (cycle + 1) + offset;
 
             int unitIndex = static_cast<int>(std::floor(releaseTime / unit));
 
@@ -200,8 +187,8 @@ void TaskImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numberOf
             while (emptyTimes[(unitIndex)] == 0.0) unitIndex++;
 
             // Set start time
-            float startTime = (static_cast<float>(unitIndex) * unit) + (1 - emptyTimes[unitIndex]);
-            float endTime;
+            int startTime = (unitIndex * unit) + (1 - emptyTimes[unitIndex]);
+            int endTime;
 
             // Set end time
             while (executionTime) {
@@ -211,7 +198,7 @@ void TaskImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numberOf
 
                     unitIndex++;
                 } else {
-                    endTime = (static_cast<float>(unitIndex) * unit) + executionTime;
+                    endTime = (unitIndex * unit) + executionTime;
                     emptyTimes[unitIndex] -= executionTime;
                     executionTime = 0.0;
                 }
@@ -235,16 +222,16 @@ void TaskImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numberOf
     }
 }
 
-void LET::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numberOfRunnables, float hyperPeriod, std::vector<std::vector<std::vector<int>>>& runnablePermutation, std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications) {
+void LET::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numberOfRunnables, int hyperPeriod, std::vector<std::vector<std::vector<int>>>& runnablePermutation, std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications) {
     runnablePermutation.reserve(numberOfRunnables);
 
-    ExecutionInformation initialExecutionInformation = {-1.0, -1.0};
+    ExecutionInformation initialExecutionInformation = {-1, -1};
     runnableCommunications.resize(numberOfRunnables);
 
     for (auto &task : dag->GetTasksPriority()) {
-        int maxCycle = static_cast<int>(hyperPeriod / task->GetPeriod());
-        float period = task->GetPeriod();
-        float offset = task->GetOffset();
+        int maxCycle = hyperPeriod / task->GetPeriod();
+        int period = task->GetPeriod();
+        int offset = task->GetOffset();
 
         for (auto &runnable : task->GetRunnables()) {
             int runnableId = runnable->GetId();
