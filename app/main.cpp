@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
 
     switch (mappingStrategy) {
         case 0 : {
-            dag->SetMapping(std::unique_ptr<Mapping>(new RandomMapping()));
+            dag->SetMapping(std::unique_ptr<Mapping>(new InputMapping()));
             break;
         }
 

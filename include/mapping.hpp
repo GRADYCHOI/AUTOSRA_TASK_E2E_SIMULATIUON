@@ -20,4 +20,14 @@ public:
     void DoMapping(std::vector<std::shared_ptr<TASK>>& tasks, std::vector<std::shared_ptr<RUNNABLE>>& runnables);
 };
 
+class RateMapping : public Mapping {
+public:
+    void DoMapping(std::vector<std::shared_ptr<TASK>>& tasks, std::vector<std::shared_ptr<RUNNABLE>>& runnables);
+};
+
+class InputMapping : public Mapping {
+public:
+    void DoMapping(std::vector<std::shared_ptr<TASK>>& tasks, std::vector<std::shared_ptr<RUNNABLE>>& runnables);
+};
+
 #endif

@@ -61,7 +61,7 @@ void Simulation::Simulate() {
         ResultInformation result = this->GetResult(caseIndex, runnableExecutionPermutation, runnableExecutions, runnableCommunicationPermutation, runnableCommunications);
         this->results_.push_back(result);
 		
-		std::system("clear");
+		//std::system("clear");
 		std::cout << "===========================================================================================================================\n";
         std::cout << " - Simulation Case            : " << std::setw(10) << caseIndex << "/" << std::setw(10) << numberOfCase << "\n";
         std::cout << " - Reaction Time              : " << std::setw(10) << result.reactionTime << "\n";
@@ -393,6 +393,7 @@ rapidjson::Value Simulation::SaveReactionTime(rapidjson::Document::AllocatorType
             rapidjson::Value taskObject(rapidjson::kObjectType);
             taskObject.AddMember("Period", task->GetPeriod(), allocator);
             taskObject.AddMember("Offset", task->GetOffset(), allocator);
+            taskObject.AddMember("Execution Time", task->GetExecutionTime(), allocator);
 
             rapidjson::Value sequenceArray(rapidjson::kArrayType);
             int numberOfRunnables = task->GetNumberOfRunnables();
