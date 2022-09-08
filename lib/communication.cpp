@@ -27,7 +27,7 @@ void RunnableImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numb
             runnableList.emplace_back(runnable);
         }
 
-        std::sort(runnableList.begin(), runnableList.end(), [](std::shared_ptr<RUNNABLE> a, std::shared_ptr<RUNNABLE> b) { return a->GetPrecedence() < b->GetPrecedence(); });
+        std::sort(runnableList.begin(), runnableList.end(), [](std::shared_ptr<RUNNABLE> a, std::shared_ptr<RUNNABLE> b) { return a->GetPriorityInTask() < b->GetPriorityInTask(); });
 
         // compress same precedence in vector
         std::vector<std::vector<std::shared_ptr<RUNNABLE>>> sequencePerTask;
@@ -35,7 +35,7 @@ void RunnableImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numb
 
         for (auto &runnable : runnableList) {
             if (sequencePerTask.size()) {
-                if (sequencePerTask.back()[0]->GetPrecedence() == runnable->GetPrecedence()) {
+                if (sequencePerTask.back()[0]->GetPriorityInTask() == runnable->GetPriorityInTask()) {
                     sequencePerTask.back().emplace_back(runnable);
                 } else {
                     sequencePerTask.emplace_back(std::vector<std::shared_ptr<RUNNABLE>>(1, runnable));
