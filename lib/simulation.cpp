@@ -9,7 +9,7 @@ void Simulation::Initialize() {
     this->numberOfInputRunnables_ = this->dag_->GetNumberOfInputRunnables();
     this->numberOfOutputRunnables_ = this->dag_->GetNumberOfOutputRunnables();
 
-    std::system("clear");
+    //std::system("clear");
     std::cout << "===========================================================================================================================\n";
     std::cout << " - Max Cycle                  : " << this->maxCycle_ << "\n";
     std::cout << " - Hyper Period               : " << this->hyperPeriod_<< "\n";
@@ -78,7 +78,7 @@ void Simulation::Simulate(int communicationMethod) {
         ResultInformation result = this->GetResult(caseIndex, runnableExecutionPermutation, runnableExecutions, runnableCommunicationPermutation, runnableCommunications);
         this->results_.push_back(result);
 		
-		std::system("clear");
+		//std::system("clear");
 		std::cout << "===========================================================================================================================\n";
         std::cout << " - Simulation Case            : " << std::setw(10) << caseIndex << "/" << std::setw(10) << numberOfCase << "\n";
         std::cout << " - Reaction Time              : " << std::setw(10) << result.reactionTime << "\n";
