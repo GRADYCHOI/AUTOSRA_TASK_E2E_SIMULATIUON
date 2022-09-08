@@ -2,7 +2,7 @@
 
 
 void TASK::SetExecutionTime() {
-	float tmpExecutionTime = 0.0;
+	int tmpExecutionTime = 0;
 	
 	for (auto &runnable : this->runnables_) {
 		tmpExecutionTime += runnable->GetExecutionTime();

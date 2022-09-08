@@ -13,7 +13,7 @@ private:
 	// Inherent characters
     int id_ = -1;
     int realId_ = -1;
-    float executionTime_ = -1.0;
+    int executionTime_ = -1; // ns (nano second)
     int status_ = 0; // 0 = input runnable, 1 = output runnable, 2 = middle runnable
 
     // mapped Task
@@ -31,12 +31,12 @@ private:
     void AddOutputRunnable(const std::shared_ptr<RUNNABLE> outputRunnable) { this->outputRunnables_.push_back(outputRunnable); this->SetStatus(); }
 
 public:
-    RUNNABLE(int id, int realId, float executionTime) : id_(id), realId_(realId), executionTime_((executionTime == 0.0) ? 0.01 : executionTime) {}
+    RUNNABLE(int id, int realId, int executionTime) : id_(id), realId_(realId), executionTime_((executionTime == 0) ? 1 : executionTime) {}
     ~RUNNABLE() {}
 
     const int GetId() const { return id_; }
     const int GetRealId() const { return realId_; }
-    float GetExecutionTime() const { return executionTime_; }
+    int GetExecutionTime() const { return executionTime_; }
     const int GetStatus() const { return status_; }
 
     const std::shared_ptr<TASK> GetTask() { return task_.lock(); }

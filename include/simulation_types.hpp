@@ -3,14 +3,14 @@
 #define __SIMULATION_TYPES__HPP__
 
 struct ExecutionInformation {
-    float startTime;
-    float endTime;
+    int startTime;
+    int endTime;
 };
 
 struct ResultInformation {
     int sequenceIndex;
-    float reactionTime;
-    float dataAge;
+    int reactionTime;
+    int dataAge;
 };
 
 #endif
