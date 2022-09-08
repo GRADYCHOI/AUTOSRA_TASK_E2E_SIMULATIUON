@@ -59,9 +59,8 @@ int main(int argc, char *argv[]) {
     dag->DoMapping();
 
     std::unique_ptr<Simulation> simulation(new Simulation(dag));
-    simulation->SetCommunication(std::unique_ptr<Communication>(new RunnableImplicit()));
     
-    simulation->Simulate();
+    simulation->Simulate(RunnableImplicit);
     
     std::clog << "[main.cpp] CheckPoint 1" << std::endl;
     simulation->SaveDag();

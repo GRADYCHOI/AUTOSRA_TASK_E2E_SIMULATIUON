@@ -1,6 +1,16 @@
 #include "communication.hpp"
 
 
+int GetNumberOfPermutation(int number) {
+    int tmpNumber = 1;
+
+    for (int count = number; count > 1; count--) {
+        tmpNumber *= count;
+    }
+
+    return tmpNumber;
+}
+
 void RunnableImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numberOfRunnables, float hyperPeriod, std::vector<std::vector<std::vector<int>>>& runnablePermutation, std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications) {
     std::vector<std::vector<std::shared_ptr<RUNNABLE>>> sequence; // [Priority][Runnable]
 	sequence.reserve(numberOfRunnables);
@@ -42,23 +52,13 @@ void RunnableImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numb
     // Permutation in Same Priority Runnables
     int numberOfCase = 0;
     for (auto &samePriorityRunnables : sequence) {
-        int samePriorityRunnablesCase = 1;
-
-        for (int count = static_cast<int>(samePriorityRunnables.size()); count > 1; count--) {
-            samePriorityRunnablesCase *= count;
-        }
-
-        numberOfCase += samePriorityRunnablesCase;
+        numberOfCase += GetNumberOfPermutation(static_cast<int>(samePriorityRunnables.size()));
     }
 
     std::vector<std::vector<std::shared_ptr<RUNNABLE>>> allCasePerPriority(numberOfCase);
 
     for (auto samePriorityRunnables : sequence) {
-        int numberOfPermutation = 1;
-
-        for (int count = static_cast<int>(samePriorityRunnables.size()); count > 1; count--) {
-            numberOfPermutation *= count;
-        }
+        int numberOfPermutation = GetNumberOfPermutation(static_cast<int>(samePriorityRunnables.size()));
 
         std::sort(samePriorityRunnables.begin(), samePriorityRunnables.end(), [](std::shared_ptr<RUNNABLE> a, std::shared_ptr<RUNNABLE> b) { return a->GetId() < b->GetId(); });
 
