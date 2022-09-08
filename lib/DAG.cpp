@@ -1,20 +1,18 @@
 #include "DAG.hpp"
 
 
-/*
 float LCM(float a, float b) {
-    int tmp1 = static_cast<int>(a * 1000);
-    int tmp2 = static_cast<int>(b * 1000);
+    unsigned long long tmp1 = static_cast<unsigned long long>(a * 1e+19f);
+    unsigned long long tmp2 = static_cast<unsigned long long>(b * 1e+19f);
 
     while (tmp2 != 0) {
-    	int tmp3 = tmp1 % tmp2;
+    	unsigned long long tmp3 = tmp1 % tmp2;
         tmp1 = tmp2;
         tmp2 = tmp3;
     }
 
-    return static_cast<float>(a * (b / (float)(tmp1 / 1000)));
+    return static_cast<float>(a * (b / (float)(tmp1 * 1e-19f)));
 }
-*/
 
 const int DAG::GetMaxCycle() {
     float minPeriod = DBL_MAX;
@@ -118,8 +116,8 @@ void DAG::RandomEdge() { //Runnable edge random generation
 
 void DAG::GenerateTasks(int numberOfTasks) {
 	std::cout << "[Task Generation] Generation Start" << std::endl;
-    float tmpPeriod = -1.0;
-    float tmpOffset = -1.0;
+    float tmpPeriod = -1.0f;
+    float tmpOffset = -1.0f;
     bool mappableFlag = false;
 
 	std::clog << "=================================================[Debug : Task Generation}=================================================" << std::endl;
@@ -152,8 +150,8 @@ void DAG::GenerateTasks(int numberOfTasks) {
 }
 
 bool DAG::CheckMappable() {
-    float sumOfExecutionTimes = 0.0;
-    float maxPeriod = 0.0;
+    float sumOfExecutionTimes = 0.0f;
+    float maxPeriod = 0.0f;
 
     for (auto &runnable : this->runnables_) {
         sumOfExecutionTimes += runnable->GetExecutionTime();
@@ -175,7 +173,7 @@ void DAG::ClearTaskMapping() {
 }
 
 float DAG::GetUtilization() {
-    float tmpUtilization = 0.0;
+    float tmpUtilization = 0.0f;
 
     for (auto &task : this->tasks_) {
         tmpUtilization += (task->GetExecutionTime() / task->GetPeriod());
