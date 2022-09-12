@@ -10,11 +10,11 @@ const int DAG::GetMaxCycle() {
         } 
     }
 
-    return this->GetHyperPeriod() / minPeriod;
+    return static_cast<int>(this->GetHyperPeriod() / minPeriod);
 }
 
-const int DAG::GetHyperPeriod() {
-    int tmpPeriod = this->GetTasksPriority()[0]->GetPeriod();
+const long long int DAG::GetHyperPeriod() {
+    long long int tmpPeriod = this->GetTasksPriority()[0]->GetPeriod();
 
     for(auto& orderOfPriorityTasks : this->GetTasksPriority()) {
         tmpPeriod = std::lcm(tmpPeriod, orderOfPriorityTasks->GetPeriod());

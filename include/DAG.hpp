@@ -90,7 +90,7 @@ public:
     const int GetNumberOfOutputRunnables() { return static_cast<int>(outputRunnables_.size()); }
 
     const int GetMaxCycle();
-    const int GetHyperPeriod();
+    const long long int GetHyperPeriod();
 
 	// Generate Command
 	void GenerateDag();
