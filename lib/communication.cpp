@@ -30,10 +30,10 @@ void RunnableImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numb
                 if (sequencePerTask.back()[0]->GetPriorityInTask() == runnable->GetPriorityInTask()) {
                     sequencePerTask.back().emplace_back(runnable);
                 } else {
-                    sequencePerTask.emplace_back(std::vector<std::shared_ptr<RUNNABLE>>(1, runnable));
+                    sequencePerTask.emplace_back(std::vector<std::shared_ptr<RUNNABLE>>{ runnable });
                 }
             } else {
-                sequencePerTask.emplace_back(std::vector<std::shared_ptr<RUNNABLE>>(1, runnable));
+                sequencePerTask.emplace_back(std::vector<std::shared_ptr<RUNNABLE>>{ runnable });
             }
         }
 
@@ -69,7 +69,7 @@ void RunnableImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numb
 
             runnablePermutation.emplace_back(tmpRunnablePermutation);
         } else {
-            runnablePermutation.emplace_back(std::vector<std::vector<int>>(1, std::vector<int>(1, samePriorityRunnables.front()->GetId())));
+            runnablePermutation.emplace_back(std::vector<std::vector<int>>{ { samePriorityRunnables.front()->GetId() } });
 
             allCasePerPriority.emplace_back(samePriorityRunnables);
         }
@@ -203,7 +203,7 @@ void TaskImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numberOf
         for (auto &runnable : task->GetRunnablesByPriorityInTask()) {
             int runnableId = runnable->GetId();
 
-            runnablePermutation.emplace_back(std::vector<std::vector<int>>(1, std::vector<int>(1, runnableId)));
+            runnablePermutation.emplace_back(std::vector<std::vector<int>>{ { runnableId } });
             runnableCommunications[runnableId].emplace_back(taskExecutionInformation);
         }
     }
@@ -223,7 +223,7 @@ void LET::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numberOfRunnables
         for (auto &runnable : task->GetRunnables()) {
             int runnableId = runnable->GetId();
 
-            runnablePermutation.emplace_back(std::vector<std::vector<int>>(1, std::vector<int>(1, runnableId)));
+            runnablePermutation.emplace_back(std::vector<std::vector<int>>{ runnableId });
             runnableCommunications[runnableId].emplace_back(std::vector<ExecutionInformation>(maxCycle, initialExecutionInformation));
 
             for (int cycle = 0; cycle < maxCycle; cycle++) {

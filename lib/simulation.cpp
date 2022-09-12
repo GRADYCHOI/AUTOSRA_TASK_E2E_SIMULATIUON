@@ -81,10 +81,10 @@ void Simulation::Simulate(int communicationMethod) {
 		//std::system("clear");
 		std::cout << "===========================================================================================================================\n";
         std::cout << " - Simulation Case            : " << std::setw(10) << caseIndex << "/" << std::setw(10) << numberOfCase << "\n";
-        std::cout << " - Reaction Time              : " << std::setw(10) << static_cast<float>(result.reactionTime) / 1000.0f << "\n";
-        std::cout << " - Data Age                   : " << std::setw(10) << static_cast<float>(result.dataAge) / 1000.0f << "\n";
+        std::cout << " - Reaction Time              : " << std::setw(10) << static_cast<double>(result.reactionTime) / 1000.0 << "\n";
+        std::cout << " - Data Age                   : " << std::setw(10) << static_cast<double>(result.dataAge) / 1000.0 << "\n";
         std::cout << " - Max Cycle                  : " << this->maxCycle_ << "\n";
-        std::cout << " - Hyper Period               : " << static_cast<float>(this->hyperPeriod_) / 1000.0f << "\n";
+        std::cout << " - Hyper Period               : " << static_cast<double>(this->hyperPeriod_) / 1000.0 << "\n";
         std::cout << " - Number Of Tasks            : " << this->numberOfTasks_ << "\n";
         std::cout << " - Number Of Runanbles        : " << this->numberOfRunnables_ << "\n";
         std::cout << " - Number Of Input Runnables  : " << this->numberOfInputRunnables_ << "\n";
