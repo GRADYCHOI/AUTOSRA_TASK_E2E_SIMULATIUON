@@ -36,7 +36,7 @@ private:
     std::unique_ptr<Communication> communication_;
 
     int maxCycle_;
-    int hyperPeriod_;
+    long long int hyperPeriod_;
 
     int numberOfTasks_;
     int numberOfRunnables_;

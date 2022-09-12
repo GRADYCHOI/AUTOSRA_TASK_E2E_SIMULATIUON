@@ -12,7 +12,7 @@ void Simulation::Initialize() {
     //std::system("clear");
     std::cout << "===========================================================================================================================\n";
     std::cout << " - Max Cycle                  : " << this->maxCycle_ << "\n";
-    std::cout << " - Hyper Period               : " << static_cast<float>(this->hyperPeriod_) / 1000.0f << "\n";
+    std::cout << " - Hyper Period               : " << static_cast<double>(this->hyperPeriod_) / 1000.0 << "\n";
     std::cout << " - Number Of Tasks            : " << this->numberOfTasks_ << "\n";
     std::cout << " - Number Of Runanbles        : " << this->numberOfRunnables_ << "\n";
     std::cout << " - Number Of Input Runnables  : " << this->numberOfInputRunnables_ << "\n";
@@ -160,7 +160,7 @@ void Simulation::SetProcessExecutions(std::vector<int>& executionPermutationPoin
                                       std::map<std::pair<int, int>, std::vector<ExecutionInformation>>& processExecutions) {
     for (auto &task : this->dag_->GetTasks()) {
         for (auto &runnable : task->GetRunnables()) {
-            int eachMaxCycle = this->hyperPeriod_ / task->GetPeriod();
+            int eachMaxCycle = static_cast<int>(this->hyperPeriod_ / task->GetPeriod());
 
             for (int cycle = 0; cycle < eachMaxCycle; cycle++) {
                 std::vector<int> worstCyclePerRunnable(this->numberOfRunnables_, -1);

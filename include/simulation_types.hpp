@@ -3,8 +3,8 @@
 #define __SIMULATION_TYPES__HPP__
 
 struct ExecutionInformation {
-    int startTime;
-    int endTime;
+    long long int startTime;
+    long long int endTime;
 };
 
 struct ResultInformation {
