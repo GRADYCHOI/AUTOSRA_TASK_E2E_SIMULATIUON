@@ -234,55 +234,177 @@ void DAG::CheckPrecedence(std::vector<int>& precedenceOfRunnables, const std::sh
     }
 }
 
-void DAG::ResetMappedRunnablePriority() {
-    std::clog << "============================================[Debug : Mapped Runnable Sequence Reset]============================================" << "\n";
-    int maxPrecedence = 0;
-    for (auto &run : this->runnables_) {
-        if (maxPrecedence < run->GetPrecedence()) maxPrecedence = run->GetPrecedence();
+void DAG::ResetMappedRunnablePriority1() { // 순서대로(1씩 증가)
+
+    for (auto &task : tasks_) {
+        int priority = 0;
+        for (auto &run : task->GetRunnables()) run->SetPriorityInTask(priority++);
     }
+    std::clog << "============================================[Debug : Mapped Runnable Sequence Reset]============================================" << "\n";
 
     for (auto &task : this->tasks_) {
-        int priority = 0;
-        int precedence = 0;
+        std::clog << "task" << task->GetId() << std::endl;
+        
+        for (auto &run : task->GetRunnables()) {
+            if (run->GetStatus() == 1) continue;
+            int maxOutputRunnableTaskPriority = ((int)this->tasks_.size() +1);
+            int maxOutputRunnable = -1;
+            std::clog << "Runnable : " << run->GetId() << std::endl;
+            int index = 0;
+            for (auto &out : run->GetOutputRunnables()) { // 기준 러너블의 아웃풋러너블 중 highest priority task를 찾음.
+                std::clog << out->GetId() << std::endl;
+                if (out->GetTask()->GetPriority() < maxOutputRunnableTaskPriority) {
+                    maxOutputRunnableTaskPriority = out->GetTask()->GetPriority();
+                    maxOutputRunnable = index;
+                }
+                index++;
+            }
+            //std::clog << "Runnable " << run->GetId() << " " << run->GetStatus() << " max output R : " << run->GetOutputRunnable(maxOutputRunnable)->GetId() << " task priority : " << maxOutputRunnableTaskPriority << " output runnable priority : " << run->GetOutputRunnable(maxOutputRunnable)->GetPriorityInTask() << std::endl;
 
-        for (auto &run : task->GetRunnables()) run->SetPriorityInTask(priority++);
-        while (precedence <= maxPrecedence) {
-            for (auto &run : task->GetRunnables()) {
-                if (run->GetStatus() == 1) continue;
-
-                if (run->GetPrecedence() == precedence) {
-                    int maxOutputRunnableTaskPriority = ((int)this->tasks_.size() +1);
-                    for (auto &out : run->GetOutputRunnables()) { // 기준 러너블의 아웃풋러너블 중 highest priority task를 찾음.
-                        if (out->GetTask()->GetPriority() < maxOutputRunnableTaskPriority) maxOutputRunnableTaskPriority = out->GetTask()->GetPriority();
+            for (auto &run2 : task->GetRunnables()) {
+                //if (run2->GetId() > run->GetId()) continue;
+                if (run2->GetStatus() == 1) continue;
+                if (run2->GetPriorityInTask() < run->GetPriorityInTask()) continue; 
+                if (run2->GetPrecedence() == run->GetPrecedence()) {
+                    int maxCompareOutputRunnableTaskPriority = ((int)this->tasks_.size() + 1);
+                    int maxCompareOutputRunnable = -1;
+                    std::clog << "compare Run : " << run2->GetId() << std::endl;
+                    int index2 = 0;
+                    for (auto &out : run2->GetOutputRunnables()) { // 비교할 러너블의 아웃풋러너블중 highest priority task를 찾음.
+                        if (out->GetTask()->GetPriority() < maxCompareOutputRunnableTaskPriority) {
+                            maxCompareOutputRunnableTaskPriority = out->GetTask()->GetPriority();
+                            maxCompareOutputRunnable = index2;
+                            //std::clog << "id :" << run2->GetOutputRunnable(maxCompareOutputRunnable)->GetId() << " priority : " << run2->GetOutputRunnable(maxCompareOutputRunnable)->GetPriorityInTask() << std::endl;
+                        }
+                        index2++;
                     }
+                    std::clog << "stats : " << run2->GetStatus() <<  " Max output R : " << maxCompareOutputRunnable << " task priority : " << maxCompareOutputRunnableTaskPriority << " output runnable priority : " << run2->GetOutputRunnable(maxCompareOutputRunnable)->GetPriorityInTask() << std::endl;
 
-                    for (auto &run2 : task->GetRunnables()) {
-                        if (run->GetPrecedence() == run2->GetPrecedence()) {
-                            int maxCompareOutputRunnableTaskPriority = ((int)this->tasks_.size() + 1);
-                            for (auto &out : run2->GetOutputRunnables()) { // 비교할 러너블의 아웃풋러너블중 highest priority task를 찾음.
-                                if (out->GetTask()->GetPriority() < maxCompareOutputRunnableTaskPriority) maxCompareOutputRunnableTaskPriority = out->GetTask()->GetPriority();
-                            }
-                            if (run2->GetStatus() == 1) continue;
-                            if ((maxOutputRunnableTaskPriority > maxCompareOutputRunnableTaskPriority) && (task->GetPriority() >maxCompareOutputRunnableTaskPriority)) {
-                                int tmp = run->GetPriorityInTask();
-                                run->SetPriorityInTask(run2->GetPriorityInTask());
-                                run2->SetPriorityInTask(tmp);
-                                std::cout << "change! task : " << task->GetId() << " runnable : " << run->GetId() << " " << maxOutputRunnableTaskPriority << " -> " << run2->GetId() << " " << maxCompareOutputRunnableTaskPriority << std::endl;
-                            }
-                        } 
+                    if (maxOutputRunnableTaskPriority < maxCompareOutputRunnableTaskPriority) continue;
+
+                    if ((maxOutputRunnableTaskPriority > maxCompareOutputRunnableTaskPriority) && (task->GetPriority() <= maxCompareOutputRunnableTaskPriority)) continue;
+                    else if ((maxOutputRunnableTaskPriority > maxCompareOutputRunnableTaskPriority) && (task->GetPriority() > maxCompareOutputRunnableTaskPriority)) {
+                        int tmp = run->GetPriorityInTask();
+                        run->SetPriorityInTask(run2->GetPriorityInTask());
+                        run2->SetPriorityInTask(tmp);
                     }
+                    
+                    if (maxOutputRunnableTaskPriority == maxCompareOutputRunnableTaskPriority) {
+                        std::clog << run->GetOutputRunnable(maxOutputRunnable)->GetPriorityInTask() << " " << run2->GetOutputRunnable(maxCompareOutputRunnable)->GetPriorityInTask() << std::endl;
+                        if(maxOutputRunnableTaskPriority == task->GetPriority()) continue;
+                        if (run->GetOutputRunnable(maxOutputRunnable)->GetPriorityInTask() > run2->GetOutputRunnable(maxCompareOutputRunnable)->GetPriorityInTask()) {
+                            int tmp = run->GetPriorityInTask();
+                            run->SetPriorityInTask(run2->GetPriorityInTask());
+                            run2->SetPriorityInTask(tmp);
+                        }
+                        else {
+                            continue;
+                        }
+                    }
+                    std::cout << "change! task : " << task->GetId() << std::endl;
+                    std::cout << " runnable : " << run->GetId() << " output runnable : " << run->GetOutputRunnable(maxOutputRunnable)->GetId() << " output runnable task priority :  " << maxOutputRunnableTaskPriority << " output runnable priority : " << run->GetOutputRunnable(maxOutputRunnable)->GetPriorityInTask() << std::endl;
+                    std::cout << " -> " << run2->GetId() << " output runnable " << run2->GetOutputRunnable(maxCompareOutputRunnable)->GetId() << " output runnable task priority : " << maxCompareOutputRunnableTaskPriority << " output runnable priority : " << run2->GetOutputRunnable(maxCompareOutputRunnable)->GetPriorityInTask() << std::endl;
                 }
             }
-            precedence++;
         }
     }
-
+    /*
     for (auto &task : this->tasks_) {
         std::cout << "task : " << task->GetId() << std::endl;
         for (auto &run : task->GetRunnables()) {
             std::cout << "runnable : " << run->GetId() << " " << run->GetPriorityInTask() << std::endl;
         }
+    }*/
+}
+
+
+void DAG::ResetMappedRunnablePriority2() { // 같은 precedence끼리 같은 priority 갖도록
+    for (auto &task : tasks_) {
+        int priority = 0;
+        for (auto &run : task->GetRunnables()) run->SetPriorityInTask(priority++);
     }
+    for (auto &task : tasks_) {
+        for (auto &run : task->GetRunnables()) {
+            for (auto &run2 : task->GetRunnables()) {
+                //if (run2->GetPriorityInTask() < run->GetPriorityInTask()) continue;
+                if ((run->GetPrecedence() == run2->GetPrecedence()) && (run->GetPriorityInTask() > run2->GetPriorityInTask())) run2->SetPriorityInTask(run->GetPriorityInTask());
+            }
+        }
+    }
+    /*
+    for (auto &task : this->tasks_) {
+        std::cout << "task : " << task->GetId() << std::endl;
+        for (auto &run : task->GetRunnables()) {
+            std::cout << "runnable : " << run->GetId() << " " << run->GetPriorityInTask() << std::endl;
+        }
+    }*/
+
+    std::clog << "============================================[Debug : Mapped Runnable Sequence Reset]============================================" << "\n";
+
+    for (auto &task : this->tasks_) {
+        //if (task->GetPriority() == 0) continue;
+        std::clog << "task" << task->GetId() << std::endl;
+        
+        for (auto &run : task->GetRunnables()) {
+            if (run->GetStatus() == 1) continue;
+            int maxOutputRunnableTaskPriority = ((int)this->tasks_.size() + 1);
+            int maxOutputRunnable = -1;
+            int index = 0;
+            for (auto &out : run->GetOutputRunnables()) { // 기준 러너블의 아웃풋러너블 중 highest priority task를 찾음.
+                if (out->GetTask()->GetPriority() < maxOutputRunnableTaskPriority) {
+                    maxOutputRunnableTaskPriority = out->GetTask()->GetPriority();
+                    maxOutputRunnable = index;
+                }
+                index++;
+            }
+
+            for (auto &run2 : task->GetRunnables()) {
+                if (run2->GetStatus() == 1) continue;
+                if (run2->GetPriorityInTask() < run->GetPriorityInTask()) continue; 
+                if (run2->GetPrecedence() == run->GetPrecedence()) {
+                    int maxCompareOutputRunnableTaskPriority = ((int)this->tasks_.size() + 1);
+                    int maxCompareOutputRunnable = -1;
+                    int index2 = 0;
+                    for (auto &out : run2->GetOutputRunnables()) { // 비교할 러너블의 아웃풋러너블중 highest priority task를 찾음.
+                        if (out->GetTask()->GetPriority() < maxCompareOutputRunnableTaskPriority) {
+                            maxCompareOutputRunnableTaskPriority = out->GetTask()->GetPriority();
+                            maxCompareOutputRunnable = index2;
+                        }
+                        index2++;
+                    }
+                    if (maxOutputRunnableTaskPriority < maxCompareOutputRunnableTaskPriority) continue;
+                    if ((maxOutputRunnableTaskPriority > maxCompareOutputRunnableTaskPriority) && (task->GetPriority() <= maxCompareOutputRunnableTaskPriority)) continue;
+                    else if ((maxOutputRunnableTaskPriority > maxCompareOutputRunnableTaskPriority) && (task->GetPriority() > maxCompareOutputRunnableTaskPriority)) {
+                        int tmp = run2->GetPriorityInTask() - 1;
+                        //run->SetPriorityInTask(run2->GetPriorityInTask());
+                        run2->SetPriorityInTask(tmp);
+                    }
+                    
+                    if (maxOutputRunnableTaskPriority == maxCompareOutputRunnableTaskPriority) {
+                        if(maxOutputRunnableTaskPriority == task->GetPriority()) continue;
+                        if (run->GetOutputRunnable(maxOutputRunnable)->GetPriorityInTask() > run2->GetOutputRunnable(maxCompareOutputRunnable)->GetPriorityInTask()) {
+                            int tmp = run2->GetPriorityInTask() - 1;
+                            //run->SetPriorityInTask(run2->GetPriorityInTask());
+                            run2->SetPriorityInTask(tmp);
+                        }
+                        else {
+                            continue;
+                        }
+                    }
+                    std::clog << "change! task : " << task->GetId() << std::endl;
+                    std::clog << " runnable : " << run->GetId() << " output runnable : " << run->GetOutputRunnable(maxOutputRunnable)->GetId() << " output runnable task priority :  " << maxOutputRunnableTaskPriority << " output runnable priority : " << run->GetOutputRunnable(maxOutputRunnable)->GetPriorityInTask() << std::endl;
+                    std::clog << " -> " << run2->GetId() << " output runnable " << run2->GetOutputRunnable(maxCompareOutputRunnable)->GetId() << " output runnable task priority : " << maxCompareOutputRunnableTaskPriority << " output runnable priority : " << run2->GetOutputRunnable(maxCompareOutputRunnable)->GetPriorityInTask() << std::endl;
+                }
+            }
+        }
+    }
+    /*
+    for (auto &task : this->tasks_) {
+        std::cout << "task : " << task->GetId() << std::endl;
+        for (auto &run : task->GetRunnables()) {
+            std::cout << "runnable : " << run->GetId() << " " << run->GetPriorityInTask() << std::endl;
+        }
+    }*/
 }
 
 /* Save File & Parsing File Section */
