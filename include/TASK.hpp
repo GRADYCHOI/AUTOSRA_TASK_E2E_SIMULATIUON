@@ -6,6 +6,7 @@
 
 #include <vector>
 #include <memory>
+#include <algorithm>
 
 
 class TASK : public std::enable_shared_from_this<TASK> {

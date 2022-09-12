@@ -11,8 +11,8 @@ void TASK::SetExecutionTime() {
 	this->executionTime_ = tmpExecutionTime;
 }
 
-std::vector<std::shared_ptr<RUNNABLE>>& TASK::GetRunnablesByPriorityInTask() {
-    std::sort(this->runnables_.begin(), this->runnables.end(), [](std::shared_ptr<RUNNABLE> a, std::shared_ptr<RUNNABLE> b) { return a->GetPriorityInTask() < b->GetPriorityInTask(); });
+const std::vector<std::shared_ptr<RUNNABLE>>& TASK::GetRunnablesByPriorityInTask() {
+    std::sort(this->runnables_.begin(), this->runnables_.end(), [](std::shared_ptr<RUNNABLE> a, std::shared_ptr<RUNNABLE> b) { return a->GetPriorityInTask() < b->GetPriorityInTask(); });
 
     return this->runnables_;
 }

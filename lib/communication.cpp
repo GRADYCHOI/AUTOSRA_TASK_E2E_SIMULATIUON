@@ -69,7 +69,7 @@ void RunnableImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numb
 
             runnablePermutation.emplace_back(tmpRunnablePermutation);
         } else {
-            runnablePermutation.emplace_back(std::vector<std::vector<int>>(1, std::vector<int>(1, samePriorityRunnables.front()->GetId()));
+            runnablePermutation.emplace_back(std::vector<std::vector<int>>(1, std::vector<int>(1, samePriorityRunnables.front()->GetId())));
 
             allCasePerPriority.emplace_back(samePriorityRunnables);
         }
@@ -201,8 +201,9 @@ void TaskImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numberOf
         }
 
         for (auto &runnable : task->GetRunnablesByPriorityInTask()) {
-            runnablePermutation.emplace_back(std::vector<std::vector<int>>(1, std::vector<int>(1, runnable->GetId())));
+            int runnableId = runnable->GetId();
 
+            runnablePermutation.emplace_back(std::vector<std::vector<int>>(1, std::vector<int>(1, runnableId)));
             runnableCommunications[runnableId].emplace_back(taskExecutionInformation);
         }
     }
@@ -220,8 +221,9 @@ void LET::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numberOfRunnables
         int offset = task->GetOffset();
 
         for (auto &runnable : task->GetRunnables()) {
-            runnablePermutation.emplace_back(std::vector<std::vector<int>>(1, std::vector<int>(1, runnable->GetId())));
+            int runnableId = runnable->GetId();
 
+            runnablePermutation.emplace_back(std::vector<std::vector<int>>(1, std::vector<int>(1, runnableId)));
             runnableCommunications[runnableId].emplace_back(std::vector<ExecutionInformation>(maxCycle, initialExecutionInformation));
 
             for (int cycle = 0; cycle < maxCycle; cycle++) {
