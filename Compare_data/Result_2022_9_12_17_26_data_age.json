@@ -1,0 +1,1700 @@
+{
+    "Reaction Time Ranking": [{
+            "Ranking": 1,
+            "Reaction Time": 97.005,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.303,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.7,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.592,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.614,
+                    "Runnable Sequence": [1, 11, 21, 23, 26, 27, 32, 33, 36, 40, 47, 58, 59]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.71,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 44, 48, 49, 46, 50, 54, 52, 55]
+                }]
+        }, {
+            "Ranking": 2,
+            "Reaction Time": 97.005,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.303,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.7,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.592,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.614,
+                    "Runnable Sequence": [1, 11, 21, 26, 23, 27, 32, 33, 36, 40, 47, 59, 58]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.71,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 48, 44, 49, 50, 46, 54, 52, 55]
+                }]
+        }, {
+            "Ranking": 3,
+            "Reaction Time": 97.005,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.303,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.7,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.592,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.614,
+                    "Runnable Sequence": [1, 11, 21, 23, 26, 27, 32, 33, 36, 40, 47, 59, 58]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.71,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 48, 44, 49, 50, 46, 54, 52, 55]
+                }]
+        }, {
+            "Ranking": 4,
+            "Reaction Time": 97.005,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.303,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.7,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.592,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.614,
+                    "Runnable Sequence": [1, 11, 21, 26, 23, 27, 32, 33, 36, 40, 47, 58, 59]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.71,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 48, 44, 49, 50, 46, 54, 52, 55]
+                }]
+        }, {
+            "Ranking": 5,
+            "Reaction Time": 97.005,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.303,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.7,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.592,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.614,
+                    "Runnable Sequence": [1, 11, 21, 23, 26, 27, 32, 33, 36, 40, 47, 58, 59]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.71,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 48, 44, 49, 50, 46, 54, 52, 55]
+                }]
+        }, {
+            "Ranking": 6,
+            "Reaction Time": 97.005,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.303,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.7,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.592,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.614,
+                    "Runnable Sequence": [1, 11, 21, 26, 23, 27, 32, 33, 36, 40, 47, 59, 58]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.71,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 44, 48, 49, 50, 46, 54, 52, 55]
+                }]
+        }, {
+            "Ranking": 7,
+            "Reaction Time": 97.005,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.303,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.7,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.592,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.614,
+                    "Runnable Sequence": [1, 11, 21, 23, 26, 27, 32, 33, 36, 40, 47, 59, 58]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.71,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 44, 48, 49, 50, 46, 54, 52, 55]
+                }]
+        }, {
+            "Ranking": 8,
+            "Reaction Time": 97.005,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.303,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.7,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.592,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.614,
+                    "Runnable Sequence": [1, 11, 21, 26, 23, 27, 32, 33, 36, 40, 47, 58, 59]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.71,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 44, 48, 49, 50, 46, 54, 52, 55]
+                }]
+        }, {
+            "Ranking": 9,
+            "Reaction Time": 97.005,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.303,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.7,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.592,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.614,
+                    "Runnable Sequence": [1, 11, 21, 23, 26, 27, 32, 33, 36, 40, 47, 58, 59]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.71,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 44, 48, 49, 50, 46, 54, 52, 55]
+                }]
+        }, {
+            "Ranking": 10,
+            "Reaction Time": 97.005,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.303,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.7,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.592,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.614,
+                    "Runnable Sequence": [1, 11, 21, 26, 23, 27, 32, 33, 36, 40, 47, 59, 58]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.71,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 48, 44, 49, 46, 50, 54, 52, 55]
+                }]
+        }, {
+            "Ranking": 11,
+            "Reaction Time": 97.005,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.303,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.7,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.592,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.614,
+                    "Runnable Sequence": [1, 11, 21, 23, 26, 27, 32, 33, 36, 40, 47, 59, 58]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.71,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 48, 44, 49, 46, 50, 54, 52, 55]
+                }]
+        }, {
+            "Ranking": 12,
+            "Reaction Time": 97.005,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.303,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.7,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.592,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.614,
+                    "Runnable Sequence": [1, 11, 21, 26, 23, 27, 32, 33, 36, 40, 47, 58, 59]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.71,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 48, 44, 49, 46, 50, 54, 52, 55]
+                }]
+        }, {
+            "Ranking": 13,
+            "Reaction Time": 97.005,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.303,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.7,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.592,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.614,
+                    "Runnable Sequence": [1, 11, 21, 23, 26, 27, 32, 33, 36, 40, 47, 58, 59]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.71,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 48, 44, 49, 46, 50, 54, 52, 55]
+                }]
+        }, {
+            "Ranking": 14,
+            "Reaction Time": 97.005,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.303,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.7,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.592,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.614,
+                    "Runnable Sequence": [1, 11, 21, 26, 23, 27, 32, 33, 36, 40, 47, 59, 58]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.71,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 44, 48, 49, 46, 50, 54, 52, 55]
+                }]
+        }, {
+            "Ranking": 15,
+            "Reaction Time": 97.005,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.303,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.7,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.592,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.614,
+                    "Runnable Sequence": [1, 11, 21, 23, 26, 27, 32, 33, 36, 40, 47, 59, 58]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.71,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 44, 48, 49, 46, 50, 54, 52, 55]
+                }]
+        }, {
+            "Ranking": 16,
+            "Reaction Time": 97.005,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.303,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.7,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.592,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.614,
+                    "Runnable Sequence": [1, 11, 21, 26, 23, 27, 32, 33, 36, 40, 47, 58, 59]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.71,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 44, 48, 49, 46, 50, 54, 52, 55]
+                }]
+        }, {
+            "Ranking": 17,
+            "Reaction Time": 97.005,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.303,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.7,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.592,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.614,
+                    "Runnable Sequence": [1, 11, 21, 23, 26, 27, 32, 33, 36, 40, 47, 58, 59]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.71,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 44, 48, 49, 46, 50, 52, 54, 55]
+                }]
+        }, {
+            "Ranking": 18,
+            "Reaction Time": 97.005,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.303,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.7,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.592,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.614,
+                    "Runnable Sequence": [1, 11, 21, 26, 23, 27, 32, 33, 36, 40, 47, 59, 58]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.71,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 48, 44, 49, 50, 46, 52, 54, 55]
+                }]
+        }, {
+            "Ranking": 19,
+            "Reaction Time": 97.005,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.303,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.7,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.592,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.614,
+                    "Runnable Sequence": [1, 11, 21, 23, 26, 27, 32, 33, 36, 40, 47, 59, 58]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.71,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 48, 44, 49, 50, 46, 52, 54, 55]
+                }]
+        }, {
+            "Ranking": 20,
+            "Reaction Time": 97.005,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.303,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.7,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.592,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.614,
+                    "Runnable Sequence": [1, 11, 21, 26, 23, 27, 32, 33, 36, 40, 47, 58, 59]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.71,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 48, 44, 49, 50, 46, 52, 54, 55]
+                }]
+        }, {
+            "Ranking": 21,
+            "Reaction Time": 97.005,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.303,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.7,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.592,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.614,
+                    "Runnable Sequence": [1, 11, 21, 23, 26, 27, 32, 33, 36, 40, 47, 58, 59]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.71,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 48, 44, 49, 50, 46, 52, 54, 55]
+                }]
+        }, {
+            "Ranking": 22,
+            "Reaction Time": 97.005,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.303,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.7,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.592,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.614,
+                    "Runnable Sequence": [1, 11, 21, 26, 23, 27, 32, 33, 36, 40, 47, 59, 58]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.71,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 44, 48, 49, 50, 46, 52, 54, 55]
+                }]
+        }, {
+            "Ranking": 23,
+            "Reaction Time": 97.005,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.303,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.7,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.592,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.614,
+                    "Runnable Sequence": [1, 11, 21, 23, 26, 27, 32, 33, 36, 40, 47, 59, 58]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.71,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 44, 48, 49, 50, 46, 52, 54, 55]
+                }]
+        }, {
+            "Ranking": 24,
+            "Reaction Time": 97.005,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.303,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.7,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.592,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.614,
+                    "Runnable Sequence": [1, 11, 21, 26, 23, 27, 32, 33, 36, 40, 47, 58, 59]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.71,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 44, 48, 49, 50, 46, 52, 54, 55]
+                }]
+        }, {
+            "Ranking": 25,
+            "Reaction Time": 97.005,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.303,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.7,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.592,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.614,
+                    "Runnable Sequence": [1, 11, 21, 23, 26, 27, 32, 33, 36, 40, 47, 58, 59]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.71,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 44, 48, 49, 50, 46, 52, 54, 55]
+                }]
+        }, {
+            "Ranking": 26,
+            "Reaction Time": 97.005,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.303,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.7,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.592,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.614,
+                    "Runnable Sequence": [1, 11, 21, 26, 23, 27, 32, 33, 36, 40, 47, 59, 58]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.71,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 48, 44, 49, 46, 50, 52, 54, 55]
+                }]
+        }, {
+            "Ranking": 27,
+            "Reaction Time": 97.005,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.303,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.7,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.592,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.614,
+                    "Runnable Sequence": [1, 11, 21, 23, 26, 27, 32, 33, 36, 40, 47, 59, 58]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.71,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 48, 44, 49, 46, 50, 52, 54, 55]
+                }]
+        }, {
+            "Ranking": 28,
+            "Reaction Time": 97.005,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.303,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.7,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.592,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.614,
+                    "Runnable Sequence": [1, 11, 21, 26, 23, 27, 32, 33, 36, 40, 47, 58, 59]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.71,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 48, 44, 49, 46, 50, 52, 54, 55]
+                }]
+        }, {
+            "Ranking": 29,
+            "Reaction Time": 97.005,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.303,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.7,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.592,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.614,
+                    "Runnable Sequence": [1, 11, 21, 23, 26, 27, 32, 33, 36, 40, 47, 58, 59]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.71,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 48, 44, 49, 46, 50, 52, 54, 55]
+                }]
+        }, {
+            "Ranking": 30,
+            "Reaction Time": 97.005,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.303,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.7,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.592,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.614,
+                    "Runnable Sequence": [1, 11, 21, 26, 23, 27, 32, 33, 36, 40, 47, 59, 58]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.71,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 44, 48, 49, 46, 50, 52, 54, 55]
+                }]
+        }, {
+            "Ranking": 31,
+            "Reaction Time": 97.005,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.303,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.7,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.592,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.614,
+                    "Runnable Sequence": [1, 11, 21, 23, 26, 27, 32, 33, 36, 40, 47, 59, 58]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.71,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 44, 48, 49, 46, 50, 52, 54, 55]
+                }]
+        }, {
+            "Ranking": 32,
+            "Reaction Time": 97.005,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.303,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.7,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.592,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Execution Time": 0.614,
+                    "Runnable Sequence": [1, 11, 21, 26, 23, 27, 32, 33, 36, 40, 47, 58, 59]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Execution Time": 0.71,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 44, 48, 49, 46, 50, 52, 54, 55]
+                }]
+        }],
+    "Data Age Ranking": [{
+            "Ranking": 1,
+            "Data Age": 1107030.122,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [1, 11, 21, 26, 23, 27, 32, 33, 36, 40, 47, 58, 59]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 48, 44, 49, 46, 50, 52, 54, 55]
+                }]
+        }, {
+            "Ranking": 2,
+            "Data Age": 1107267.786,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [1, 11, 21, 23, 26, 27, 32, 33, 36, 40, 47, 58, 59]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 48, 44, 49, 50, 46, 52, 54, 55]
+                }]
+        }, {
+            "Ranking": 3,
+            "Data Age": 1107546.458,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [1, 11, 21, 26, 23, 27, 32, 33, 36, 40, 47, 58, 59]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 48, 44, 49, 46, 50, 54, 52, 55]
+                }]
+        }, {
+            "Ranking": 4,
+            "Data Age": 1107615.314,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [1, 11, 21, 26, 23, 27, 32, 33, 36, 40, 47, 59, 58]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 44, 48, 49, 50, 46, 54, 52, 55]
+                }]
+        }, {
+            "Ranking": 5,
+            "Data Age": 1109321.114,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [1, 11, 21, 23, 26, 27, 32, 33, 36, 40, 47, 59, 58]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 48, 44, 49, 46, 50, 54, 52, 55]
+                }]
+        }, {
+            "Ranking": 6,
+            "Data Age": 1109524.482,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [1, 11, 21, 26, 23, 27, 32, 33, 36, 40, 47, 59, 58]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 48, 44, 49, 50, 46, 54, 52, 55]
+                }]
+        }, {
+            "Ranking": 7,
+            "Data Age": 1109726.458,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [1, 11, 21, 26, 23, 27, 32, 33, 36, 40, 47, 59, 58]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 44, 48, 49, 46, 50, 54, 52, 55]
+                }]
+        }, {
+            "Ranking": 8,
+            "Data Age": 1109942.25,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [1, 11, 21, 23, 26, 27, 32, 33, 36, 40, 47, 59, 58]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 48, 44, 49, 46, 50, 52, 54, 55]
+                }]
+        }, {
+            "Ranking": 9,
+            "Data Age": 1111128.514,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [1, 11, 21, 26, 23, 27, 32, 33, 36, 40, 47, 59, 58]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 44, 48, 49, 50, 46, 52, 54, 55]
+                }]
+        }, {
+            "Ranking": 10,
+            "Data Age": 1111578.482,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [1, 11, 21, 26, 23, 27, 32, 33, 36, 40, 47, 59, 58]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 48, 44, 49, 50, 46, 52, 54, 55]
+                }]
+        }, {
+            "Ranking": 11,
+            "Data Age": 1111694.874,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [1, 11, 21, 23, 26, 27, 32, 33, 36, 40, 47, 59, 58]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 44, 48, 49, 46, 50, 54, 52, 55]
+                }]
+        }, {
+            "Ranking": 12,
+            "Data Age": 1111721.618,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [1, 11, 21, 23, 26, 27, 32, 33, 36, 40, 47, 59, 58]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 48, 44, 49, 50, 46, 52, 54, 55]
+                }]
+        }, {
+            "Ranking": 13,
+            "Data Age": 1112238.778,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [1, 11, 21, 23, 26, 27, 32, 33, 36, 40, 47, 59, 58]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 44, 48, 49, 46, 50, 52, 54, 55]
+                }]
+        }, {
+            "Ranking": 14,
+            "Data Age": 1543800.29,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [1, 11, 21, 23, 26, 27, 32, 33, 36, 40, 47, 59, 58]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 44, 48, 49, 50, 46, 52, 54, 55]
+                }]
+        }, {
+            "Ranking": 15,
+            "Data Age": 1543800.354,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [1, 11, 21, 23, 26, 27, 32, 33, 36, 40, 47, 59, 58]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 44, 48, 49, 50, 46, 54, 52, 55]
+                }]
+        }, {
+            "Ranking": 16,
+            "Data Age": 1543800.354,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [1, 11, 21, 23, 26, 27, 32, 33, 36, 40, 47, 59, 58]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 48, 44, 49, 50, 46, 54, 52, 55]
+                }]
+        }, {
+            "Ranking": 17,
+            "Data Age": 1543804.65,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [1, 11, 21, 26, 23, 27, 32, 33, 36, 40, 47, 59, 58]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 48, 44, 49, 46, 50, 54, 52, 55]
+                }]
+        }, {
+            "Ranking": 18,
+            "Data Age": 1543804.65,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [1, 11, 21, 26, 23, 27, 32, 33, 36, 40, 47, 59, 58]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 44, 48, 49, 46, 50, 52, 54, 55]
+                }]
+        }, {
+            "Ranking": 19,
+            "Data Age": 1543804.666,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [1, 11, 21, 26, 23, 27, 32, 33, 36, 40, 47, 59, 58]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 48, 44, 49, 46, 50, 52, 54, 55]
+                }]
+        }, {
+            "Ranking": 20,
+            "Data Age": 1543805.178,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [1, 11, 21, 23, 26, 27, 32, 33, 36, 40, 47, 58, 59]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 48, 44, 49, 46, 50, 54, 52, 55]
+                }]
+        }, {
+            "Ranking": 21,
+            "Data Age": 1543805.242,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [1, 11, 21, 23, 26, 27, 32, 33, 36, 40, 47, 58, 59]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 44, 48, 49, 46, 50, 54, 52, 55]
+                }]
+        }, {
+            "Ranking": 22,
+            "Data Age": 1543805.306,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [1, 11, 21, 23, 26, 27, 32, 33, 36, 40, 47, 58, 59]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 48, 44, 49, 50, 46, 54, 52, 55]
+                }]
+        }, {
+            "Ranking": 23,
+            "Data Age": 1543805.338,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [1, 11, 21, 23, 26, 27, 32, 33, 36, 40, 47, 58, 59]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 44, 48, 49, 50, 46, 54, 52, 55]
+                }]
+        }, {
+            "Ranking": 24,
+            "Data Age": 1543805.338,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [1, 11, 21, 26, 23, 27, 32, 33, 36, 40, 47, 58, 59]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 44, 48, 49, 50, 46, 54, 52, 55]
+                }]
+        }, {
+            "Ranking": 25,
+            "Data Age": 1543805.354,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [1, 11, 21, 23, 26, 27, 32, 33, 36, 40, 47, 58, 59]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 44, 48, 49, 46, 50, 52, 54, 55]
+                }]
+        }, {
+            "Ranking": 26,
+            "Data Age": 1543805.354,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [1, 11, 21, 23, 26, 27, 32, 33, 36, 40, 47, 58, 59]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 44, 48, 49, 50, 46, 52, 54, 55]
+                }]
+        }, {
+            "Ranking": 27,
+            "Data Age": 1543805.354,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [1, 11, 21, 26, 23, 27, 32, 33, 36, 40, 47, 58, 59]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 44, 48, 49, 46, 50, 54, 52, 55]
+                }]
+        }, {
+            "Ranking": 28,
+            "Data Age": 1543805.354,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [1, 11, 21, 26, 23, 27, 32, 33, 36, 40, 47, 58, 59]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 48, 44, 49, 50, 46, 54, 52, 55]
+                }]
+        }, {
+            "Ranking": 29,
+            "Data Age": 1543805.37,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [1, 11, 21, 23, 26, 27, 32, 33, 36, 40, 47, 58, 59]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 48, 44, 49, 46, 50, 52, 54, 55]
+                }]
+        }, {
+            "Ranking": 30,
+            "Data Age": 1543805.658,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [1, 11, 21, 26, 23, 27, 32, 33, 36, 40, 47, 58, 59]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 48, 44, 49, 50, 46, 52, 54, 55]
+                }]
+        }, {
+            "Ranking": 31,
+            "Data Age": 1543805.658,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [1, 11, 21, 26, 23, 27, 32, 33, 36, 40, 47, 58, 59]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 44, 48, 49, 46, 50, 52, 54, 55]
+                }]
+        }, {
+            "Ranking": 32,
+            "Data Age": 1543806.106,
+            "Sequence": [{
+                    "Period": 3.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [3, 12, 19, 28, 34, 35, 56]
+                }, {
+                    "Period": 4.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [5, 8, 10, 16, 17, 18, 25, 37, 38, 45, 53, 57]
+                }, {
+                    "Period": 5.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [0, 4, 6, 14, 15, 22, 24, 29, 30, 31, 39, 41, 42, 51]
+                }, {
+                    "Period": 7.0,
+                    "Offset": 0.0,
+                    "Runnable Sequence": [1, 11, 21, 26, 23, 27, 32, 33, 36, 40, 47, 58, 59]
+                }, {
+                    "Period": 8.0,
+                    "Offset": 1.0,
+                    "Runnable Sequence": [2, 7, 9, 13, 20, 43, 44, 48, 49, 50, 46, 52, 54, 55]
+                }]
+        }]
+}

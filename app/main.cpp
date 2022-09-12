@@ -57,7 +57,8 @@ int main(int argc, char *argv[]) {
     dag->SetTaskPriority();
     dag->SetRunnablePrecedence();
     dag->DoMapping();
-    dag->ResetMappedRunnablePriority();
+    //dag->ResetMappedRunnablePriority1();
+    dag->ResetMappedRunnablePriority2();
 
     std::unique_ptr<Simulation> simulation(new Simulation(dag));
     
