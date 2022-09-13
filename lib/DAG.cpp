@@ -532,6 +532,7 @@ void DAG::ParseMapping(std::string jsonPath) {
 	int taskIndex = 0;
 	for (auto &task : doc["Tasks"].GetArray()) {
         std::shared_ptr<TASK> tmpTask(new TASK(taskIndex, static_cast<int>(task["Period"].GetDouble() * 1000.0), static_cast<int>(task["Offset"].GetDouble() * 1000.0)));
+        tmpTask->SetPriority(task["Priority"].GetInt());
         this->tasks_.push_back(tmpTask);
         taskIndex++;
 
