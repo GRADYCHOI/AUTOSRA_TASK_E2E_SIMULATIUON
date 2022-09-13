@@ -66,8 +66,8 @@ int main(int argc, char *argv[]) {
     dag->SetTaskPriority();
     dag->SetRunnablePrecedence();
     dag->DoMapping();
-    //dag->ResetMappedRunnablePriority1();
-    dag->ResetMappedRunnablePriority2();
+    dag->ResetMappedRunnablePriority1();
+    //dag->ResetMappedRunnablePriority2();
 
     std::unique_ptr<Simulation> simulation(new Simulation(dag));
     
@@ -78,6 +78,7 @@ int main(int argc, char *argv[]) {
     std::clog << "[main.cpp] CheckPoint 2" << std::endl;
     simulation->SaveData();
     std::clog << "[main.cpp] CheckPoint 3" << std::endl;
+    simulation->SaveMapping();
     
     return 0;
 }
