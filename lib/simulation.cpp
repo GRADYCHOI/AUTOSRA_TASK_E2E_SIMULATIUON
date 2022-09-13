@@ -191,29 +191,6 @@ void Simulation::TraceProcess(std::vector<int> executionPermutationPointer,
                               int thisHyperPeriodCount,
                               std::vector<int>& worstCyclePerRunnable,
                               std::map<std::pair<int, int>, std::vector<ExecutionInformation>>& processExecutions) {
-    // --------------------------------------------------------------------------------------------------------------
-    // runnableExecutions : [maxCycle X numberOfRunnables]     Input
-    // --------------------------------------------------------------------------------------------------------------
-    // ## The order of Runnable is based on their IDs
-    // 1 : First Cycle's ExecutionInformation (startTime, endTime)
-    // 2 : Second Cycle's ExecutionInformation (startTime, endTime)
-    // ..
-    // --------------------------------------------------------------------------------------------------------------
-    // runnableCommunications : [maxCycle X numberOfRunnables]     Input
-    // --------------------------------------------------------------------------------------------------------------
-    // ## The order of Runnable is based on their IDs
-    // 1 : First Cycle's CommunicationInformation (readTime, writeTime)
-    // 2 : Second Cycle's CommunicationInformation (readTime, writeTime)
-    // ..
-    // --------------------------------------------------------------------------------------------------------------
-    // processExecutions : [maxCycle X (InputRunnable, OutputRunnable) pair]     Output
-    // --------------------------------------------------------------------------------------------------------------
-    // ## The order of Runnable is based on their IDs
-    // 1 : First Cycle's ExecutionTimeInformation (startTime, writeTime)
-    // 2 : Second Cycle's ExecutionTimeInformation (startTime, writeTime)
-    // ..
-    // --------------------------------------------------------------------------------------------------------------
-
     if (this->dag_->GetRunnable(thisRunnableId)->GetStatus() == 1) {  //precedence처럼 해보셈
         auto iter = processExecutions.find(std::make_pair(inputRunnableId, thisRunnableId));
 
