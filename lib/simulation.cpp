@@ -389,6 +389,10 @@ void Simulation::SaveDag() {
     this->dag_->SaveDag(this->simulationTime_);
 }
 
+void Simulation::SaveMapping() {
+    this->dag_->SaveMapping(this->simulationTime_);
+}
+
 rapidjson::Value Simulation::SaveReactionTime(rapidjson::Document::AllocatorType& allocator) {
     int rankingCount;
     rapidjson::Value reactionTimeArray(rapidjson::kArrayType);

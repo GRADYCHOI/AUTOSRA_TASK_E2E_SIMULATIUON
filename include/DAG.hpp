@@ -110,6 +110,9 @@ public:
     // Save to .json
     void ParseDag(std::string jsonPath);
     void SaveDag(std::string thisTime);
+
+    void ParseMapping(std::string jsonPath);
+    void SaveMapping(std::string thisTime);
 };
 
 #endif

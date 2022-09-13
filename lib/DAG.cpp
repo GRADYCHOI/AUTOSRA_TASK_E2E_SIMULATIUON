@@ -499,6 +499,8 @@ void DAG::ParseDag(std::string jsonPath) {
 
     this->SetInputRunnableList();
     this->SetOutputRunnableList();
+
+    std::cout << "Parse Tasks Start" << std::endl;
 	
 	int taskIndex = 0;
 	for (auto &task : doc["Tasks"].GetArray()) {
@@ -508,4 +510,75 @@ void DAG::ParseDag(std::string jsonPath) {
     }
 
     ifs.close();
+}
+
+void DAG::ParseMapping(std::string jsonPath) {
+    std::ifstream ifs(jsonPath.c_str());
+    if (ifs.fail()) {
+        throw ("File doesn't exist.");
+    }
+
+    rapidjson::IStreamWrapper isw(ifs);
+
+    rapidjson::Document doc;
+    doc.ParseStream(isw);
+
+    std::cout << "Parse Mapping Start" << std::endl;
+
+    this->ClearTaskMapping();
+    std::vector<std::shared_ptr<TASK>>().swap(this->tasks_);
+	
+	int taskIndex = 0;
+	for (auto &task : doc["Tasks"].GetArray()) {
+        std::shared_ptr<TASK> tmpTask(new TASK(taskIndex, static_cast<int>(task["Period"].GetDouble() * 1000.0), static_cast<int>(task["Offset"].GetDouble() * 1000.0)));
+        this->tasks_.push_back(tmpTask);
+        taskIndex++;
+
+        for (auto &runnableRealId : task["Runnables"].GetArray()) {
+            auto iter = std::find_if(this->runnables_.begin(), this->runnables_.end(), [&runnableRealId](std::shared_ptr<RUNNABLE> a) { return a->GetRealId() == runnableRealId; });
+            if (this->runnables_.end() != iter) {
+                tmpTask->AddRunnable(*iter);
+            }
+        }
+    }
+
+    ifs.close();
+}
+
+void DAG::SaveMapping(std::string thisTime) {
+    rapidjson::Document doc;
+    rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();
+
+    rapidjson::Value dagObject(rapidjson::kObjectType);
+    rapidjson::Value runnableArray(rapidjson::kArrayType);
+    rapidjson::Value taskArray(rapidjson::kArrayType);
+
+    for (auto &task : this->tasks_) {
+        rapidjson::Value taskObject(rapidjson::kObjectType);
+        rapidjson::Value runnableArray(rapidjson::kArrayType);
+
+        taskObject.AddMember("Period", static_cast<double>(task->GetPeriod()) / 1000.0, allocator);
+        taskObject.AddMember("Offset", static_cast<double>(task->GetOffset()) / 1000.0, allocator);
+        taskObject.AddMember("Priority", task->GetPriority(), allocator);
+
+        for (auto &runnable : task->GetRunnables()) {
+            runnableArray.PushBack(runnable->GetRealId(), allocator);
+        }
+        taskObject.AddMember("Runnables", runnableArray, allocator);
+
+        taskArray.PushBack(taskObject, allocator);
+    }
+    dagObject.AddMember("Tasks", taskArray, allocator);
+
+    // Save to json
+    std::string fileName = "../data/Mapping_" + thisTime + ".json";
+
+    std::ofstream ofs(fileName.c_str());
+    rapidjson::OStreamWrapper osw(ofs);
+
+    rapidjson::PrettyWriter<rapidjson::OStreamWrapper> writer(osw);
+    writer.SetFormatOptions(rapidjson::kFormatSingleLineArray);
+    dagObject.Accept(writer);
+
+    ofs.close();
 }

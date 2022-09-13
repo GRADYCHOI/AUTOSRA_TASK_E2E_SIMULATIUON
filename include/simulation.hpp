@@ -115,6 +115,7 @@ public:
     std::vector<ResultInformation>& GetBestDataAge();
 
     void SaveDag();
+    void SaveMapping();
     void SaveData();
 
     rapidjson::Value SaveReactionTime(rapidjson::Document::AllocatorType& allocator);

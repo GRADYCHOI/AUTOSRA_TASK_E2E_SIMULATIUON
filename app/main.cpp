@@ -34,6 +34,15 @@ int main(int argc, char *argv[]) {
             std::cout << error << std::endl;
             return 0;
         }
+
+        if (argc > 2) {
+            try {
+                dag->ParseMapping(argv[2]);
+            } catch (std::string error) {
+                std::cout << error << std::endl;
+                return 0;
+            }
+        }
     } else {
         dag->GenerateDag();
     }

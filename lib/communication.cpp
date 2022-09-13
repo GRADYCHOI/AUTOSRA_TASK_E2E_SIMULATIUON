@@ -223,7 +223,7 @@ void LET::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numberOfRunnables
         for (auto &runnable : task->GetRunnables()) {
             int runnableId = runnable->GetId();
 
-            runnablePermutation.emplace_back(std::vector<std::vector<int>>{ runnableId });
+            runnablePermutation.emplace_back(std::vector<std::vector<int>>{ {runnableId} });
             runnableCommunications[runnableId].emplace_back(std::vector<ExecutionInformation>(maxCycle, initialExecutionInformation));
 
             for (int cycle = 0; cycle < maxCycle; cycle++) {
