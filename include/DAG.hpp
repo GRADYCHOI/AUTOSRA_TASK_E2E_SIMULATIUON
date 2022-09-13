@@ -102,8 +102,9 @@ public:
     // Set Priority
     void SetTaskPriority();
     void SetRunnablePrecedence();
-    void ResetMappedRunnablePriority1();
-    void ResetMappedRunnablePriority2();
+    //void ResetMappedRunnablePriority1();
+    //void ResetMappedRunnablePriority2();
+    void AllCaseRunnablePriority();
 
     float GetUtilization();
 

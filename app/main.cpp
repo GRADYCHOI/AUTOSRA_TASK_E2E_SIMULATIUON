@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
 
     srand(time(NULL));
     bool dag_file = false;
-    int mappingStrategy = 0;
+    int mappingStrategy = 2;
     int simulateMethod = 0;
 
     std::shared_ptr<DAG> dag(new DAG());
@@ -77,7 +77,8 @@ int main(int argc, char *argv[]) {
     }
 
     //dag->ResetMappedRunnablePriority1(); // 케이스 1개 짜리
-    dag->ResetMappedRunnablePriority2(); // 케이스 경우의수
+    //dag->ResetMappedRunnablePriority2(); // 케이스 경우의수
+    dag->AllCaseRunnablePriority();
     std::unique_ptr<Simulation> simulation(new Simulation(dag));
     
     switch (simulateMethod) {

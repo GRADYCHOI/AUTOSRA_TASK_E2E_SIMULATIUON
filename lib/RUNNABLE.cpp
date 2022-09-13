@@ -45,3 +45,11 @@ void RUNNABLE::LinkOutputRunnable(const std::shared_ptr<RUNNABLE> outputRunnable
         outputRunnable->AddInputRunnable(this->GetSharedPtr());
     }
 }
+
+/*
+const int RUNNABLE::GetMaxOutputTaskPriority() {
+    int maxOutputTaskPriority = -1;
+    if (maxOutputTaskPriority this->outputRunnables_
+}
+const int RUNNABLE::GetMaxOutputRunnablePrecedence();
+*/
