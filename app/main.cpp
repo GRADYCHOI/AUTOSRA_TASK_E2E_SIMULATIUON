@@ -24,6 +24,7 @@ int main(int argc, char *argv[]) {
     srand(time(NULL));
     bool dag_file = false;
     int mappingStrategy = 0;
+    int simulateMethod = 0;
 
     std::shared_ptr<DAG> dag(new DAG());
 
@@ -59,7 +60,7 @@ int main(int argc, char *argv[]) {
                 break;
             }
 
-            case 3 : {
+            case 2 : {
                 dag->SetMapping(std::unique_ptr<Mapping>(new RandomMapping()));
                 break;
             }
@@ -74,39 +75,40 @@ int main(int argc, char *argv[]) {
         dag->SetRunnablePrecedence();
         dag->DoMapping();
     }
+
     //dag->ResetMappedRunnablePriority1();
     dag->ResetMappedRunnablePriority2();
 
     std::unique_ptr<Simulation> simulation(new Simulation(dag));
     
-        switch (mappingStrategy) {
-            case 0 : {
-                dag->SetMapping(std::unique_ptr<Mapping>(new InputMapping()));
-                break;
-            }
-
-            case 1 : {
-                dag->SetMapping(std::unique_ptr<Mapping>(new RateMapping()));
-                break;
-            }
-
-            case 3 : {
-                dag->SetMapping(std::unique_ptr<Mapping>(new RandomMapping()));
-                break;
-            }
-
-            default : {
-                std::cout << "Wrong Mapping Strategy." << std::endl;
-                return 0;
-            }
+    switch (simulateMethod) {
+        case 0 : {
+            simulation->Simulate(RunnableImplicitMethod);
+            break;
         }
-    simulation->Simulate(RunnableImplicitMethod);
+
+        case 1 : {
+            simulation->Simulate(TaskImplicitMethod);
+            break;
+        }
+
+        case 2 : {
+            simulation->Simulate(LETMethod);
+            break;
+        }
+
+        default : {
+            std::cout << "Wrong Simulate Method." << std::endl;
+            return 0;
+        }
+    }
     
     std::clog << "[main.cpp] CheckPoint 1" << std::endl;
     simulation->SaveDag();
     std::clog << "[main.cpp] CheckPoint 2" << std::endl;
     simulation->SaveData();
     std::clog << "[main.cpp] CheckPoint 3" << std::endl;
+    simulation->SaveMapping();
     
     return 0;
 }
