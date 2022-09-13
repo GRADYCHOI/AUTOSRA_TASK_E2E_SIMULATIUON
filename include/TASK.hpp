@@ -39,6 +39,7 @@ public:
 	const std::shared_ptr<RUNNABLE> GetRunnable(int index) const { return runnables_[index]; }
 
     const std::vector<std::shared_ptr<RUNNABLE>> GetRunnablesByPriorityInTask();
+    const std::vector<std::shared_ptr<RUNNABLE>>& GetRunnablesByPrecedence();
 	
 	void SetPriority(const int priority) { priority_ = priority; }
 
