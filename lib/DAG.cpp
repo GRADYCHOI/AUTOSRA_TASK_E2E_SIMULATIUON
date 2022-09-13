@@ -483,6 +483,7 @@ void DAG::ParseDag(std::string jsonPath) {
     int runnableIndex = 0;
     for (auto &runnable : doc["Runnables"].GetArray()) {
         std::shared_ptr<RUNNABLE> tmpRunnable(new RUNNABLE(runnableIndex, runnable["ID"].GetInt(), static_cast<int>(runnable["Execution Time"].GetDouble() * 1000.0)));
+        tmpRunnable->SetPrecedence(runnable["Precedence"].GetInt());
         this->runnables_.push_back(tmpRunnable);
         idToRealId.push_back(runnable["ID"].GetInt());
         runnableIndex++;
@@ -535,7 +536,7 @@ void DAG::ParseMapping(std::string jsonPath) {
         taskIndex++;
 
         for (auto &runnableRealId : task["Runnables"].GetArray()) {
-            auto iter = std::find_if(this->runnables_.begin(), this->runnables_.end(), [&runnableRealId](std::shared_ptr<RUNNABLE> a) { return a->GetRealId() == runnableRealId; });
+            auto iter = std::find_if(this->runnables_.begin(), this->runnables_.end(), [&runnableRealId](std::shared_ptr<RUNNABLE> a) { return a->GetRealId() == runnableRealId.GetInt(); });
             if (this->runnables_.end() != iter) {
                 tmpTask->AddRunnable(*iter);
             }
