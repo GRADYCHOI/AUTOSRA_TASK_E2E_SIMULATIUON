@@ -20,6 +20,12 @@ const std::vector<std::shared_ptr<RUNNABLE>> TASK::GetRunnablesByPriorityInTask(
     return tmpRunnables;
 }
 
+const std::vector<std::shared_ptr<RUNNABLE>>& TASK::GetRunnablesByPrecedence() {
+    std::sort(this->runnables_.begin(), this->runnables_.end(), [](std::shared_ptr<RUNNABLE> a, std::shared_ptr<RUNNABLE> b) { return a->GetPrecedence() < b->GetPrecedence(); });
+
+    return this->runnables_;
+}
+
 void TASK::AddRunnable(const std::shared_ptr<RUNNABLE> runnable) {
     bool searchFlag = false;
     
