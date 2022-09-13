@@ -46,6 +46,8 @@ public:
     void ClearMapping();
 
     std::shared_ptr<TASK> GetSharedPtr() { return shared_from_this(); }
+
+    void SortRunnables() { std::sort(runnables_.begin(), runnables_.end(), [](std::shared_ptr<RUNNABLE> a, std::shared_ptr<RUNNABLE> b) { return a->GetId() < b->GetId(); }); }
 };
 
 #endif
