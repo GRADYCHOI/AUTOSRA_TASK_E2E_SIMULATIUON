@@ -249,10 +249,10 @@ void DAG::ResetMappedRunnablePriority1() { // 순서대로(1씩 증가)
             if (run->GetStatus() == 1) continue;
             int maxOutputRunnableTaskPriority = ((int)this->tasks_.size() +1);
             int maxOutputRunnable = -1;
-            std::clog << "Runnable : " << run->GetId() << std::endl;
+            //std::clog << "Runnable : " << run->GetId() << std::endl;
             int index = 0;
             for (auto &out : run->GetOutputRunnables()) { // 기준 러너블의 아웃풋러너블 중 highest priority task를 찾음.
-                std::clog << out->GetId() << std::endl;
+                //std::clog << out->GetId() << std::endl;
                 if (out->GetTask()->GetPriority() < maxOutputRunnableTaskPriority) {
                     maxOutputRunnableTaskPriority = out->GetTask()->GetPriority();
                     maxOutputRunnable = index;
@@ -268,7 +268,7 @@ void DAG::ResetMappedRunnablePriority1() { // 순서대로(1씩 증가)
                 if (run2->GetPrecedence() == run->GetPrecedence()) {
                     int maxCompareOutputRunnableTaskPriority = ((int)this->tasks_.size() + 1);
                     int maxCompareOutputRunnable = -1;
-                    std::clog << "compare Run : " << run2->GetId() << std::endl;
+                    //std::clog << "compare Run : " << run2->GetId() << std::endl;
                     int index2 = 0;
                     for (auto &out : run2->GetOutputRunnables()) { // 비교할 러너블의 아웃풋러너블중 highest priority task를 찾음.
                         if (out->GetTask()->GetPriority() < maxCompareOutputRunnableTaskPriority) {
@@ -278,7 +278,7 @@ void DAG::ResetMappedRunnablePriority1() { // 순서대로(1씩 증가)
                         }
                         index2++;
                     }
-                    std::clog << "stats : " << run2->GetStatus() <<  " Max output R : " << maxCompareOutputRunnable << " task priority : " << maxCompareOutputRunnableTaskPriority << " output runnable priority : " << run2->GetOutputRunnable(maxCompareOutputRunnable)->GetPriorityInTask() << std::endl;
+                    //std::clog << "stats : " << run2->GetStatus() <<  " Max output R : " << maxCompareOutputRunnable << " task priority : " << maxCompareOutputRunnableTaskPriority << " output runnable priority : " << run2->GetOutputRunnable(maxCompareOutputRunnable)->GetPriorityInTask() << std::endl;
 
                     if (maxOutputRunnableTaskPriority < maxCompareOutputRunnableTaskPriority) continue;
 
@@ -290,7 +290,7 @@ void DAG::ResetMappedRunnablePriority1() { // 순서대로(1씩 증가)
                     }
                     
                     if (maxOutputRunnableTaskPriority == maxCompareOutputRunnableTaskPriority) {
-                        std::clog << run->GetOutputRunnable(maxOutputRunnable)->GetPriorityInTask() << " " << run2->GetOutputRunnable(maxCompareOutputRunnable)->GetPriorityInTask() << std::endl;
+                        //std::clog << run->GetOutputRunnable(maxOutputRunnable)->GetPriorityInTask() << " " << run2->GetOutputRunnable(maxCompareOutputRunnable)->GetPriorityInTask() << std::endl;
                         if(maxOutputRunnableTaskPriority == task->GetPriority()) continue;
                         if (run->GetOutputRunnable(maxOutputRunnable)->GetPriorityInTask() > run2->GetOutputRunnable(maxCompareOutputRunnable)->GetPriorityInTask()) {
                             int tmp = run->GetPriorityInTask();
@@ -320,25 +320,26 @@ void DAG::ResetMappedRunnablePriority1() { // 순서대로(1씩 증가)
 
 void DAG::ResetMappedRunnablePriority2() { // 같은 precedence끼리 같은 priority 갖도록
     for (auto &task : tasks_) {
-        int priority = 0;
-        for (auto &run : task->GetRunnables()) run->SetPriorityInTask(priority++);
+        for (auto &run : task->GetRunnables()) run->SetPriorityInTask(0);
+    }
+    for (auto &task : tasks_) {
+        for (auto &run : task->GetRunnables()) run->SetPriorityInTask(run->GetId());
     }
     for (auto &task : tasks_) {
         for (auto &run : task->GetRunnables()) {
             for (auto &run2 : task->GetRunnables()) {
-                //if (run2->GetPriorityInTask() < run->GetPriorityInTask()) continue;
-                if ((run->GetPrecedence() == run2->GetPrecedence()) && (run->GetPriorityInTask() > run2->GetPriorityInTask())) run2->SetPriorityInTask(run->GetPriorityInTask());
+                if (run->GetId() == run2->GetId()) continue;
+                if ((run->GetPrecedence() == run2->GetPrecedence()) && (run->GetPriorityInTask() < run2->GetPriorityInTask())) run2->SetPriorityInTask(run->GetPriorityInTask());
             }
         }
     }
-    /*
+    
     for (auto &task : this->tasks_) {
         std::cout << "task : " << task->GetId() << std::endl;
         for (auto &run : task->GetRunnables()) {
             std::cout << "runnable : " << run->GetId() << " " << run->GetPriorityInTask() << std::endl;
         }
-    }*/
-
+    }
     std::clog << "============================================[Debug : Mapped Runnable Sequence Reset]============================================" << "\n";
 
     for (auto &task : this->tasks_) {
@@ -398,14 +399,21 @@ void DAG::ResetMappedRunnablePriority2() { // 같은 precedence끼리 같은 pri
             }
         }
     }
-    /*
     for (auto &task : this->tasks_) {
         std::cout << "task : " << task->GetId() << std::endl;
         for (auto &run : task->GetRunnables()) {
             std::cout << "runnable : " << run->GetId() << " " << run->GetPriorityInTask() << std::endl;
         }
-    }*/
+    }
 }
+/*
+void DAG::ResetMappedRunnablePriority3() { // 순서대로(1씩 증가)
+
+    for (auto &task : tasks_) {
+        int priority = 0;
+        for (auto &run : task->GetRunnables()) run->SetPriorityInTask(priority++);
+    }
+}*/
 
 /* Save File & Parsing File Section */
 

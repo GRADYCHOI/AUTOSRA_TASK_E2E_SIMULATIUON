@@ -16,7 +16,7 @@
 
 
 int main(int argc, char *argv[]) {
-    std::clog.setstate(std::ios_base::failbit);
+    //std::clog.setstate(std::ios_base::failbit);
 
     // clear screen (only linux)
     std::system("clear");
@@ -76,9 +76,8 @@ int main(int argc, char *argv[]) {
         dag->DoMapping();
     }
 
-    //dag->ResetMappedRunnablePriority1();
-    dag->ResetMappedRunnablePriority2();
-
+    //dag->ResetMappedRunnablePriority1(); // 케이스 1개 짜리
+    dag->ResetMappedRunnablePriority2(); // 케이스 경우의수
     std::unique_ptr<Simulation> simulation(new Simulation(dag));
     
     switch (simulateMethod) {
@@ -109,6 +108,5 @@ int main(int argc, char *argv[]) {
     simulation->SaveData();
     std::clog << "[main.cpp] CheckPoint 3" << std::endl;
     simulation->SaveMapping();
-    
     return 0;
 }
