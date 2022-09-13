@@ -27,6 +27,7 @@ int main(int argc, char *argv[]) {
 
     std::shared_ptr<DAG> dag(new DAG());
 
+    // Runnable & Task
     if (argc > 1) {
         try {
             dag->ParseDag(argv[1]);
@@ -34,43 +35,71 @@ int main(int argc, char *argv[]) {
             std::cout << error << std::endl;
             return 0;
         }
-
-        if (argc > 2) {
-            try {
-                dag->ParseMapping(argv[2]);
-            } catch (std::string error) {
-                std::cout << error << std::endl;
-                return 0;
-            }
-        }
     } else {
         dag->GenerateDag();
     }
 
-    switch (mappingStrategy) {
-        case 0 : {
-            dag->SetMapping(std::unique_ptr<Mapping>(new InputMapping()));
-            break;
-        }
-
-        case 1 : {
-            break;
-        }
-
-        default : {
-            std::cout << "Wrong Mapping Number." << std::endl;
+    // Mapping
+    if (argc > 2) {
+        try {
+            dag->ParseMapping(argv[2]);
+        } catch (std::string error) {
+            std::cout << error << std::endl;
             return 0;
         }
-    }
+    } else {
+        switch (mappingStrategy) {
+            case 0 : {
+                dag->SetMapping(std::unique_ptr<Mapping>(new InputMapping()));
+                break;
+            }
 
-    dag->SetTaskPriority();
-    dag->SetRunnablePrecedence();
-    dag->DoMapping();
+            case 1 : {
+                dag->SetMapping(std::unique_ptr<Mapping>(new RateMapping()));
+                break;
+            }
+
+            case 3 : {
+                dag->SetMapping(std::unique_ptr<Mapping>(new RandomMapping()));
+                break;
+            }
+
+            default : {
+                std::cout << "Wrong Mapping Strategy." << std::endl;
+                return 0;
+            }
+        }
+
+        dag->SetTaskPriority();
+        dag->SetRunnablePrecedence();
+        dag->DoMapping();
+    }
     //dag->ResetMappedRunnablePriority1();
     dag->ResetMappedRunnablePriority2();
 
     std::unique_ptr<Simulation> simulation(new Simulation(dag));
     
+        switch (mappingStrategy) {
+            case 0 : {
+                dag->SetMapping(std::unique_ptr<Mapping>(new InputMapping()));
+                break;
+            }
+
+            case 1 : {
+                dag->SetMapping(std::unique_ptr<Mapping>(new RateMapping()));
+                break;
+            }
+
+            case 3 : {
+                dag->SetMapping(std::unique_ptr<Mapping>(new RandomMapping()));
+                break;
+            }
+
+            default : {
+                std::cout << "Wrong Mapping Strategy." << std::endl;
+                return 0;
+            }
+        }
     simulation->Simulate(RunnableImplicitMethod);
     
     std::clog << "[main.cpp] CheckPoint 1" << std::endl;
