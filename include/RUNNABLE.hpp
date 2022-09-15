@@ -51,11 +51,6 @@ public:
 
     const std::shared_ptr<RUNNABLE> GetOutputRunnable(int index) const { return outputRunnables_[index]; }
     const std::vector<std::shared_ptr<RUNNABLE>>& GetOutputRunnables() const { return outputRunnables_; }
-
-/*
-    const int GetMaxOutputTaskPriority();
-    const int GetMaxOutputRunnablePrecedence();
-    */
 	
 	void SetPrecedence(const int precedence) { precedence_ = precedence; }
     void SetPriorityInTask(const int priority) { priorityInTask_ = priority; }

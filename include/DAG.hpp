@@ -100,11 +100,16 @@ public:
     void DoMapping() { mapping_->DoMapping(tasks_, runnables_); }
 
     // Set Priority
-    void SetTaskPriority();
     void SetRunnablePrecedence();
-    //void ResetMappedRunnablePriority1();
-    //void ResetMappedRunnablePriority2();
-    void AllCaseRunnablePriority();
+    void SetTaskPriority();
+
+    const int GetMaxOutputTaskPriority(std::shared_ptr<RUNNABLE> tmpRunnable);
+    const int GetMaxOutputRunnablePrecedence(std::shared_ptr<RUNNABLE> tmpRunnable);
+
+    void SetAllCaseRunnablePriority();
+    void SetPrecedenceRunnablePriority();
+    void SetTaskPriorityRunnablePriority();
+    void SetRunnablePriorityRunnablePriority();
 
     float GetUtilization();
 

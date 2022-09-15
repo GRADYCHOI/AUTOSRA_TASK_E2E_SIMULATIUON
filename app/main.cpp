@@ -23,8 +23,9 @@ int main(int argc, char *argv[]) {
 
     srand(time(NULL));
     bool dag_file = false;
-    int mappingStrategy = 2;
-    int simulateMethod = 0;
+    int mappingStrategy = -1;
+    int permutationMethod = -1;
+    int simulateMethod = -1;
 
     std::shared_ptr<DAG> dag(new DAG());
 
@@ -49,6 +50,14 @@ int main(int argc, char *argv[]) {
             return 0;
         }
     } else {
+        std::system("clear");
+        std::cout << "*** Select Mapping Strategy ***" << "\n";
+        std::cout << " 0 : Input Mapping" << "\n";
+        std::cout << " 1 : Rate Mapping" << "\n";
+        std::cout << " 2 : Random Mapping" << "\n";
+        std::cout << "\n" << "Enter Number : ";
+
+        std::cin >> mappingStrategy;
         switch (mappingStrategy) {
             case 0 : {
                 dag->SetMapping(std::unique_ptr<Mapping>(new InputMapping()));
@@ -76,11 +85,52 @@ int main(int argc, char *argv[]) {
         dag->DoMapping();
     }
 
-    dag->ResetMappedRunnablePriority1(); // 케이스 1개 짜리
-    //dag->ResetMappedRunnablePriority2(); // 케이스 경우의수
-    //dag->AllCaseRunnablePriority();
+    std::system("clear");
+    std::cout << "*** Range of Cases ***" << "\n";
+    std::cout << " 0 : All Case" << "\n";
+    std::cout << " 1 : Precedence" << "\n";
+    std::cout << " 2 : Output Runnables' Task's Priority" << "\n";
+    std::cout << "\n" << "Enter Number : ";
+
+    std::cin >> permutationMethod;
+    switch (permutationMethod) {
+        case 0 : {
+            dag->SetAllCaseRunnablePriority();
+            break;
+        }
+
+        case 1 : {
+            dag->SetPrecedenceRunnablePriority();
+            break;
+        }
+
+        case 2 : {
+            dag->SetTaskPriorityRunnablePriority();
+            break;
+        }
+
+        /*
+        case 3 : {
+            dag->SetRunnablePriority();
+            break;
+        }
+        */
+
+        default : {
+            std::cout << "Wrong Runnable's Priority Method." << std::endl;
+            return 0;
+        }
+    }
+
     std::unique_ptr<Simulation> simulation(new Simulation(dag));
     
+    std::system("clear");
+    std::cout << "*** Communication Method ***" << "\n";
+    std::cout << " 0 : Runnable Implicit" << "\n";
+    std::cout << " 1 : Task Implicit" << "\n";
+    std::cout << " 2 : LET" << "\n";
+    std::cout << "\n" << "Enter Number : ";
+
     switch (simulateMethod) {
         case 0 : {
             simulation->Simulate(RunnableImplicitMethod);
