@@ -76,9 +76,9 @@ int main(int argc, char *argv[]) {
         dag->DoMapping();
     }
 
-    //dag->ResetMappedRunnablePriority1(); // 케이스 1개 짜리
+    dag->ResetMappedRunnablePriority1(); // 케이스 1개 짜리
     //dag->ResetMappedRunnablePriority2(); // 케이스 경우의수
-    dag->AllCaseRunnablePriority();
+    //dag->AllCaseRunnablePriority();
     std::unique_ptr<Simulation> simulation(new Simulation(dag));
     
     switch (simulateMethod) {
