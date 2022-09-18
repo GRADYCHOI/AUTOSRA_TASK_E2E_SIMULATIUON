@@ -84,6 +84,15 @@ private:
     const int GetMaxOutputTaskPriority(std::shared_ptr<RUNNABLE> tmpRunnable);
     const int GetMaxOutputRunnablePrecedence(std::shared_ptr<RUNNABLE> tmpRunnable);
 
+    bool CheckTaskPriorityRunnablePriority(std::vector<int>& currentSequence);
+    bool CheckRunnablePriorityRunnablePriority(std::vector<int>& currentSequence);
+
+    std::vector<std::vector<ResultInformation>>& GetBestReactionTime();
+    std::vector<std::vector<ResultInformation>>& GetBestDataAge();
+
+    const int GetMaxReactionTime(std::vector<ResultInformation>& a);
+    const int GetMaxDataAge(std::vector<ResultInformation>& a);
+
 	ResultInformation GetResult(int caseIndex,
                                 std::vector<std::vector<std::vector<int>>>& runnableExecutionPermutation,
                                 std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableExecutions,
@@ -115,13 +124,11 @@ public:
                       int thisHyperPeriodCount,
                       std::vector<int>& worstCyclePerRunnable,
                       std::map<std::pair<int, int>, std::vector<ExecutionInformation>>& processExecutions);
-    
-    std::vector<ResultInformation>& GetBestReactionTime();
-    std::vector<ResultInformation>& GetBestDataAge();
 
     void SaveDag();
     void SaveMapping();
     void SaveData();
+    void SaveDataToCSV()
 
     rapidjson::Value SaveReactionTime(rapidjson::Document::AllocatorType& allocator);
     rapidjson::Value SaveDataAge(rapidjson::Document::AllocatorType& allocator);

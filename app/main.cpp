@@ -159,5 +159,7 @@ int main(int argc, char *argv[]) {
     simulation->SaveData();
     std::clog << "[main.cpp] CheckPoint 3" << std::endl;
     simulation->SaveMapping();
+    std::clog << "[main.cpp] CheckPoint 4" << std::endl;
+    simulation->SaveDataToCSV();
     return 0;
 }

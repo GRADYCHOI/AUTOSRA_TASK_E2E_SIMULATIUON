@@ -502,19 +502,19 @@ int Simulation::GetDataAge(std::vector<int>& executionPermutationPointer,
     */
 }
 
-std::vector<ResultInformation>& Simulation::GetBestReactionTime() {
+std::vector<std::vector<ResultInformation>>& Simulation::GetBestReactionTime() {
     std::sort(this->results_.begin(), this->results_.end(), [&, this](std::vector<ResultInformation>& a, std::vector<ResultInformation>& b) { return this->GetMaxReactionTime(a) < this->GetMaxReactionTime(b); });
 
     return this->results_;
 }
 
-std::vector<ResultInformation>& Simulation::GetBestDataAge() {
+std::vector<std::vector<ResultInformation>>& Simulation::GetBestDataAge() {
     std::sort(this->results_.begin(), this->results_.end(), [&, this](std::vector<ResultInformation>& a, std::vector<ResultInformation>& b) { return this->GetMaxDataAge(a) < this->GetMaxDataAge(b); });
 
     return this->results_;
 }
 
-int Simulation::GetMaxReactionTime(std::vector<ResultInformation>& a) {
+const int Simulation::GetMaxReactionTime(std::vector<ResultInformation>& a) {
     int maxReactionTime = 0;
 
     for (auto &resultInformation : a) {
@@ -526,7 +526,7 @@ int Simulation::GetMaxReactionTime(std::vector<ResultInformation>& a) {
     return maxReactionTime;
 }
 
-int Simulation::GetMaxDataAge(std::vector<ResultInformation>& a) {
+const int Simulation::GetMaxDataAge(std::vector<ResultInformation>& a) {
     int maxDataAge = 0;
 
     for (auto &resultInformation : a) {
@@ -585,7 +585,7 @@ rapidjson::Value Simulation::SaveReactionTime(rapidjson::Document::AllocatorType
         rapidjson::Value bestReactionTimeCaseObject(rapidjson::kObjectType);
         rapidjson::Value bestReactionTimeCaseArray(rapidjson::kArrayType);
 
-        std::vector<int> sequence = this->sequence_[reactionTime.sequenceIndex];
+        std::vector<int> sequence = this->sequence_[reactionTime[0].sequenceIndex];
 
         bestReactionTimeObject.AddMember("Ranking", ++rankingCount, allocator);
         bestReactionTimeObject.AddMember("Sort Runnables by Task Priority", this->CheckTaskPriorityRunnablePriority(sequence), allocator);
@@ -677,4 +677,41 @@ rapidjson::Value Simulation::SaveDataAge(rapidjson::Document::AllocatorType& all
     }
 
     return dataAgeArray;
+}
+
+void Simulation::SaveDataToCSV() {
+    // Save to json
+    std::string thisTime = this->simulationTime_;
+    std::string allCaseFileName = "../data/Result_AllCase_" + thisTime + ".csv";
+    std::string taskPriorityFileName = "../data/Result_TaskPriority_" + thisTime + ".csv";
+    std::string runnablePriorityFileName = "../data/Result_RunnablePriority_" + thisTime + ".csv";
+
+    std::ofstream allCase;
+    allCase.open (fileName.c_str());
+
+    std::ofstream taskPriority;
+    taskPriority.open (fileName.c_str());
+
+    std::ofstream runnablePriority;
+    runnablePriority.open (fileName.c_str());
+
+    for (auto &reactionTime : this->GetBestReactionTime()) {
+        std::vector<int> sequence = this->sequence_[reactionTime[0].sequenceIndex];
+        int maxReactionTime = this->GetMaxReactionTime(reactionTime);
+        int maxDataAge = this->GetMaxDataAge(reactionTime);
+
+        allCase << maxReactionTime << "," << maxDataAge << "\n";
+
+        if (this->CheckTaskPriorityRunnablePriority(sequence)) {
+            taskPriority << maxReactionTime << "," << maxDataAge << "\n";
+        }
+
+        if (this->CheckRunnablePriorityRunnablePriority(sequence)) {
+            runnablePriority << maxReactionTime << "," << maxDataAge << "\n";
+        }
+    }
+
+    runnablePriority.close();
+    taskPriority.close();
+    allCase.close();
 }
