@@ -137,6 +137,10 @@ const int Simulation::GetMaxOutputTaskPriority(std::shared_ptr<RUNNABLE> tmpRunn
         maxOutputTaskPriority = (maxOutputTaskPriority > runnable->GetTask()->GetPriority()) ? runnable->GetTask()->GetPriority() : maxOutputTaskPriority;
     }
 
+    if (!(tmpRunnable->GetOutputRunnables().size())) {
+        maxOutputTaskPriority -= 1;
+    }
+
     return maxOutputTaskPriority;
 }
 
@@ -145,6 +149,10 @@ const int Simulation::GetMaxOutputRunnablePriority(std::shared_ptr<RUNNABLE> tmp
     
     for (auto &runnable : tmpRunnable->GetOutputRunnables()) {
         maxOutputRunnablePriority = (maxOutputRunnablePriority > runnable->GetPriorityInTask()) ? runnable->GetPriorityInTask() : maxOutputRunnablePriority;
+    }
+
+    if (!(tmpRunnable->GetOutputRunnables().size())) {
+        maxOutputRunnablePriority -= 1;
     }
 
     return maxOutputRunnablePriority;
@@ -422,11 +430,16 @@ int Simulation::GetDataAge(std::vector<int>& executionPermutationPointer,
     long long int preEndTime = processExecution.second[0].endTime;
     long long int currentEndTime = processExecution.second[0].endTime;
 
-    int hyperPeriodCount = (processExecution.second[0].endTime / runnableExecutions[processExecution.first.second][executionPermutationPointer[processExecution.first.second]].back().endTime);
+    int hyperPeriodCount = 0;
     int maxCycle = static_cast<int>(runnableExecutions[processExecution.first.second][executionPermutationPointer[processExecution.first.second]].size());
 
     while (preEndTime != (runnableExecutions[processExecution.first.second][executionPermutationPointer[processExecution.first.second]][pointer].endTime + hyperPeriodCount * this->hyperPeriod_)) {
         pointer++;
+
+        if (pointer >= maxCycle) {
+            pointer -= maxCycle;
+            hyperPeriodCount++;
+        }
     }
 
     for (auto &StartToEndTime : processExecution.second) {
