@@ -179,6 +179,7 @@ bool Simulation::CheckTaskPriorityRunnablePriority(std::vector<int>& currentSequ
         } else {
             if (prePrecedence > currentPrecedence) {
                 return false;
+                
             } else if (prePrecedence < currentPrecedence) {
                 prePrecedence = currentPrecedence;
                 preTaskPriority = currentTaskPriority;
@@ -187,6 +188,7 @@ bool Simulation::CheckTaskPriorityRunnablePriority(std::vector<int>& currentSequ
             } else {
                 if (preOutputTaskPriority > currentOutputTaskPriority) {
                     return false;
+
                 } else {
                     prePrecedence = currentPrecedence;
                     preTaskPriority = currentTaskPriority;
