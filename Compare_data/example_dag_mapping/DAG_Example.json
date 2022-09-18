@@ -1,0 +1,120 @@
+{
+    "Runnables": [{
+            "ID": 0,
+            "Execution Time": 0.765,
+            "Status": 0,
+            "Precedence": 0,
+            "Priority in Task": -1,
+            "Input Runnables's ID": [],
+            "Output Runnable's ID": [3, 4, 7]
+        }, {
+            "ID": 1,
+            "Execution Time": 0.62,
+            "Status": 0,
+            "Precedence": 0,
+            "Priority in Task": -1,
+            "Input Runnables's ID": [],
+            "Output Runnable's ID": [6, 7]
+        }, {
+            "ID": 2,
+            "Execution Time": 0.787,
+            "Status": 0,
+            "Precedence": 0,
+            "Priority in Task": -1,
+            "Input Runnables's ID": [],
+            "Output Runnable's ID": [7]
+        }, {
+            "ID": 3,
+            "Execution Time": 0.034,
+            "Status": 2,
+            "Precedence": 1,
+            "Priority in Task": -1,
+            "Input Runnables's ID": [0],
+            "Output Runnable's ID": [4, 5, 7, 8]
+        }, {
+            "ID": 4,
+            "Execution Time": 0.019,
+            "Status": 2,
+            "Precedence": 2,
+            "Priority in Task": -1,
+            "Input Runnables's ID": [0, 3],
+            "Output Runnable's ID": [5]
+        }, {
+            "ID": 5,
+            "Execution Time": 0.185,
+            "Status": 2,
+            "Precedence": 3,
+            "Priority in Task": -1,
+            "Input Runnables's ID": [3, 4],
+            "Output Runnable's ID": [8, 10, 11]
+        }, {
+            "ID": 6,
+            "Execution Time": 0.047,
+            "Status": 2,
+            "Precedence": 1,
+            "Priority in Task": -1,
+            "Input Runnables's ID": [1],
+            "Output Runnable's ID": [9, 12]
+        }, {
+            "ID": 7,
+            "Execution Time": 0.393,
+            "Status": 2,
+            "Precedence": 2,
+            "Priority in Task": -1,
+            "Input Runnables's ID": [0, 1, 2, 3],
+            "Output Runnable's ID": [12]
+        }, {
+            "ID": 8,
+            "Execution Time": 0.628,
+            "Status": 2,
+            "Precedence": 4,
+            "Priority in Task": -1,
+            "Input Runnables's ID": [4, 5],
+            "Output Runnable's ID": [10, 12]
+        }, {
+            "ID": 9,
+            "Execution Time": 0.081,
+            "Status": 2,
+            "Precedence": 3,
+            "Priority in Task": -1,
+            "Input Runnables's ID": [4, 6],
+            "Output Runnable's ID": [11]
+        }, {
+            "ID": 10,
+            "Execution Time": 0.388,
+            "Status": 1,
+            "Precedence": 5,
+            "Priority in Task": -1,
+            "Input Runnables's ID": [5, 8],
+            "Output Runnable's ID": []
+        }, {
+            "ID": 11,
+            "Execution Time": 0.172,
+            "Status": 1,
+            "Precedence": 4,
+            "Priority in Task": -1,
+            "Input Runnables's ID": [5, 9],
+            "Output Runnable's ID": []
+        }, {
+            "ID": 12,
+            "Execution Time": 0.034,
+            "Status": 1,
+            "Precedence": 5,
+            "Priority in Task": -1,
+            "Input Runnables's ID": [6, 7, 8],
+            "Output Runnable's ID": []
+        }],
+    "Tasks": [{
+            "Period": 9.0,
+            "Offset": 0.0
+        }, {
+            "Period": 10.0,
+            "Offset": 0.0
+        }, {
+            "Period": 12.0,
+            "Offset": 0.0
+        }, {
+            "Period": 15.0,
+            "Offset": 0.0
+        }]
+}
