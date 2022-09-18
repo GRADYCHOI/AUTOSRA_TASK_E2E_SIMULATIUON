@@ -80,7 +80,7 @@ void Simulation::Simulate(int communicationMethod) {
 		
 		std::system("clear");
 		std::cout << "===========================================================================================================================\n";
-        std::cout << " - Simulation Case            : " << std::setw(10) << caseIndex << "/" << std::setw(10) << numberOfCase << "\n";
+        std::cout << " - Simulation Case            : " << std::setw(10) << (caseIndex + 1) << "/" << std::setw(10) << numberOfCase << "\n";
         //std::cout << " - Reaction Time              : " << std::setw(10) << static_cast<double>(result.reactionTime) / 1000.0 << "\n";
         //std::cout << " - Data Age                   : " << std::setw(10) << static_cast<double>(result.dataAge) / 1000.0 << "\n";
         std::cout << " - Max Cycle                  : " << this->maxCycle_ << "\n";
@@ -302,24 +302,22 @@ void Simulation::SetProcessExecutions(std::vector<int>& executionPermutationPoin
                                       std::vector<int>& communicationPermutationPointer,
                                       std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications,
                                       std::map<std::pair<int, int>, std::vector<ExecutionInformation>>& processExecutions) {
-    for (auto &task : this->dag_->GetTasks()) {
-        for (auto &runnable : task->GetRunnables()) {
-            int eachMaxCycle = static_cast<int>(this->hyperPeriod_ / task->GetPeriod());
+    for (auto &runnable : this->dag_->GetInputRunnables()) {
+        int eachMaxCycle = static_cast<int>(this->hyperPeriod_ / runnable->GetTask()->GetPeriod());
 
-            for (int cycle = 0; cycle < eachMaxCycle; cycle++) {
-                std::vector<int> worstCyclePerRunnable(this->numberOfRunnables_, -1);
-                this->TraceProcess(executionPermutationPointer,
-                                   runnableExecutions,
-                                   communicationPermutationPointer,
-                                   runnableCommunications,
-                                   runnable->GetId(), // input Runnable's ID
-                                   cycle,             // input Runnable's cycle
-                                   runnable->GetId(), // current Runnable's ID
-                                   cycle,             // current Runnable's cycle
-                                   0,
-                                   worstCyclePerRunnable,
-                                   processExecutions);
-            }
+        for (int cycle = 0; cycle < eachMaxCycle; cycle++) {
+            std::vector<int> worstCyclePerRunnable(this->numberOfRunnables_, -1);
+            this->TraceProcess(executionPermutationPointer,
+                                runnableExecutions,
+                                communicationPermutationPointer,
+                                runnableCommunications,
+                                runnable->GetId(), // input Runnable's ID
+                                cycle,             // input Runnable's cycle
+                                runnable->GetId(), // current Runnable's ID
+                                cycle,             // current Runnable's cycle
+                                0,
+                                worstCyclePerRunnable,
+                                processExecutions);
         }
     }
 }
