@@ -67,15 +67,11 @@ void RunnableImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numb
                     tmpRunnables.emplace_back(runnable->GetId());
                 }
                 tmpRunnablePermutation.emplace_back(tmpRunnables);
-
-                allCasePerPriority.emplace_back(samePriorityRunnables);
             } while (std::next_permutation(samePriorityRunnables.begin(), samePriorityRunnables.end(), [](std::shared_ptr<RUNNABLE> a, std::shared_ptr<RUNNABLE> b) { return a->GetId() < b->GetId(); }));
 
             runnablePermutation.emplace_back(tmpRunnablePermutation);
         } else {
             runnablePermutation.emplace_back(std::vector<std::vector<int>>{ { samePriorityRunnables.front()->GetId() } });
-
-            allCasePerPriority.emplace_back(samePriorityRunnables);
         }
     }
 
@@ -111,57 +107,54 @@ void RunnableImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numb
 
     std::vector<int> emptyTimes(static_cast<int>(hyperPeriod / unit), unit);
 
-    int numberOfAllCasePerPriority = static_cast<int>(allCasePerPriority.size());
+    int numberOfAllCasePerPriority = static_cast<int>(runnablePermutation.size());
     int count = 0;
 
     runnableCommunications.resize(numberOfRunnables);
-    for (auto &oneCaseSequence : allCasePerPriority) {
-        std::vector<int> tmpEmptyTimes(static_cast<int>(hyperPeriod / unit));
+    for (auto &runnables : runnablePermutation) {
+        std::vector<int> currentEmptyTimes(static_cast<int>(hyperPeriod / unit));
 
-        for (auto &runnable : oneCaseSequence) {
-            std::vector<int> currentEmptyTimes(static_cast<int>(hyperPeriod / unit));
+        for (auto &oneCaseSequence : runnables) {
             std::copy(emptyTimes.begin(), emptyTimes.end(), currentEmptyTimes.begin());
 
-            int runnableId = runnable->GetId();
-            int maxCycle = static_cast<int>(runnableReleaseTimes[runnableId].size());
-            runnableCommunications[runnableId].emplace_back(runnableReleaseTimes[runnableId]);
+            for (auto &runnable : oneCaseSequence) {
+                int runnableId = runnable;
+                int maxCycle = static_cast<int>(runnableReleaseTimes[runnableId].size());
+                runnableCommunications[runnableId].emplace_back(runnableReleaseTimes[runnableId]);
 
-            for (int cycle = 0; cycle < maxCycle; cycle++) {
-                int unitIndex = static_cast<int>(runnableReleaseTimes[runnableId][cycle].startTime / unit);
+                for (int cycle = 0; cycle < maxCycle; cycle++) {
+                    int unitIndex = static_cast<int>(runnableReleaseTimes[runnableId][cycle].startTime / unit);
 
-                // Regard time-line
-                while (emptyTimes[unitIndex] == 0) unitIndex++;
+                    // Regard time-line
+                    while (currentEmptyTimes[unitIndex] == 0) unitIndex++;
 
-                // Set start time
-                runnableCommunications[runnableId].back()[cycle].startTime = static_cast<long long int>(unitIndex) * static_cast<long long int>(unit) + static_cast<long long int>(1 - emptyTimes[unitIndex]);
+                    // Set start time
+                    runnableCommunications[runnableId].back()[cycle].startTime = static_cast<long long int>(unitIndex) * static_cast<long long int>(unit) + static_cast<long long int>(unit - currentEmptyTimes[unitIndex]);
 
-                // Set end time
-                int executionTime = runnable->GetExecutionTime();
+                    // Set end time
+                    int executionTime = dag->GetRunnable(runnableId)->GetExecutionTime();
 
-                while (executionTime) {
-                    if (emptyTimes[unitIndex] < executionTime) {
-                        executionTime -= emptyTimes[unitIndex];
-                        emptyTimes[unitIndex] = 0;
+                    while (executionTime) {
+                        if (currentEmptyTimes[unitIndex] < executionTime) {
+                            executionTime -= currentEmptyTimes[unitIndex];
+                            currentEmptyTimes[unitIndex] = 0;
 
-                        unitIndex++;
-                    } else {
-                        runnableCommunications[runnableId].back()[cycle].endTime = static_cast<long long int>(unitIndex) * static_cast<long long int>(unit) + static_cast<long long int>(executionTime);
-                        emptyTimes[unitIndex] -= executionTime;
-                        executionTime = 0;
+                            unitIndex++;
+                        } else {
+                            runnableCommunications[runnableId].back()[cycle].endTime = static_cast<long long int>(unitIndex) * static_cast<long long int>(unit) + static_cast<long long int>(executionTime);
+                            currentEmptyTimes[unitIndex] -= executionTime;
+                            executionTime = 0;
+                        }
+                    }
+
+                    if (runnableReleaseTimes[runnableId][cycle].endTime < runnableCommunications[runnableId].back()[cycle].endTime) {
+                        std::cout << "[Scheduling Error] : This sequence can't scheduling" << std::endl;
+                        exit(0);
                     }
                 }
-
-                if (runnableReleaseTimes[runnableId][cycle].endTime < runnableCommunications[runnableId].back()[cycle].endTime) {
-                    std::cout << "[Scheduling Error] : This sequence can't scheduling" << std::endl;
-                    exit(0);
-                }
-
-                std::copy(currentEmptyTimes.begin(), currentEmptyTimes.end(), tmpEmptyTimes.begin());
             }
-
-            std::copy(tmpEmptyTimes.begin(), tmpEmptyTimes.end(), emptyTimes.begin());
         }
-
+        std::copy(currentEmptyTimes.begin(), currentEmptyTimes.end(), emptyTimes.begin());
         std::cout << "Process : " << 30 + static_cast<int>((70.0 / static_cast<double>(numberOfAllCasePerPriority)) * (count++)) << "%" << std::endl;
     }
 

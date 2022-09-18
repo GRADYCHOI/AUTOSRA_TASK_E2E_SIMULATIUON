@@ -308,8 +308,6 @@ std::vector<ResultInformation> Simulation::GetResult(int caseIndex,
         //result.push_back({processExecution.first.first, processExecution.first.second, caseIndex, this->GetReactionTime(processExecution), 0});
     }
 
-    std::clog << "==============================[Debug : Get Result Checkpoint 5]===============================" << "\n";
-
     return result;
 }
 
@@ -378,19 +376,19 @@ void Simulation::TraceProcess(std::vector<int>& executionPermutationPointer,
                 int tmpCycle = 0;
                 int maxCycle = static_cast<int>(runnableCommunications[outputRunnableId][communicationPermutationPointer[outputRunnableId]].size());
                 int hyperPeriodCount = 0;
-                int thisRunnableWriteTime = runnableCommunications[thisRunnableId][communicationPermutationPointer[thisRunnableId]][thisCycle].endTime;
-                int outputRunnableReadTime = runnableCommunications[outputRunnableId][communicationPermutationPointer[outputRunnableId]][tmpCycle].startTime;
+                long long int thisRunnableWriteTime = runnableCommunications[thisRunnableId][communicationPermutationPointer[thisRunnableId]][thisCycle].endTime;
+                long long int outputRunnableReadTime = runnableCommunications[outputRunnableId][communicationPermutationPointer[outputRunnableId]][tmpCycle].startTime;
 
                 while (thisRunnableWriteTime > outputRunnableReadTime) {
                     tmpCycle++;
 
                     if (tmpCycle == maxCycle) {
-                        outputRunnableReadTime = runnableCommunications[outputRunnableId][communicationPermutationPointer[outputRunnableId]][0].startTime + this->hyperPeriod_;
-
                         tmpCycle = 0;
                         hyperPeriodCount++;
+
+                        outputRunnableReadTime = runnableCommunications[outputRunnableId][communicationPermutationPointer[outputRunnableId]][tmpCycle].startTime + (hyperPeriodCount * this->hyperPeriod_);
                     } else {
-                        outputRunnableReadTime = runnableCommunications[outputRunnableId][communicationPermutationPointer[outputRunnableId]][tmpCycle].startTime;
+                        outputRunnableReadTime = runnableCommunications[outputRunnableId][communicationPermutationPointer[outputRunnableId]][tmpCycle].startTime + (hyperPeriodCount * this->hyperPeriod_);
                     }
                 }
 
