@@ -583,7 +583,7 @@ rapidjson::Value Simulation::SaveDataAge(rapidjson::Document::AllocatorType& all
         std::vector<int> sequence = this->sequence_[dataAge[0].sequenceIndex];
 
         bestDataAgeObject.AddMember("Ranking", ++rankingCount, allocator);
-        bestDataAgeObject.AddMember("Worst Data Age", this->GetMaxDataAge(reactionTime), allocator);
+        bestDataAgeObject.AddMember("Worst Data Age", this->GetMaxDataAge(data), allocator);
         bestDataAgeObject.AddMember("Sort Runnables by Task Priority", this->CheckTaskPriorityRunnablePriority(sequence), allocator);
         bestDataAgeObject.AddMember("Sort Runnables by Runnable Priority", this->CheckRunnablePriorityRunnablePriority(sequence), allocator);
 
