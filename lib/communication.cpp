@@ -27,7 +27,7 @@ void RunnableImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numb
         std::vector<std::vector<std::shared_ptr<RUNNABLE>>> sequencePerTask;
         sequencePerTask.reserve(numberOfRunnablesInTask);
 
-        for (auto &runnable : task->GetRunnablesByPriorityInTask()) {
+        for (auto &runnable : task->GetRunnablesByPrecedence()) {
             if (sequencePerTask.size()) {
                 if (sequencePerTask.back()[0]->GetPrecedence() == runnable->GetPrecedence()) {
                     sequencePerTask.back().emplace_back(runnable);
@@ -224,7 +224,7 @@ void TaskImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numberOf
             taskExecutionInformation[cycle].endTime = endTime;
         }
 
-        for (auto &runnable : task->GetRunnablesByPriorityInTask()) {
+        for (auto &runnable : task->GetRunnablesByPrecedence()) {
             int runnableId = runnable->GetId();
 
             runnablePermutation.emplace_back(std::vector<std::vector<int>>{ { runnableId } });
