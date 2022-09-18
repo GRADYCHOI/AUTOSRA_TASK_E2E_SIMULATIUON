@@ -116,7 +116,12 @@ void RunnableImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numb
 
     runnableCommunications.resize(numberOfRunnables);
     for (auto &oneCaseSequence : allCasePerPriority) {
+        std::vector<int> tmpEmptyTimes(static_cast<int>(hyperPeriod / unit));
+
         for (auto &runnable : oneCaseSequence) {
+            std::vector<int> currentEmptyTimes(static_cast<int>(hyperPeriod / unit));
+            std::copy(emptyTimes.begin(), emptyTimes.end(), currentEmptyTimes.begin());
+
             int runnableId = runnable->GetId();
             int maxCycle = static_cast<int>(runnableReleaseTimes[runnableId].size());
             runnableCommunications[runnableId].emplace_back(runnableReleaseTimes[runnableId]);
@@ -150,7 +155,11 @@ void RunnableImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numb
                     std::cout << "[Scheduling Error] : This sequence can't scheduling" << std::endl;
                     exit(0);
                 }
+
+                std::copy(currentEmptyTimes.begin(), currentEmptyTimes.end(), tmpEmptyTimes.begin());
             }
+
+            std::copy(tmpEmptyTimes.begin(), tmpEmptyTimes.end(), emptyTimes.begin());
         }
 
         std::cout << "Process : " << 30 + ((70 / numberOfAllCasePerPriority) * (count++)) << "%" << std::endl;
