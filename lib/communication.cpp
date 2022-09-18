@@ -27,7 +27,7 @@ void RunnableImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numb
 
         for (auto &runnable : task->GetRunnablesByPriorityInTask()) {
             if (sequencePerTask.size()) {
-                if (sequencePerTask.back()[0]->GetPriorityInTask() == runnable->GetPriorityInTask()) {
+                if (sequencePerTask.back()[0]->GetPrecedence() == runnable->GetPrecedence()) {
                     sequencePerTask.back().emplace_back(runnable);
                 } else {
                     sequencePerTask.emplace_back(std::vector<std::shared_ptr<RUNNABLE>>{ runnable });

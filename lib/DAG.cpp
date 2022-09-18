@@ -190,26 +190,6 @@ void DAG::SetTaskPriority() {
 	std::clog << "===========================================================================================================================" << std::endl;
 }
 
-const int DAG::GetMaxOutputTaskPriority(std::shared_ptr<RUNNABLE> tmpRunnable) {
-    int maxOutputTaskPriority = INT_MAX;
-    
-    for (auto &runnable : tmpRunnable->GetOutputRunnables()) {
-        maxOutputTaskPriority = (maxOutputTaskPriority > runnable->GetTask()->GetPriority()) ? runnable->GetTask()->GetPriority() : maxOutputTaskPriority;
-    }
-
-    return maxOutputTaskPriority;
-}
-
-const int DAG::GetMaxOutputRunnablePrecedence(std::shared_ptr<RUNNABLE> tmpRunnable) {
-    int maxOutputRunnablePrecedence = INT_MAX;
-    
-    for (auto &runnable : tmpRunnable->GetOutputRunnables()) {
-        maxOutputRunnablePrecedence = (maxOutputRunnablePrecedence > runnable->GetPrecedence()) ? runnable->GetPrecedence() : maxOutputRunnablePrecedence;
-    }
-
-    return maxOutputRunnablePrecedence;
-}
-
 const std::vector<std::shared_ptr<TASK>> DAG::GetTasksPriority() {
     std::sort(this->tasks_.begin(), this->tasks_.end(), [](std::shared_ptr<TASK> a, std::shared_ptr<TASK> b) { return a->GetPriority() < b->GetPriority(); });
 
@@ -254,67 +234,16 @@ void DAG::CheckPrecedence(std::vector<int>& precedenceOfRunnables, const std::sh
     }
 }
 
-void DAG::SetAllCaseRunnablePriority() {
+void DAG::SetRunnableAllCase() {
     std::clog << "==========================================[Debug : All Case -> Runnable Priority]==========================================" << "\n";
 
     for (auto &task : this->tasks_) {
         int taskPriority = task->GetPriority();
 
         for (auto &runnable : task->GetRunnables()) {
-            runnable->SetPriorityInTask(taskPriority);
+            runnable->SetPrecedence(taskPriority);
         }
     }
-}
-
-void DAG::SetPrecedenceRunnablePriority() {
-    std::clog << "=========================================[Debug : Precedence -> Runnable Priority]=========================================" << "\n";
-
-    for (auto &task : this->tasks_) {
-        for (auto &runnable : task->GetRunnablesByPrecedence()) {
-            runnable->SetPriorityInTask(runnable->GetPrecedence());
-        }
-    }
-}
-
-void DAG::SetTaskPriorityRunnablePriority() {
-    std::clog << "==============================[Debug : Output Runnable's Task Priority -> Runnable Priority]===============================" << "\n";
-
-    for (auto &task : this->tasks_) {
-        int priority = 1;
-        int prePrecedence = -1;
-        std::vector<std::shared_ptr<RUNNABLE>> samePrecedenceRunnables;
-
-        for (auto &runnable : task->GetRunnablesByPrecedence()) {            
-            if (prePrecedence != runnable->GetPrecedence()) {
-                samePrecedenceRunnables.clear();
-            }
-
-            priority++;
-            prePrecedence = runnable->GetPrecedence();
-            samePrecedenceRunnables.emplace_back(runnable);
-
-            int numberOfSamePrecedenceRunnables = static_cast<int>(samePrecedenceRunnables.size());
-            if (numberOfSamePrecedenceRunnables > 1) {
-                std::sort(samePrecedenceRunnables.begin(), samePrecedenceRunnables.end(), [&, this](std::shared_ptr<RUNNABLE> a, std::shared_ptr<RUNNABLE> b) { return this->GetMaxOutputTaskPriority(a) > this->GetMaxOutputTaskPriority(b); });
-
-                for (int index = 0; index < numberOfSamePrecedenceRunnables; index++) {
-                    samePrecedenceRunnables[index]->SetPriorityInTask(priority - index);
-                }
-
-                for (int index = 1; index < numberOfSamePrecedenceRunnables; index++) {
-                    if (this->GetMaxOutputRunnablePrecedence(samePrecedenceRunnables[index - 1]) == this->GetMaxOutputRunnablePrecedence(samePrecedenceRunnables[index])) {
-                        samePrecedenceRunnables[index]->SetPriorityInTask(samePrecedenceRunnables[index - 1]->GetPriorityInTask());
-                    }
-                }
-            } else {
-                samePrecedenceRunnables[0]->SetPriorityInTask(priority);
-            }
-        }
-    }
-}
-
-void DAG::SetRunnablePriorityRunnablePriority() {
-    std::clog << "=================================[Debug : Output Runnable's Priority -> Runnable Priority]=================================" << "\n";
 }
 
 /* Save File & Parsing File Section */

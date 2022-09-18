@@ -8,6 +8,8 @@ struct ExecutionInformation {
 };
 
 struct ResultInformation {
+    int inputRunnableId;
+    int outputRunnableId;
     int sequenceIndex;
     int reactionTime;
     int dataAge;

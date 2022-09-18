@@ -48,7 +48,7 @@ private:
     std::vector<std::vector<int>> sequence_;
 
 	// Store results of all cases
-    std::vector<ResultInformation> results_;
+    std::vector<std::vector<ResultInformation>> results_;
 	
 	// part of file name
 	std::string simulationTime_;
@@ -78,6 +78,11 @@ private:
                       std::map<std::pair<int, int>, std::vector<ExecutionInformation>>& processExecutions);
 
     void SetSequence(int numberOfCase, std::vector<std::vector<std::vector<int>>>& runnableExecutionPermutation);
+    void SetTaskPriorityRunnablePriority(int numberOfCase, std::vector<std::vector<std::vector<int>>>& runnableExecutionPermutation);
+    void SetRunnablePriorityRunnablePriority(int numberOfCase, std::vector<std::vector<std::vector<int>>>& runnableExecutionPermutation);
+    
+    const int GetMaxOutputTaskPriority(std::shared_ptr<RUNNABLE> tmpRunnable);
+    const int GetMaxOutputRunnablePrecedence(std::shared_ptr<RUNNABLE> tmpRunnable);
 
 	ResultInformation GetResult(int caseIndex,
                                 std::vector<std::vector<std::vector<int>>>& runnableExecutionPermutation,

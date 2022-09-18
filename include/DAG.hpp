@@ -103,13 +103,8 @@ public:
     void SetRunnablePrecedence();
     void SetTaskPriority();
 
-    const int GetMaxOutputTaskPriority(std::shared_ptr<RUNNABLE> tmpRunnable);
-    const int GetMaxOutputRunnablePrecedence(std::shared_ptr<RUNNABLE> tmpRunnable);
-
     void SetAllCaseRunnablePriority();
     void SetPrecedenceRunnablePriority();
-    void SetTaskPriorityRunnablePriority();
-    void SetRunnablePriorityRunnablePriority();
 
     float GetUtilization();
 
