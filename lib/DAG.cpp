@@ -201,12 +201,12 @@ void DAG::SetRunnablePrecedence() {
     std::vector<int> precedenceOfRunnables(this->GetNumberOfRunnables(), -1);
 
 	std::clog << "===============================================[Debug : Runnable Precedence]===============================================" << std::endl;
-    for (auto &inputRunnable : this->inputRunnables_) {
-		std::clog << " Input Runnable ID : " << inputRunnable->GetId() << std::endl;
+    for (auto &outputRunnable : this->outputRunnables_) {
+		std::clog << " Input Runnable ID : " << outputRunnable->GetId() << std::endl;
 	}
 
-    for (auto &inputRunnable : this->inputRunnables_) {
-		this->CheckPrecedence(precedenceOfRunnables, inputRunnable, 0);
+    for (auto &outputRunnable : this->outputRunnables_) {
+		this->CheckPrecedence(precedenceOfRunnables, outputRunnable, 0);
 	}
 	
 	for (auto &runnable : this->runnables_) {
@@ -225,10 +225,10 @@ void DAG::CheckPrecedence(std::vector<int>& precedenceOfRunnables, const std::sh
 		precedenceOfRunnables[runnable->GetId()] = precedence;
 	}
 	
-	if (runnable->GetStatus() != 1) {
-        for (auto &outputRunnable : runnable->GetOutputRunnables()) {
-            if (precedenceOfRunnables[outputRunnable->GetId()] < ++precedence) {
-				CheckPrecedence(precedenceOfRunnables, outputRunnable, precedence);
+	if (runnable->GetStatus() != 0) {
+        for (auto &inputRunnable : runnable->GetInputRunnables()) {
+            if (precedenceOfRunnables[inputRunnable->GetId()] < ++precedence) {
+				CheckPrecedence(precedenceOfRunnables, inputRunnable, precedence);
 			}
         }
     }

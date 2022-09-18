@@ -20,7 +20,7 @@ private:
     std::weak_ptr<TASK> task_; 
 	
 	// Dynamic characters
-	int precedence_ = -1;
+	int precedence_ = 0;
     int priorityInTask_ = -1;
     std::vector<std::weak_ptr<RUNNABLE>> inputRunnables_;
     std::vector<std::shared_ptr<RUNNABLE>> outputRunnables_;
