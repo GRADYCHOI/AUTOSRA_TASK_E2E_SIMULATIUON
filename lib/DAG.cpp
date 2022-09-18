@@ -67,7 +67,7 @@ void DAG::GenerateRunnables(int numberOfRunnables) {
 
 	std::clog << "===============================================[Debug : Runnable Generation}===============================================" << std::endl;
     for (int runnableIndex = 0; runnableIndex < numberOfRunnables; runnableIndex++) {
-        std::shared_ptr<RUNNABLE> runnable(new RUNNABLE(runnableIndex, runnableIndex, std::rand() % 100));
+        std::shared_ptr<RUNNABLE> runnable(new RUNNABLE(runnableIndex, runnableIndex, std::rand() % 1000));
         this->runnables_.push_back(runnable);
         std::clog << "[DAG.cpp] Runnable ID : " << runnable->GetId() << ", Execution Time : " << runnable->GetExecutionTime() << std::endl;
     }
@@ -150,7 +150,7 @@ bool DAG::CheckMappable() {
         }
     }
 
-    return ((static_cast<float>(sumOfExecutionTimes) / static_cast<float>(maxPeriod)) < UTILIZATION) ? true : false;
+    return ((static_cast<double>(sumOfExecutionTimes) / static_cast<double>(maxPeriod)) < UTILIZATION) ? true : false;
 }
 
 void DAG::ClearTaskMapping() {
