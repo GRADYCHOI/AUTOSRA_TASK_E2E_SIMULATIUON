@@ -214,7 +214,6 @@ bool Simulation::CheckRunnablePriorityRunnablePriority(std::vector<int>& current
         if (currentTaskPriority == 0) continue;
 
         if (preTaskPriority > currentTaskPriority) {
-            std::cout << "ckpt 1" << std::endl;
             return false;
 
         } else if (preTaskPriority < currentTaskPriority) {
@@ -225,7 +224,6 @@ bool Simulation::CheckRunnablePriorityRunnablePriority(std::vector<int>& current
 
         } else {
             if (prePrecedence > currentPrecedence) {
-                std::cout << "ckpt 2" << std::endl;
                 return false;
 
             } else if (prePrecedence < currentPrecedence) {
@@ -236,7 +234,6 @@ bool Simulation::CheckRunnablePriorityRunnablePriority(std::vector<int>& current
 
             } else {
                 if (preOutputTaskPriority > currentOutputTaskPriority) {
-                    std::cout << "ckpt 3" << std::endl;
                     return false;
 
                 } else if (preOutputTaskPriority < currentOutputTaskPriority) {
@@ -247,7 +244,6 @@ bool Simulation::CheckRunnablePriorityRunnablePriority(std::vector<int>& current
 
                 } else {
                     if (preOutputRunnablePriority > currentOutputRunnablePriority) {
-                        std::cout << "ckpt 4" << std::endl;
                         return false;
 
                     } else {
