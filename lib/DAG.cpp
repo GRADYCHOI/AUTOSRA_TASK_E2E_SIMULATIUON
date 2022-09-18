@@ -215,8 +215,12 @@ void DAG::SetRunnablePrecedence() {
 	}
 
     for (auto &outputRunnable : this->outputRunnables_) {
-        outputRunnable->SetPrecedence(INT_MAX);
+        outputRunnable->SetPrecedence(0);
     }
+
+    for (auto &inputRunnable : this->inputRunnables_) {
+		inputRunnable->SetPrecedence(INT_MAX);
+	}
 	
 	std::clog << "===========================================================================================================================" << std::endl;
 }
