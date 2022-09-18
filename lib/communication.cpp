@@ -162,7 +162,7 @@ void RunnableImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numb
             std::copy(tmpEmptyTimes.begin(), tmpEmptyTimes.end(), emptyTimes.begin());
         }
 
-        std::cout << "Process : " << 30 + ((70 / numberOfAllCasePerPriority) * (count++)) << "%" << std::endl;
+        std::cout << "Process : " << 30 + static_cast<int>((70.0 / static_cast<double>(numberOfAllCasePerPriority)) * (count++)) << "%" << std::endl;
     }
 }
 
