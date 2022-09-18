@@ -103,8 +103,8 @@ public:
     void SetRunnablePrecedence();
     void SetTaskPriority();
 
-    void SetAllCaseRunnablePriority();
-    void SetPrecedenceRunnablePriority();
+    void SetRunnableAllCase();
+    void SetPrecedenceRunnablePriority() {}
 
     float GetUtilization();
 

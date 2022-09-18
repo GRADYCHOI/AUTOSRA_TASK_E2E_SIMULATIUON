@@ -9,7 +9,7 @@ void Simulation::Initialize() {
     this->numberOfInputRunnables_ = this->dag_->GetNumberOfInputRunnables();
     this->numberOfOutputRunnables_ = this->dag_->GetNumberOfOutputRunnables();
 
-    //std::system("clear");
+    std::system("clear");
     std::cout << "===========================================================================================================================\n";
     std::cout << " - Max Cycle                  : " << this->maxCycle_ << "\n";
     std::cout << " - Hyper Period               : " << static_cast<double>(this->hyperPeriod_) / 1000.0 << "\n";
@@ -78,7 +78,7 @@ void Simulation::Simulate(int communicationMethod) {
         std::vector<ResultInformation> result = this->GetResult(caseIndex, runnableExecutionPermutation, runnableExecutions, runnableCommunicationPermutation, runnableCommunications);
         this->results_.emplace_back(result);
 		
-		//std::system("clear");
+		std::system("clear");
 		std::cout << "===========================================================================================================================\n";
         std::cout << " - Simulation Case            : " << std::setw(10) << caseIndex << "/" << std::setw(10) << numberOfCase << "\n";
         //std::cout << " - Reaction Time              : " << std::setw(10) << static_cast<double>(result.reactionTime) / 1000.0 << "\n";
@@ -150,7 +150,7 @@ bool Simulation::CheckTaskPriorityRunnablePriority(std::vector<int>& currentSequ
     int currentOutputTaskPriority = -1;
 
     for (auto &runnable : currentSequence) {
-        std::shared_ptr<RUNNABLE> currentRunnable = this->dag_>GetRunnable(runnable);
+        std::shared_ptr<RUNNABLE> currentRunnable = this->dag_->GetRunnable(runnable);
         currentPrecedence = currentRunnable->GetPrecedence();
         currentTaskPriority = currentRunnable->GetTask()->GetPriority();
         currentOutputTaskPriority = this->GetMaxOutputTaskPriority(currentRunnable);
@@ -190,7 +190,7 @@ bool Simulation::CheckRunnablePriorityRunnablePriority(std::vector<int>& current
     std::clog << "=================================[Debug : Output Runnable's Priority -> Runnable Priority]=================================" << "\n";
 
     for (int index = 0; index < this->numberOfRunnables_; index++) {
-        this->dag_>GetRunnable(runnable)->SetPriorityInTask(index);
+        this->dag_->GetRunnable(currentSequence[index])->SetPriorityInTask(index);
     }
 
     int prePrecedence = -1;
@@ -203,7 +203,7 @@ bool Simulation::CheckRunnablePriorityRunnablePriority(std::vector<int>& current
     int currentOutputRunnablePriority = -1;
 
     for (auto &runnable : currentSequence) {
-        std::shared_ptr<RUNNABLE> currentRunnable = this->dag_>GetRunnable(runnable);
+        std::shared_ptr<RUNNABLE> currentRunnable = this->dag_->GetRunnable(runnable);
         currentPrecedence = currentRunnable->GetPrecedence();
         currentTaskPriority = currentRunnable->GetTask()->GetPriority();
         currentOutputTaskPriority = this->GetMaxOutputTaskPriority(currentRunnable);
@@ -321,9 +321,9 @@ void Simulation::SetProcessExecutions(std::vector<int>& executionPermutationPoin
     }
 }
 
-void Simulation::TraceProcess(std::vector<int> executionPermutationPointer,
+void Simulation::TraceProcess(std::vector<int>& executionPermutationPointer,
                               std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableExecutions,
-                              std::vector<int> communicationPermutationPointer,
+                              std::vector<int>& communicationPermutationPointer,
                               std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications,
                               int inputRunnableId,
                               int inputCycle,
@@ -383,7 +383,7 @@ void Simulation::TraceProcess(std::vector<int> executionPermutationPointer,
     }
 }
 
-int Simulation::GetReactionTime(std::pair<std::pair<int, int>, std::vector<ExecutionInformation>>& processExecution) {
+int Simulation::GetReactionTime(std::pair<const std::pair<int, int>, std::vector<ExecutionInformation>>& processExecution) {
     int WorstReactionTime =  0;
 
     for (auto &StartToEndTime : processExecution.second) {
@@ -399,16 +399,16 @@ int Simulation::GetReactionTime(std::pair<std::pair<int, int>, std::vector<Execu
 
 int Simulation::GetDataAge(std::vector<int>& executionPermutationPointer,
                            std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableExecutions,
-                           std::pair<std::pair<int, int>, std::vector<ExecutionInformation>>& processExecution) {
+                           std::pair<const std::pair<int, int>, std::vector<ExecutionInformation>>& processExecution) {
     int WorstDataAge = 0;
     int pointer = 0;
     long long int preEndTime = processExecution.second[0].endTime;
     long long int currentEndTime = processExecution.second[0].endTime;
 
-    int hyperPeriodCount = (processExecution.second[0].endTime / runnableExecutions[processExecution.first][executionPermutationPointer[processExecution.first]].back().endTime);
-    int maxCycle = static_cast<int>(runnableExecutions[processExecution.first][executionPermutationPointer[processExecution.first]].size());
+    int hyperPeriodCount = (processExecution.second[0].endTime / runnableExecutions[processExecution.first.second][executionPermutationPointer[processExecution.first.second]].back().endTime);
+    int maxCycle = static_cast<int>(runnableExecutions[processExecution.first.second][executionPermutationPointer[processExecution.first.second]].size());
 
-    while (preEndTime != (runnableExecutions[processExecution.first][executionPermutationPointer[processExecution.first]][pointer].endTime + hyperPeriodCount * this->hyperPeriod_)) {
+    while (preEndTime != (runnableExecutions[processExecution.first.second][executionPermutationPointer[processExecution.first.second]][pointer].endTime + hyperPeriodCount * this->hyperPeriod_)) {
         pointer++;
     }
     
@@ -417,16 +417,16 @@ int Simulation::GetDataAge(std::vector<int>& executionPermutationPointer,
         currentEndTime = StartToEndTime.endTime;
 
         if (currentEndTime != preEndTime) {
-            while (currentEndTime != (runnableExecutions[processExecution.first][executionPermutationPointer[processExecution.first]][pointer].endTime + hyperPeriodCount * this->hyperPeriod_)) {
+            while (currentEndTime != (runnableExecutions[processExecution.first.second][executionPermutationPointer[processExecution.first.second]][pointer].endTime + hyperPeriodCount * this->hyperPeriod_)) {
                 pointer++;
 
-                if (pointer >= maxCycle)) {
+                if (pointer >= maxCycle) {
                     pointer -= maxCycle;
                     hyperPeriodCount++;
                 }
             }
 
-            int dataAge = (runnableExecutions[processExecution.first][executionPermutationPointer[processExecution.first]][pointer - 1].endTime + hyperPeriodCount * this->hyperPeriod_) - preEndTime;
+            int dataAge = (runnableExecutions[processExecution.first.second][executionPermutationPointer[processExecution.first.second]][pointer - 1].endTime + hyperPeriodCount * this->hyperPeriod_) - preEndTime;
             if (WorstDataAge < dataAge) {
                 WorstDataAge = dataAge;
             }
@@ -436,70 +436,6 @@ int Simulation::GetDataAge(std::vector<int>& executionPermutationPointer,
     }
 
     return WorstDataAge;
-/*
-    int WorstDataAge = 0;
-
-    for (auto &ouputRunnable : this->dag_->GetOutputRunnables()) {
-        int runnableId = ouputRunnable->GetId();
-        int biggestEndTime = 0; 
-
-        for (auto &StoEs : processExecutions) {
-            if (StoEs.first.second == runnableId) {
-                for (auto &StoE : StoEs.second) {
-                    if (StoE.endTime > biggestEndTime) {
-                        biggestEndTime = StoE.endTime;
-                    }
-                }
-            }
-        }
-
-        int hyperPeriodCount = std::ceil(biggestEndTime/this->hyperPeriod_);
-
-        // Reacted time
-        std::vector<int> endTimes;
-        endTimes.reserve(hyperPeriodCount * this->maxCycle_);
-        for (auto &StoEs : processExecutions) {
-            if (StoEs.first.second == runnableId) {
-                for (auto &StoE : StoEs.second) {
-                    int tmpEndTime = StoE.endTime;
-                    while (tmpEndTime <= biggestEndTime) {
-                        endTimes.emplace_back(tmpEndTime);
-                        tmpEndTime += this->hyperPeriod_;
-                    }
-                }
-            }
-        }
-
-        // just output time
-        std::vector<int> endTimeTable;
-        endTimeTable.reserve(hyperPeriodCount * this->maxCycle_);
-        for (int count = 0; count < hyperPeriodCount; count++) {
-            for (auto &executionTime : runnableExecutions[runnableId]) {
-                endTimeTable.emplace_back(executionTime[executionPermutationPointer[runnableId]].endTime + this->hyperPeriod_ * count);
-            }
-        }
-
-        std::vector<int> endTimeIndex; 
-        endTimeIndex.reserve(hyperPeriodCount * this->maxCycle_);
-        for (auto &endTime : endTimes) {
-            endTimeIndex.push_back(std::distance(endTimeTable.begin(), std::find(endTimeTable.begin(), endTimeTable.end(), endTime)));
-        }
-
-        std::sort(endTimeIndex.begin(), endTimeIndex.end(), [](int a, int b) { return a < b; });
-
-        int preindex = endTimeIndex[0];
-        for (auto &index : endTimeIndex) {
-            if (index > preindex + 1)  {
-                if (WorstDataAge < endTimeTable[index] - endTimeTable[preindex]) {
-                    WorstDataAge = endTimeTable[index] - endTimeTable[preindex];
-                }
-            }
-            preindex = index;
-        }
-    }
-
-    return WorstDataAge;
-    */
 }
 
 std::vector<std::vector<ResultInformation>>& Simulation::GetBestReactionTime() {
@@ -640,11 +576,11 @@ rapidjson::Value Simulation::SaveDataAge(rapidjson::Document::AllocatorType& all
         rapidjson::Value bestDataAgeCaseObject(rapidjson::kObjectType);
         rapidjson::Value bestDataAgeCaseArray(rapidjson::kArrayType);
 
-        std::vector<int> sequence = this->sequence_[dataAge.sequenceIndex];
+        std::vector<int> sequence = this->sequence_[dataAge[0].sequenceIndex];
 
-        bestReactionTimeObject.AddMember("Ranking", ++rankingCount, allocator);
-        bestReactionTimeObject.AddMember("Sort Runnables by Task Priority", this->CheckTaskPriorityRunnablePriority(sequence), allocator);
-        bestReactionTimeObject.AddMember("Sort Runnables by Runnable Priority", this->CheckRunnablePriorityRunnablePriority(sequence), allocator);
+        bestDataAgeObject.AddMember("Ranking", ++rankingCount, allocator);
+        bestDataAgeObject.AddMember("Sort Runnables by Task Priority", this->CheckTaskPriorityRunnablePriority(sequence), allocator);
+        bestDataAgeObject.AddMember("Sort Runnables by Runnable Priority", this->CheckRunnablePriorityRunnablePriority(sequence), allocator);
 
         for (auto &information : dataAge) {
             bestDataAgeCaseObject.AddMember("Input Runnable Id", this->dag_->GetRunnable(information.inputRunnableId)->GetRealId(), allocator);
@@ -687,13 +623,13 @@ void Simulation::SaveDataToCSV() {
     std::string runnablePriorityFileName = "../data/Result_RunnablePriority_" + thisTime + ".csv";
 
     std::ofstream allCase;
-    allCase.open (fileName.c_str());
+    allCase.open (allCaseFileName.c_str());
 
     std::ofstream taskPriority;
-    taskPriority.open (fileName.c_str());
+    taskPriority.open (taskPriorityFileName.c_str());
 
     std::ofstream runnablePriority;
-    runnablePriority.open (fileName.c_str());
+    runnablePriority.open (runnablePriorityFileName.c_str());
 
     for (auto &reactionTime : this->GetBestReactionTime()) {
         std::vector<int> sequence = this->sequence_[reactionTime[0].sequenceIndex];

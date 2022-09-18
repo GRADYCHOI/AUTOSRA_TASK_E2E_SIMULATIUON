@@ -15,6 +15,8 @@ void RunnableImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numb
     std::vector<std::vector<std::shared_ptr<RUNNABLE>>> sequence; // [Priority][Runnable]
 	sequence.reserve(numberOfRunnables);
 
+    std::cout << "\n\n\n" << std::endl;
+
     // Seperate Runnables By Priority
     for (auto &task : dag->GetTasksPriority()) {
         // sort by precedence in same task
@@ -40,6 +42,8 @@ void RunnableImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numb
         // add seqeunce
         sequence.insert(sequence.end(), sequencePerTask.begin(), sequencePerTask.end());
     }
+
+    std::cout << "Process : 10%" << std::endl;
 
     // Permutation in Same Priority Runnables
     int numberOfCase = 0;
@@ -75,6 +79,8 @@ void RunnableImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numb
         }
     }
 
+    std::cout << "Process : 20%" << std::endl;
+
     // Set Release Time in Runnables
     ExecutionInformation initialExecutionInformation = {-1, -1};
     std::vector<std::vector<ExecutionInformation>> runnableReleaseTimes(numberOfRunnables);
@@ -95,6 +101,8 @@ void RunnableImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numb
         }
     }
 
+    std::cout << "Process : 30%" << std::endl;
+
     // Set Execution Times
     int unit = dag->GetTask(0)->GetPeriod();
     for (auto &task : dag->GetTasks()) {
@@ -102,6 +110,9 @@ void RunnableImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numb
     }
 
     std::vector<int> emptyTimes(static_cast<int>(hyperPeriod / unit), unit);
+
+    int numberOfAllCasePerPriority = static_cast<int>(allCasePerPriority.size());
+    int count = 0;
 
     runnableCommunications.resize(numberOfRunnables);
     for (auto &oneCaseSequence : allCasePerPriority) {
@@ -141,6 +152,8 @@ void RunnableImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numb
                 }
             }
         }
+
+        std::cout << "Process : " << 30 + ((70 / numberOfAllCasePerPriority) * (count++)) << "%" << std::endl;
     }
 }
 

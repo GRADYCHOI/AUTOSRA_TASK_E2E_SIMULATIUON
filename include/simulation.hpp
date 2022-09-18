@@ -72,17 +72,17 @@ private:
         communication_->GetCommunicationTable(dag_, numberOfRunnables_, hyperPeriod_, runnablePermutation, runnableCommunications);
     }
 	
-    int GetReactionTime(std::map<std::pair<int, int>, std::vector<ExecutionInformation>>& processExecutions);
-    int GetDataAge(std::vector<int> executionPermutationPointer,
-                      std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableExecutions,
-                      std::map<std::pair<int, int>, std::vector<ExecutionInformation>>& processExecutions);
+    int GetReactionTime(std::pair<const std::pair<int, int>, std::vector<ExecutionInformation>>& processExecution);
+    int GetDataAge(std::vector<int>& executionPermutationPointer,
+                   std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableExecutions,
+                   std::pair<const std::pair<int, int>, std::vector<ExecutionInformation>>& processExecution);
 
     void SetSequence(int numberOfCase, std::vector<std::vector<std::vector<int>>>& runnableExecutionPermutation);
     void SetTaskPriorityRunnablePriority(int numberOfCase, std::vector<std::vector<std::vector<int>>>& runnableExecutionPermutation);
     void SetRunnablePriorityRunnablePriority(int numberOfCase, std::vector<std::vector<std::vector<int>>>& runnableExecutionPermutation);
     
     const int GetMaxOutputTaskPriority(std::shared_ptr<RUNNABLE> tmpRunnable);
-    const int GetMaxOutputRunnablePrecedence(std::shared_ptr<RUNNABLE> tmpRunnable);
+    const int GetMaxOutputRunnablePriority(std::shared_ptr<RUNNABLE> tmpRunnable);
 
     bool CheckTaskPriorityRunnablePriority(std::vector<int>& currentSequence);
     bool CheckRunnablePriorityRunnablePriority(std::vector<int>& currentSequence);
@@ -93,7 +93,7 @@ private:
     const int GetMaxReactionTime(std::vector<ResultInformation>& a);
     const int GetMaxDataAge(std::vector<ResultInformation>& a);
 
-	ResultInformation GetResult(int caseIndex,
+	std::vector<ResultInformation> GetResult(int caseIndex,
                                 std::vector<std::vector<std::vector<int>>>& runnableExecutionPermutation,
                                 std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableExecutions,
                                 std::vector<std::vector<std::vector<int>>>& runnableCommunicationPermutation,
@@ -113,9 +113,9 @@ public:
                               std::vector<int>& communicationPermutationPointer,
                               std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications,
                               std::map<std::pair<int, int>, std::vector<ExecutionInformation>>& processExecutions);
-    void TraceProcess(std::vector<int> executionPermutationPointer,
+    void TraceProcess(std::vector<int>& executionPermutationPointer,
                       std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableExecutions,
-                      std::vector<int> communicationPermutationPointer,
+                      std::vector<int>& communicationPermutationPointer,
                       std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications,
                       int inputRunnableId,
                       int inputCycle,
@@ -128,7 +128,7 @@ public:
     void SaveDag();
     void SaveMapping();
     void SaveData();
-    void SaveDataToCSV()
+    void SaveDataToCSV();
 
     rapidjson::Value SaveReactionTime(rapidjson::Document::AllocatorType& allocator);
     rapidjson::Value SaveDataAge(rapidjson::Document::AllocatorType& allocator);

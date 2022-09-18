@@ -16,7 +16,7 @@
 
 
 int main(int argc, char *argv[]) {
-    //std::clog.setstate(std::ios_base::failbit);
+    std::clog.setstate(std::ios_base::failbit);
 
     // clear screen (only linux)
     std::system("clear");
@@ -89,13 +89,12 @@ int main(int argc, char *argv[]) {
     std::cout << "*** Range of Cases ***" << "\n";
     std::cout << " 0 : All Case" << "\n";
     std::cout << " 1 : Precedence" << "\n";
-    std::cout << " 2 : Output Runnables' Task's Priority" << "\n";
     std::cout << "\n" << "Enter Number : ";
 
     std::cin >> permutationMethod;
     switch (permutationMethod) {
         case 0 : {
-            dag->SetAllCaseRunnablePriority();
+            dag->SetRunnableAllCase();
             break;
         }
 
@@ -103,18 +102,6 @@ int main(int argc, char *argv[]) {
             dag->SetPrecedenceRunnablePriority();
             break;
         }
-
-        case 2 : {
-            dag->SetTaskPriorityRunnablePriority();
-            break;
-        }
-
-        /*
-        case 3 : {
-            dag->SetRunnablePriority();
-            break;
-        }
-        */
 
         default : {
             std::cout << "Wrong Runnable's Priority Method." << std::endl;
@@ -131,6 +118,7 @@ int main(int argc, char *argv[]) {
     std::cout << " 2 : LET" << "\n";
     std::cout << "\n" << "Enter Number : ";
 
+    std::cin >> simulateMethod;
     switch (simulateMethod) {
         case 0 : {
             simulation->Simulate(RunnableImplicitMethod);
