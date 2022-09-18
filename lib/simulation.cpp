@@ -81,8 +81,8 @@ void Simulation::Simulate(int communicationMethod) {
 		std::system("clear");
 		std::cout << "===========================================================================================================================\n";
         std::cout << " - Simulation Case            : " << std::setw(10) << (caseIndex + 1) << "/" << std::setw(10) << numberOfCase << "\n";
-        //std::cout << " - Reaction Time              : " << std::setw(10) << static_cast<double>(result.reactionTime) / 1000.0 << "\n";
-        //std::cout << " - Data Age                   : " << std::setw(10) << static_cast<double>(result.dataAge) / 1000.0 << "\n";
+        std::cout << " - Reaction Time              : " << std::setw(10) << static_cast<double>(this->GetMaxReactionTime(result)) / 1000.0 << "\n";
+        std::cout << " - Data Age                   : " << std::setw(10) << static_cast<double>(this->GetMaxDataAge(result)) / 1000.0 << "\n";
         std::cout << " - Max Cycle                  : " << this->maxCycle_ << "\n";
         std::cout << " - Hyper Period               : " << static_cast<double>(this->hyperPeriod_) / 1000.0 << "\n";
         std::cout << " - Number Of Tasks            : " << this->numberOfTasks_ << "\n";
@@ -155,6 +155,8 @@ bool Simulation::CheckTaskPriorityRunnablePriority(std::vector<int>& currentSequ
         currentTaskPriority = currentRunnable->GetTask()->GetPriority();
         currentOutputTaskPriority = this->GetMaxOutputTaskPriority(currentRunnable);
 
+        if (currentTaskPriority == 0) continue;
+
         if (preTaskPriority > currentTaskPriority) {
             return false;
 
@@ -209,7 +211,10 @@ bool Simulation::CheckRunnablePriorityRunnablePriority(std::vector<int>& current
         currentOutputTaskPriority = this->GetMaxOutputTaskPriority(currentRunnable);
         currentOutputRunnablePriority = this->GetMaxOutputRunnablePriority(currentRunnable);
 
+        if (currentTaskPriority == 0) continue;
+
         if (preTaskPriority > currentTaskPriority) {
+            std::cout << "ckpt 1" << std::endl;
             return false;
 
         } else if (preTaskPriority < currentTaskPriority) {
@@ -220,7 +225,9 @@ bool Simulation::CheckRunnablePriorityRunnablePriority(std::vector<int>& current
 
         } else {
             if (prePrecedence > currentPrecedence) {
+                std::cout << "ckpt 2" << std::endl;
                 return false;
+
             } else if (prePrecedence < currentPrecedence) {
                 prePrecedence = currentPrecedence;
                 preTaskPriority = currentTaskPriority;
@@ -229,6 +236,7 @@ bool Simulation::CheckRunnablePriorityRunnablePriority(std::vector<int>& current
 
             } else {
                 if (preOutputTaskPriority > currentOutputTaskPriority) {
+                    std::cout << "ckpt 3" << std::endl;
                     return false;
 
                 } else if (preOutputTaskPriority < currentOutputTaskPriority) {
@@ -239,6 +247,7 @@ bool Simulation::CheckRunnablePriorityRunnablePriority(std::vector<int>& current
 
                 } else {
                     if (preOutputRunnablePriority > currentOutputRunnablePriority) {
+                        std::cout << "ckpt 4" << std::endl;
                         return false;
 
                     } else {
@@ -527,7 +536,7 @@ rapidjson::Value Simulation::SaveReactionTime(rapidjson::Document::AllocatorType
         std::vector<int> sequence = this->sequence_[reactionTime[0].sequenceIndex];
 
         bestReactionTimeObject.AddMember("Ranking", ++rankingCount, allocator);
-        bestReactionTimeObject.AddMember("Worst Reaction Time", this->GetMaxReactionTime(reactionTime), allocator);
+        bestReactionTimeObject.AddMember("Worst Reaction Time", static_cast<double>(this->GetMaxReactionTime(reactionTime)) / 1000.0, allocator);
         bestReactionTimeObject.AddMember("Sort Runnables by Task Priority", this->CheckTaskPriorityRunnablePriority(sequence), allocator);
         bestReactionTimeObject.AddMember("Sort Runnables by Runnable Priority", this->CheckRunnablePriorityRunnablePriority(sequence), allocator);
 
@@ -583,7 +592,7 @@ rapidjson::Value Simulation::SaveDataAge(rapidjson::Document::AllocatorType& all
         std::vector<int> sequence = this->sequence_[dataAge[0].sequenceIndex];
 
         bestDataAgeObject.AddMember("Ranking", ++rankingCount, allocator);
-        bestDataAgeObject.AddMember("Worst Data Age", this->GetMaxDataAge(data), allocator);
+        bestDataAgeObject.AddMember("Worst Data Age", static_cast<double>(this->GetMaxDataAge(dataAge)) / 1000.0, allocator);
         bestDataAgeObject.AddMember("Sort Runnables by Task Priority", this->CheckTaskPriorityRunnablePriority(sequence), allocator);
         bestDataAgeObject.AddMember("Sort Runnables by Runnable Priority", this->CheckRunnablePriorityRunnablePriority(sequence), allocator);
 
