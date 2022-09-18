@@ -288,8 +288,8 @@ std::vector<ResultInformation> Simulation::GetResult(int caseIndex,
     std::vector<ResultInformation> result;
 
     for (auto &processExecution : processExecutions) {
-        //result.push_back({processExecution.first.first, processExecution.first.second, caseIndex, this->GetReactionTime(processExecution), this->GetDataAge(executionPermutationPointer, runnableExecutions, processExecution)});
-        result.push_back({processExecution.first.first, processExecution.first.second, caseIndex, this->GetReactionTime(processExecution), 0});
+        result.push_back({processExecution.first.first, processExecution.first.second, caseIndex, this->GetReactionTime(processExecution), this->GetDataAge(executionPermutationPointer, runnableExecutions, processExecution)});
+        //result.push_back({processExecution.first.first, processExecution.first.second, caseIndex, this->GetReactionTime(processExecution), 0});
     }
 
     std::clog << "==============================[Debug : Get Result Checkpoint 5]===============================" << "\n";
@@ -340,13 +340,13 @@ void Simulation::TraceProcess(std::vector<int>& executionPermutationPointer,
 
         if (iter == processExecutions.end()) {
             std::vector<ExecutionInformation> tmpVector = { {runnableExecutions[inputRunnableId][executionPermutationPointer[inputRunnableId]][inputCycle].startTime,
-                                                             runnableExecutions[thisRunnableId][executionPermutationPointer[thisRunnableId]][thisCycle].endTime + thisHyperPeriodCount * this->hyperPeriod_} };
+                                                             runnableExecutions[thisRunnableId][executionPermutationPointer[thisRunnableId]][thisCycle].endTime + static_cast<long long int>(thisHyperPeriodCount) * this->hyperPeriod_} };
             processExecutions.insert(std::make_pair(std::make_pair(inputRunnableId, thisRunnableId), tmpVector));
         } else {
             ExecutionInformation tmpInfo = {runnableExecutions[inputRunnableId][executionPermutationPointer[inputRunnableId]][inputCycle].startTime,
-                                            runnableExecutions[thisRunnableId][executionPermutationPointer[thisRunnableId]][thisCycle].endTime + thisHyperPeriodCount * this->hyperPeriod_};
+                                            runnableExecutions[thisRunnableId][executionPermutationPointer[thisRunnableId]][thisCycle].endTime + static_cast<long long int>(thisHyperPeriodCount) * this->hyperPeriod_};
 
-            if (static_cast<int>((*iter).second.size()) == inputCycle) {
+            if (static_cast<int>((*iter).second.size()) == (inputCycle + 1)) {
                 if ((*iter).second.back().endTime > tmpInfo.endTime) {
                     (*iter).second.back().endTime = tmpInfo.endTime;
                 }
@@ -411,33 +411,28 @@ int Simulation::GetDataAge(std::vector<int>& executionPermutationPointer,
     int hyperPeriodCount = (processExecution.second[0].endTime / runnableExecutions[processExecution.first.second][executionPermutationPointer[processExecution.first.second]].back().endTime);
     int maxCycle = static_cast<int>(runnableExecutions[processExecution.first.second][executionPermutationPointer[processExecution.first.second]].size());
 
-    std::clog << "==============================[Debug : Get Result Checkpoint 1-1]===============================" << "\n";
     while (preEndTime != (runnableExecutions[processExecution.first.second][executionPermutationPointer[processExecution.first.second]][pointer].endTime + hyperPeriodCount * this->hyperPeriod_)) {
         pointer++;
     }
-    std::clog << "==============================[Debug : Get Result Checkpoint 1-2]===============================" << "\n";
 
     for (auto &StartToEndTime : processExecution.second) {
         currentEndTime = StartToEndTime.endTime;
-        std::clog << "==============================[Debug : Get Result Checkpoint 1-3]===============================" << "\n";
 
         if (currentEndTime != preEndTime) {
-            while (currentEndTime != (runnableExecutions[processExecution.first.second][executionPermutationPointer[processExecution.first.second]][pointer].endTime + hyperPeriodCount * this->hyperPeriod_)) {
-                if (pointer >= maxCycle) {
-                    pointer -= (maxCycle + 1);
-                    hyperPeriodCount++;
-                }
+            long long int tmpEndTime = runnableExecutions[processExecution.first.second][executionPermutationPointer[processExecution.first.second]][pointer].endTime;
+
+            while (currentEndTime > (runnableExecutions[processExecution.first.second][executionPermutationPointer[processExecution.first.second]][pointer].endTime + static_cast<long long int>(hyperPeriodCount) * this->hyperPeriod_)) {
+                tmpEndTime = runnableExecutions[processExecution.first.second][executionPermutationPointer[processExecution.first.second]][pointer].endTime;
 
                 pointer++;
-                
-                //std::clog << "pointer : " << pointer << std::endl;
-                //std::clog << "hyperPeriod Count : " << hyperPeriodCount << std::endl;
-                //std::clog << "current End Time : " << currentEndTime << std::endl;
-                //std::clog << "executions : " << (runnableExecutions[processExecution.first.second][executionPermutationPointer[processExecution.first.second]][pointer].endTime + hyperPeriodCount * this->hyperPeriod_) << std::endl;
-            }
-            std::clog << "==============================[Debug : Get Result Checkpoint 1-4]===============================" << "\n";
 
-            int dataAge = (runnableExecutions[processExecution.first.second][executionPermutationPointer[processExecution.first.second]][pointer - 1].endTime + hyperPeriodCount * this->hyperPeriod_) - preEndTime;
+                if (pointer >= maxCycle) {
+                    pointer -= maxCycle;
+                    hyperPeriodCount++;
+                }
+            }
+
+            int dataAge = (tmpEndTime + static_cast<long long int>(hyperPeriodCount) * this->hyperPeriod_) - preEndTime;
             if (WorstDataAge < dataAge) {
                 WorstDataAge = dataAge;
             }
