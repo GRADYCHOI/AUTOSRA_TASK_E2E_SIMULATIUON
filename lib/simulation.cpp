@@ -278,6 +278,7 @@ std::vector<ResultInformation> Simulation::GetResult(int caseIndex,
                                                      std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableExecutions,
                                                      std::vector<std::vector<std::vector<int>>>& runnableCommunicationPermutation,
                                                      std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications) {
+    std::clog << "=================================[Debug : Output Runnable's Priority -> Runnable Priority]=================================" << std::endl;
     int executionCaseIndex = caseIndex;
     std::vector<int> executionPermutationPointer(this->numberOfRunnables_);
     for (auto &executionPermutation : runnableExecutionPermutation) {
@@ -309,6 +310,7 @@ std::vector<ResultInformation> Simulation::GetResult(int caseIndex,
         result.push_back({processExecution.first.first, processExecution.first.second, caseIndex, this->GetReactionTime(processExecution), this->GetDataAge(executionPermutationPointer, runnableExecutions, processExecution)});
         //result.push_back({processExecution.first.first, processExecution.first.second, caseIndex, this->GetReactionTime(processExecution), 0});
     }
+    std::clog << "ckpt 6" << std::endl;
 
     return result;
 }
@@ -361,7 +363,7 @@ void Simulation::TraceProcess(std::vector<int>& executionPermutationPointer,
                                             runnableExecutions[thisRunnableId][executionPermutationPointer[thisRunnableId]][thisCycle].endTime + static_cast<long long int>(thisHyperPeriodCount) * this->hyperPeriod_};
 
             if (static_cast<int>((*iter).second.size()) == (inputCycle + 1)) {
-                if ((*iter).second.back().endTime > tmpInfo.endTime) {
+                if ((*iter).second.back().endTime < tmpInfo.endTime) {
                     (*iter).second.back().endTime = tmpInfo.endTime;
                 }
             } else {
@@ -422,11 +424,16 @@ int Simulation::GetDataAge(std::vector<int>& executionPermutationPointer,
     long long int preEndTime = processExecution.second[0].endTime;
     long long int currentEndTime = processExecution.second[0].endTime;
 
-    int hyperPeriodCount = (processExecution.second[0].endTime / runnableExecutions[processExecution.first.second][executionPermutationPointer[processExecution.first.second]].back().endTime);
+    int hyperPeriodCount = 0;
     int maxCycle = static_cast<int>(runnableExecutions[processExecution.first.second][executionPermutationPointer[processExecution.first.second]].size());
 
-    while (preEndTime != (runnableExecutions[processExecution.first.second][executionPermutationPointer[processExecution.first.second]][pointer].endTime + hyperPeriodCount * this->hyperPeriod_)) {
+    while (preEndTime != (runnableExecutions[processExecution.first.second][executionPermutationPointer[processExecution.first.second]][pointer].endTime + (hyperPeriodCount * this->hyperPeriod_))) {
         pointer++;
+
+        if (pointer >= maxCycle) {
+            pointer -= maxCycle;
+            hyperPeriodCount++;
+        }
     }
 
     for (auto &StartToEndTime : processExecution.second) {
@@ -446,7 +453,7 @@ int Simulation::GetDataAge(std::vector<int>& executionPermutationPointer,
                 }
             }
 
-            int dataAge = (tmpEndTime + static_cast<long long int>(hyperPeriodCount) * this->hyperPeriod_) - preEndTime;
+            int dataAge = static_cast<int>((tmpEndTime + static_cast<long long int>(hyperPeriodCount) * this->hyperPeriod_) - preEndTime);
             if (WorstDataAge < dataAge) {
                 WorstDataAge = dataAge;
             }

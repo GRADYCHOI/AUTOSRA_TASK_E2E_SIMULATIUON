@@ -213,6 +213,10 @@ void DAG::SetRunnablePrecedence() {
         std::clog << " [Set Precedence] Runnable ID : " << runnable->GetId() << ", Precedence : " << precedenceOfRunnables[runnable->GetId()] << std::endl;
 		runnable->SetPrecedence(precedenceOfRunnables[runnable->GetId()]);
 	}
+
+    for (auto &outputRunnable : this->outputRunnables_) {
+        outputRunnable->SetPrecedence(INT_MAX);
+    }
 	
 	std::clog << "===========================================================================================================================" << std::endl;
 }
