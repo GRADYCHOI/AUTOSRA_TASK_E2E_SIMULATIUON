@@ -288,8 +288,11 @@ std::vector<ResultInformation> Simulation::GetResult(int caseIndex,
     std::vector<ResultInformation> result;
 
     for (auto &processExecution : processExecutions) {
-        result.push_back({processExecution.first.first, processExecution.first.second, caseIndex, this->GetReactionTime(processExecution), this->GetDataAge(executionPermutationPointer, runnableExecutions, processExecution)});
+        //result.push_back({processExecution.first.first, processExecution.first.second, caseIndex, this->GetReactionTime(processExecution), this->GetDataAge(executionPermutationPointer, runnableExecutions, processExecution)});
+        result.push_back({processExecution.first.first, processExecution.first.second, caseIndex, this->GetReactionTime(processExecution), 0});
     }
+
+    std::clog << "==============================[Debug : Get Result Checkpoint 5]===============================" << "\n";
 
     return result;
 }
@@ -408,23 +411,31 @@ int Simulation::GetDataAge(std::vector<int>& executionPermutationPointer,
     int hyperPeriodCount = (processExecution.second[0].endTime / runnableExecutions[processExecution.first.second][executionPermutationPointer[processExecution.first.second]].back().endTime);
     int maxCycle = static_cast<int>(runnableExecutions[processExecution.first.second][executionPermutationPointer[processExecution.first.second]].size());
 
+    std::clog << "==============================[Debug : Get Result Checkpoint 1-1]===============================" << "\n";
     while (preEndTime != (runnableExecutions[processExecution.first.second][executionPermutationPointer[processExecution.first.second]][pointer].endTime + hyperPeriodCount * this->hyperPeriod_)) {
         pointer++;
     }
-    
+    std::clog << "==============================[Debug : Get Result Checkpoint 1-2]===============================" << "\n";
 
     for (auto &StartToEndTime : processExecution.second) {
         currentEndTime = StartToEndTime.endTime;
+        std::clog << "==============================[Debug : Get Result Checkpoint 1-3]===============================" << "\n";
 
         if (currentEndTime != preEndTime) {
             while (currentEndTime != (runnableExecutions[processExecution.first.second][executionPermutationPointer[processExecution.first.second]][pointer].endTime + hyperPeriodCount * this->hyperPeriod_)) {
-                pointer++;
-
                 if (pointer >= maxCycle) {
-                    pointer -= maxCycle;
+                    pointer -= (maxCycle + 1);
                     hyperPeriodCount++;
                 }
+
+                pointer++;
+                
+                //std::clog << "pointer : " << pointer << std::endl;
+                //std::clog << "hyperPeriod Count : " << hyperPeriodCount << std::endl;
+                //std::clog << "current End Time : " << currentEndTime << std::endl;
+                //std::clog << "executions : " << (runnableExecutions[processExecution.first.second][executionPermutationPointer[processExecution.first.second]][pointer].endTime + hyperPeriodCount * this->hyperPeriod_) << std::endl;
             }
+            std::clog << "==============================[Debug : Get Result Checkpoint 1-4]===============================" << "\n";
 
             int dataAge = (runnableExecutions[processExecution.first.second][executionPermutationPointer[processExecution.first.second]][pointer - 1].endTime + hyperPeriodCount * this->hyperPeriod_) - preEndTime;
             if (WorstDataAge < dataAge) {

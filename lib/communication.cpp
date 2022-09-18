@@ -164,6 +164,8 @@ void RunnableImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numb
 
         std::cout << "Process : " << 30 + static_cast<int>((70.0 / static_cast<double>(numberOfAllCasePerPriority)) * (count++)) << "%" << std::endl;
     }
+
+    std::cout << "Process End" << std::endl;
 }
 
 void TaskImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numberOfRunnables, long long int hyperPeriod, std::vector<std::vector<std::vector<int>>>& runnablePermutation, std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications) {
