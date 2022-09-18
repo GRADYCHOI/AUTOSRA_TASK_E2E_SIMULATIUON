@@ -10,25 +10,23 @@ void RandomMapping::DoMapping(std::vector<std::shared_ptr<TASK>>& tasks, std::ve
 }
 
 void RateMapping::DoMapping(std::vector<std::shared_ptr<TASK>>& tasks, std::vector<std::shared_ptr<RUNNABLE>>& runnables) {
-    int *taskRate = new int[tasks.size()]();
-    int totalPeriod = 0;
+    double totalPeriod = 0;
     for (auto &task : tasks) totalPeriod += task->GetPeriod();
-    for (auto &task : tasks) {
-        taskRate[task->GetId()] = (task->GetPeriod()/totalPeriod)*100;
-    }
 
     for (auto &runnable : runnables) {
-        while (true) {
+        bool map = true;
+        while (map) {
             int ran = std::rand() % static_cast<int>(tasks.size());
-            if (tasks[ran] ->GetNumberOfRunnables() <= (int)(taskRate[ran] * runnables.size())) {
-                tasks[ran]->AddRunnable(runnable);
-                break;
+            for (auto &task : tasks) {
+                if (task->GetId() == ran) {
+                    if (task->GetNumberOfRunnables() <= std::ceil((((task->GetPeriod()/totalPeriod) * runnables.size())))) {
+                        task->AddRunnable(runnable);
+                        map = false;
+                    }
+                }
             }
-            std::cout << "!!!" << std::endl;
         }
     }
-
-    delete[] taskRate;
 }
 
 void InputMapping::DoMapping(std::vector<std::shared_ptr<TASK>>& tasks, std::vector<std::shared_ptr<RUNNABLE>>& runnables) { // defind input task - smallest period task.
