@@ -68,6 +68,17 @@ void Simulation::Simulate(int communicationMethod) {
 
     this->GetRunnableScheduleInformations(communicationMethod, runnableExecutionPermutation, runnableCommunicationPermutation, runnableExecutions, runnableCommunications);
 
+    std::system("clear");
+    std::cout << "===========================================================================================================================\n";
+    std::cout << " - Max Cycle                  : " << this->maxCycle_ << "\n";
+    std::cout << " - Hyper Period               : " << static_cast<double>(this->hyperPeriod_) / 1000.0 << "\n";
+    std::cout << " - Number Of Tasks            : " << this->numberOfTasks_ << "\n";
+    std::cout << " - Number Of Runanbles        : " << this->numberOfRunnables_ << "\n";
+    std::cout << " - Number Of Input Runnables  : " << this->numberOfInputRunnables_ << "\n";
+    std::cout << " - Number Of Output Runnables : " << this->numberOfOutputRunnables_ << "\n";
+    std::cout << " - Utilization                : " << this->dag_->GetUtilization() << "\n";
+    std::cout << "===========================================================================================================================" << std::endl;
+
     int numberOfCase = 1;
     for (auto &schedulingPriority : runnableExecutionPermutation) {
         numberOfCase *= static_cast<int>(schedulingPriority.size()); // number of case
@@ -379,7 +390,7 @@ void Simulation::TraceProcess(std::vector<int>& executionPermutationPointer,
                         tmpCycle = 0;
                         hyperPeriodCount++;
                     } else {
-                        outputRunnableReadTime = runnableCommunications[outputRunnableId][communicationPermutationPointer[outputRunnableId]][tmpCycle].endTime;
+                        outputRunnableReadTime = runnableCommunications[outputRunnableId][communicationPermutationPointer[outputRunnableId]][tmpCycle].startTime;
                     }
                 }
 
