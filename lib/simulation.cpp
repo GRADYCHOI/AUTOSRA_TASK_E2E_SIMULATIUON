@@ -518,7 +518,6 @@ rapidjson::Value Simulation::SaveReactionTime(rapidjson::Document::AllocatorType
     for (auto &reactionTime : this->GetBestReactionTime()) {
         rapidjson::Value bestReactionTimeObject(rapidjson::kObjectType);
         rapidjson::Value bestReactionTimeArray(rapidjson::kArrayType);
-        rapidjson::Value bestReactionTimeCaseObject(rapidjson::kObjectType);
         rapidjson::Value bestReactionTimeCaseArray(rapidjson::kArrayType);
 
         std::vector<int> sequence = this->sequence_[reactionTime[0].sequenceIndex];
@@ -528,6 +527,7 @@ rapidjson::Value Simulation::SaveReactionTime(rapidjson::Document::AllocatorType
         bestReactionTimeObject.AddMember("Sort Runnables by Runnable Priority", this->CheckRunnablePriorityRunnablePriority(sequence), allocator);
 
         for (auto &information : reactionTime) {
+            rapidjson::Value bestReactionTimeCaseObject(rapidjson::kObjectType);
             bestReactionTimeCaseObject.AddMember("Input Runnable Id", this->dag_->GetRunnable(information.inputRunnableId)->GetRealId(), allocator);
             bestReactionTimeCaseObject.AddMember("Output Runnable Id", this->dag_->GetRunnable(information.outputRunnableId)->GetRealId(), allocator);
             bestReactionTimeCaseObject.AddMember("Reaction Time", static_cast<double>(information.reactionTime) / 1000.0, allocator);
@@ -573,7 +573,6 @@ rapidjson::Value Simulation::SaveDataAge(rapidjson::Document::AllocatorType& all
     for (auto &dataAge : this->GetBestDataAge()) {
         rapidjson::Value bestDataAgeObject(rapidjson::kObjectType);
         rapidjson::Value bestDataAgeArray(rapidjson::kArrayType);
-        rapidjson::Value bestDataAgeCaseObject(rapidjson::kObjectType);
         rapidjson::Value bestDataAgeCaseArray(rapidjson::kArrayType);
 
         std::vector<int> sequence = this->sequence_[dataAge[0].sequenceIndex];
@@ -583,6 +582,7 @@ rapidjson::Value Simulation::SaveDataAge(rapidjson::Document::AllocatorType& all
         bestDataAgeObject.AddMember("Sort Runnables by Runnable Priority", this->CheckRunnablePriorityRunnablePriority(sequence), allocator);
 
         for (auto &information : dataAge) {
+            rapidjson::Value bestDataAgeCaseObject(rapidjson::kObjectType);
             bestDataAgeCaseObject.AddMember("Input Runnable Id", this->dag_->GetRunnable(information.inputRunnableId)->GetRealId(), allocator);
             bestDataAgeCaseObject.AddMember("Output Runnable Id", this->dag_->GetRunnable(information.outputRunnableId)->GetRealId(), allocator);
             bestDataAgeCaseObject.AddMember("Data Age", static_cast<double>(information.dataAge) / 1000.0, allocator);
@@ -636,14 +636,14 @@ void Simulation::SaveDataToCSV() {
         int maxReactionTime = this->GetMaxReactionTime(reactionTime);
         int maxDataAge = this->GetMaxDataAge(reactionTime);
 
-        allCase << maxReactionTime << "," << maxDataAge << "\n";
+        allCase << static_cast<double>(maxReactionTime) / 1000.0 << "," << static_cast<double>(maxDataAge) / 1000.0 << "\n";
 
         if (this->CheckTaskPriorityRunnablePriority(sequence)) {
-            taskPriority << maxReactionTime << "," << maxDataAge << "\n";
+            taskPriority << static_cast<double>(maxReactionTime) / 1000.0 << "," << static_cast<double>(maxDataAge) / 1000.0 << "\n";
         }
 
         if (this->CheckRunnablePriorityRunnablePriority(sequence)) {
-            runnablePriority << maxReactionTime << "," << maxDataAge << "\n";
+            runnablePriority << static_cast<double>(maxReactionTime) / 1000.0 << "," << static_cast<double>(maxDataAge) / 1000.0 << "\n";
         }
     }
 
