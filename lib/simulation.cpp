@@ -68,8 +68,14 @@ void Simulation::Simulate(int communicationMethod) {
 
     this->GetRunnableScheduleInformations(communicationMethod, runnableExecutionPermutation, runnableCommunicationPermutation, runnableExecutions, runnableCommunications);
 
+    int numberOfCase = 1;
+    for (auto &schedulingPriority : runnableExecutionPermutation) {
+        numberOfCase *= static_cast<int>(schedulingPriority.size()); // number of case
+    }
+
     std::system("clear");
     std::cout << "===========================================================================================================================\n";
+    std::cout << " - Simulation Case            : " << numberOfCase << "\n";
     std::cout << " - Max Cycle                  : " << this->maxCycle_ << "\n";
     std::cout << " - Hyper Period               : " << static_cast<double>(this->hyperPeriod_) / 1000.0 << "\n";
     std::cout << " - Number Of Tasks            : " << this->numberOfTasks_ << "\n";
@@ -78,11 +84,6 @@ void Simulation::Simulate(int communicationMethod) {
     std::cout << " - Number Of Output Runnables : " << this->numberOfOutputRunnables_ << "\n";
     std::cout << " - Utilization                : " << this->dag_->GetUtilization() << "\n";
     std::cout << "===========================================================================================================================" << std::endl;
-
-    int numberOfCase = 1;
-    for (auto &schedulingPriority : runnableExecutionPermutation) {
-        numberOfCase *= static_cast<int>(schedulingPriority.size()); // number of case
-    }
 
     this->results_.reserve(numberOfCase);
     for (int caseIndex = 0; caseIndex < numberOfCase; caseIndex++) {
@@ -570,6 +571,7 @@ rapidjson::Value Simulation::SaveReactionTime(rapidjson::Document::AllocatorType
             taskObject.AddMember("Period", static_cast<double>(task->GetPeriod()) / 1000.0, allocator);
             taskObject.AddMember("Offset", static_cast<double>(task->GetOffset()) / 1000.0, allocator);
             taskObject.AddMember("Execution Time", static_cast<double>(task->GetExecutionTime()) / 1000.0, allocator);
+            taskObject.AddMember("Core", task->GetCore(), allocator);
 
             rapidjson::Value sequenceArray(rapidjson::kArrayType);
             int numberOfRunnables = task->GetNumberOfRunnables();
@@ -625,6 +627,8 @@ rapidjson::Value Simulation::SaveDataAge(rapidjson::Document::AllocatorType& all
             rapidjson::Value taskObject(rapidjson::kObjectType);
             taskObject.AddMember("Period", static_cast<double>(task->GetPeriod()) / 1000.0, allocator);
             taskObject.AddMember("Offset", static_cast<double>(task->GetOffset()) / 1000.0, allocator);
+            taskObject.AddMember("Execution Time", static_cast<double>(task->GetExecutionTime()) / 1000.0, allocator);
+            taskObject.AddMember("Core", task->GetCore(), allocator);
 
             rapidjson::Value sequenceArray(rapidjson::kArrayType);
             int numberOfRunnables = task->GetNumberOfRunnables();

@@ -150,7 +150,7 @@ bool DAG::CheckMappable() {
         }
     }
 
-    return ((static_cast<double>(sumOfExecutionTimes) / static_cast<double>(maxPeriod)) < UTILIZATION) ? true : false;
+    return ((static_cast<double>(sumOfExecutionTimes) / static_cast<double>(maxPeriod)) < (UTILIZATION * 2)) ? true : false;
 }
 
 void DAG::ClearTaskMapping() {
@@ -380,6 +380,7 @@ void DAG::ParseMapping(std::string jsonPath) {
 	for (auto &task : doc["Tasks"].GetArray()) {
         std::shared_ptr<TASK> tmpTask(new TASK(taskIndex, static_cast<int>(task["Period"].GetDouble() * 1000.0), static_cast<int>(task["Offset"].GetDouble() * 1000.0)));
         tmpTask->SetPriority(task["Priority"].GetInt());
+        tmpTask->SetCore(task["Core"].GetInt());
         this->tasks_.push_back(tmpTask);
         taskIndex++;
 
@@ -409,6 +410,7 @@ void DAG::SaveMapping(std::string thisTime) {
         taskObject.AddMember("Period", static_cast<double>(task->GetPeriod()) / 1000.0, allocator);
         taskObject.AddMember("Offset", static_cast<double>(task->GetOffset()) / 1000.0, allocator);
         taskObject.AddMember("Priority", task->GetPriority(), allocator);
+        taskObject.AddMember("Core", task->GetCore(), allocator);
 
         for (auto &runnable : task->GetRunnables()) {
             runnableArray.PushBack(runnable->GetRealId(), allocator);

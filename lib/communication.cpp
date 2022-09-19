@@ -112,52 +112,106 @@ void RunnableImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, int numb
 
     runnableCommunications.resize(numberOfRunnables);
     for (auto &runnables : runnablePermutation) {
-        std::vector<int> currentEmptyTimes(static_cast<int>(hyperPeriod / unit));
+        if (dag->GetRunnable(runnables[0][0])->GetTask()->GetCore()) {
+            std::vector<int> currentEmptyTimes(static_cast<int>(hyperPeriod / unit));
 
-        for (auto &oneCaseSequence : runnables) {
-            std::copy(emptyTimes.begin(), emptyTimes.end(), currentEmptyTimes.begin());
+            for (auto &oneCaseSequence : runnables) {
+                std::copy(emptyTimes.begin(), emptyTimes.end(), currentEmptyTimes.begin());
 
-            for (auto &runnable : oneCaseSequence) {
-                int runnableId = runnable;
-                int maxCycle = static_cast<int>(runnableReleaseTimes[runnableId].size());
-                runnableCommunications[runnableId].emplace_back(runnableReleaseTimes[runnableId]);
+                for (auto &runnable : oneCaseSequence) {
+                    int runnableId = runnable;
+                    int maxCycle = static_cast<int>(runnableReleaseTimes[runnableId].size());
+                    runnableCommunications[runnableId].emplace_back(runnableReleaseTimes[runnableId]);
 
-                for (int cycle = 0; cycle < maxCycle; cycle++) {
-                    int unitIndex = static_cast<int>(runnableReleaseTimes[runnableId][cycle].startTime / unit);
+                    for (int cycle = 0; cycle < maxCycle; cycle++) {
+                        int unitIndex = static_cast<int>(runnableReleaseTimes[runnableId][cycle].startTime / unit);
 
-                    // Regard time-line
-                    while (currentEmptyTimes[unitIndex] == 0) unitIndex++;
+                        // Regard time-line
+                        while (currentEmptyTimes[unitIndex] == 0) unitIndex++;
 
-                    // Set start time
-                    runnableCommunications[runnableId].back()[cycle].startTime = static_cast<long long int>(unitIndex) * static_cast<long long int>(unit) + static_cast<long long int>(unit - currentEmptyTimes[unitIndex]);
+                        // Set start time
+                        runnableCommunications[runnableId].back()[cycle].startTime = static_cast<long long int>(unitIndex) * static_cast<long long int>(unit) + static_cast<long long int>(unit - currentEmptyTimes[unitIndex]);
 
-                    // Set end time
-                    int executionTime = dag->GetRunnable(runnableId)->GetExecutionTime();
+                        // Set end time
+                        int executionTime = dag->GetRunnable(runnableId)->GetExecutionTime();
 
-                    while (executionTime) {
-                        if (currentEmptyTimes[unitIndex] < executionTime) {
-                            executionTime -= currentEmptyTimes[unitIndex];
-                            currentEmptyTimes[unitIndex] = 0;
+                        while (executionTime) {
+                            if (currentEmptyTimes[unitIndex] < executionTime) {
+                                executionTime -= currentEmptyTimes[unitIndex];
+                                currentEmptyTimes[unitIndex] = 0;
 
-                            unitIndex++;
-                        } else {
-                            runnableCommunications[runnableId].back()[cycle].endTime = static_cast<long long int>(unitIndex) * static_cast<long long int>(unit) + static_cast<long long int>(executionTime);
-                            currentEmptyTimes[unitIndex] -= executionTime;
-                            executionTime = 0;
+                                unitIndex++;
+                            } else {
+                                runnableCommunications[runnableId].back()[cycle].endTime = static_cast<long long int>(unitIndex) * static_cast<long long int>(unit) + static_cast<long long int>(executionTime);
+                                currentEmptyTimes[unitIndex] -= executionTime;
+                                executionTime = 0;
+                            }
                         }
-                    }
 
-                    if (runnableReleaseTimes[runnableId][cycle].endTime < runnableCommunications[runnableId].back()[cycle].endTime) {
-                        std::cout << "[Scheduling Error] : This sequence can't scheduling" << std::endl;
-                        exit(0);
+                        if (runnableReleaseTimes[runnableId][cycle].endTime < runnableCommunications[runnableId].back()[cycle].endTime) {
+                            std::cout << "[Scheduling Error] : This sequence can't scheduling" << std::endl;
+                            exit(0);
+                        }
                     }
                 }
             }
+            std::copy(currentEmptyTimes.begin(), currentEmptyTimes.end(), emptyTimes.begin());
+            std::cout << "Process : " << 30 + static_cast<int>((35.0 / static_cast<double>(numberOfAllCasePerPriority)) * (count++)) << "%" << std::endl;
         }
-        std::copy(currentEmptyTimes.begin(), currentEmptyTimes.end(), emptyTimes.begin());
-        std::cout << "Process : " << 30 + static_cast<int>((70.0 / static_cast<double>(numberOfAllCasePerPriority)) * (count++)) << "%" << std::endl;
     }
 
+    for (auto &unitIndex : emptyTimes) {
+        unitIndex = unit;
+    }
+
+    for (auto &runnables : runnablePermutation) {
+        if (dag->GetRunnable(runnables[0][0])->GetTask()->GetCore() == 0) {
+            std::vector<int> currentEmptyTimes(static_cast<int>(hyperPeriod / unit));
+
+            for (auto &oneCaseSequence : runnables) {
+                std::copy(emptyTimes.begin(), emptyTimes.end(), currentEmptyTimes.begin());
+
+                for (auto &runnable : oneCaseSequence) {
+                    int runnableId = runnable;
+                    int maxCycle = static_cast<int>(runnableReleaseTimes[runnableId].size());
+                    runnableCommunications[runnableId].emplace_back(runnableReleaseTimes[runnableId]);
+
+                    for (int cycle = 0; cycle < maxCycle; cycle++) {
+                        int unitIndex = static_cast<int>(runnableReleaseTimes[runnableId][cycle].startTime / unit);
+
+                        // Regard time-line
+                        while (currentEmptyTimes[unitIndex] == 0) unitIndex++;
+
+                        // Set start time
+                        runnableCommunications[runnableId].back()[cycle].startTime = static_cast<long long int>(unitIndex) * static_cast<long long int>(unit) + static_cast<long long int>(unit - currentEmptyTimes[unitIndex]);
+
+                        // Set end time
+                        int executionTime = dag->GetRunnable(runnableId)->GetExecutionTime();
+
+                        while (executionTime) {
+                            if (currentEmptyTimes[unitIndex] < executionTime) {
+                                executionTime -= currentEmptyTimes[unitIndex];
+                                currentEmptyTimes[unitIndex] = 0;
+
+                                unitIndex++;
+                            } else {
+                                runnableCommunications[runnableId].back()[cycle].endTime = static_cast<long long int>(unitIndex) * static_cast<long long int>(unit) + static_cast<long long int>(executionTime);
+                                currentEmptyTimes[unitIndex] -= executionTime;
+                                executionTime = 0;
+                            }
+                        }
+
+                        if (runnableReleaseTimes[runnableId][cycle].endTime < runnableCommunications[runnableId].back()[cycle].endTime) {
+                            std::cout << "[Scheduling Error] : This sequence can't scheduling" << std::endl;
+                            exit(0);
+                        }
+                    }
+                }
+            }
+            std::copy(currentEmptyTimes.begin(), currentEmptyTimes.end(), emptyTimes.begin());
+            std::cout << "Process : " << 65 + static_cast<int>((35.0 / static_cast<double>(numberOfAllCasePerPriority)) * (count++)) << "%" << std::endl;
+        }
+    }
     std::cout << "Process End" << std::endl;
 }
 
