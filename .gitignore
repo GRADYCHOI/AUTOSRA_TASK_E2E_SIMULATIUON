@@ -6,5 +6,7 @@ build/
 DAG_Simulation
 # ignore data folder
 data/
+# ignore data folder
+Compare_data/
 # goorm ide
 goorm.manifest
