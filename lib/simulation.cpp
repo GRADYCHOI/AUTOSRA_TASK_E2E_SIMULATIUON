@@ -440,10 +440,10 @@ int Simulation::GetDataAge(std::vector<int>& executionPermutationPointer,
         currentEndTime = StartToEndTime.endTime;
 
         if (currentEndTime != preEndTime) {
-            long long int tmpEndTime = runnableExecutions[processExecution.first.second][executionPermutationPointer[processExecution.first.second]][pointer].endTime;
+            long long int tmpEndTime = runnableExecutions[processExecution.first.second][executionPermutationPointer[processExecution.first.second]][pointer].endTime + static_cast<long long int>(hyperPeriodCount) * this->hyperPeriod_;
 
             while (currentEndTime > (runnableExecutions[processExecution.first.second][executionPermutationPointer[processExecution.first.second]][pointer].endTime + static_cast<long long int>(hyperPeriodCount) * this->hyperPeriod_)) {
-                tmpEndTime = runnableExecutions[processExecution.first.second][executionPermutationPointer[processExecution.first.second]][pointer].endTime;
+                tmpEndTime = runnableExecutions[processExecution.first.second][executionPermutationPointer[processExecution.first.second]][pointer].endTime + static_cast<long long int>(hyperPeriodCount) * this->hyperPeriod_;
 
                 pointer++;
 
@@ -453,7 +453,7 @@ int Simulation::GetDataAge(std::vector<int>& executionPermutationPointer,
                 }
             }
 
-            int dataAge = static_cast<int>((tmpEndTime + static_cast<long long int>(hyperPeriodCount) * this->hyperPeriod_) - preEndTime);
+            int dataAge = static_cast<int>(tmpEndTime - preEndTime);
             if (WorstDataAge < dataAge) {
                 WorstDataAge = dataAge;
             }
