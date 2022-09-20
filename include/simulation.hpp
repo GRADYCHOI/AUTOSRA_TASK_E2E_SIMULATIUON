@@ -13,6 +13,7 @@
 #include <fstream>
 #include <numeric>
 #include <iomanip>
+#include <ctime>
 #include "DAG.hpp"
 #include "communication.hpp"
 #include "simulation_types.hpp"
@@ -52,6 +53,10 @@ private:
 	
 	// part of file name
 	std::string simulationTime_;
+
+    // Estimate time
+    std::vector<std::clock_t> starts_;
+    std::vector<std::clock_t> ends_;
 
     void Initialize();
 
@@ -130,6 +135,7 @@ public:
     void SaveData();
     void SaveDataToCSV();
 
+    rapidjson::Value SaveProcessTime(rapidjson::Document::AllocatorType& allocator);
     rapidjson::Value SaveReactionTime(rapidjson::Document::AllocatorType& allocator);
     rapidjson::Value SaveDataAge(rapidjson::Document::AllocatorType& allocator);
 };

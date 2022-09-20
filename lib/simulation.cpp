@@ -28,6 +28,10 @@ void Simulation::Initialize() {
     pTimeInfo = localtime(&rawTime);
 
     this->simulationTime_ = std::to_string(pTimeInfo->tm_year + 1900) + "_" + std::to_string(pTimeInfo->tm_mon + 1) + "_" + std::to_string(pTimeInfo->tm_mday) + "_" + std::to_string(pTimeInfo->tm_hour) + "_" + std::to_string(pTimeInfo->tm_min);
+
+    // reserve time vector
+    this->starts_.resize(3);
+    this->ends_.resize(3);
 }
 
 void Simulation::GetRunnableScheduleInformations(int communicationMethod,
@@ -66,12 +70,17 @@ void Simulation::Simulate(int communicationMethod) {
     std::vector<std::vector<std::vector<ExecutionInformation>>> runnableExecutions; // [ID][Case][Time]
     std::vector<std::vector<std::vector<ExecutionInformation>>> runnableCommunications; // [ID][Case][Time]
 
+    this->starts_[0] = std::clock();
+    this->starts_[1] = std::clock();
+
     this->GetRunnableScheduleInformations(communicationMethod, runnableExecutionPermutation, runnableCommunicationPermutation, runnableExecutions, runnableCommunications);
 
     int numberOfCase = 1;
     for (auto &schedulingPriority : runnableExecutionPermutation) {
         numberOfCase *= static_cast<int>(schedulingPriority.size()); // number of case
     }
+    
+    this->ends_[1] = std::clock();
 
     std::system("clear");
     std::cout << "===========================================================================================================================\n";
@@ -84,6 +93,8 @@ void Simulation::Simulate(int communicationMethod) {
     std::cout << " - Number Of Output Runnables : " << this->numberOfOutputRunnables_ << "\n";
     std::cout << " - Utilization                : " << this->dag_->GetUtilization() << "\n";
     std::cout << "===========================================================================================================================" << std::endl;
+
+    this->starts_[2] = std::clock();
 
     this->results_.reserve(numberOfCase);
     for (int caseIndex = 0; caseIndex < numberOfCase; caseIndex++) {
@@ -104,6 +115,8 @@ void Simulation::Simulate(int communicationMethod) {
         std::cout << " - Utilization                : " << this->dag_->GetUtilization() << "\n";
 		std::cout << "===========================================================================================================================" << std::endl;
     }
+
+    this->ends_[2] = std::clock();
 
     this->SetSequence(numberOfCase, runnableExecutionPermutation);
 }
@@ -323,9 +336,9 @@ void Simulation::SetProcessExecutions(std::vector<int>& executionPermutationPoin
                                       std::map<std::pair<int, int>, std::vector<ExecutionInformation>>& processExecutions) {
     for (auto &runnable : this->dag_->GetInputRunnables()) {
         int eachMaxCycle = static_cast<int>(this->hyperPeriod_ / runnable->GetTask()->GetPeriod());
+        std::vector<int> worstCyclePerRunnable(this->numberOfRunnables_, -1);
 
         for (int cycle = 0; cycle < eachMaxCycle; cycle++) {
-            std::vector<int> worstCyclePerRunnable(this->numberOfRunnables_, -1);
             this->TraceProcess(executionPermutationPointer,
                                 runnableExecutions,
                                 communicationPermutationPointer,
@@ -398,6 +411,14 @@ void Simulation::TraceProcess(std::vector<int>& executionPermutationPointer,
                 }
 
                 this->TraceProcess(executionPermutationPointer, runnableExecutions, communicationPermutationPointer, runnableCommunications, inputRunnableId, inputCycle, outputRunnableId, tmpCycle, (thisHyperPeriodCount + hyperPeriodCount), worstCyclePerRunnable, processExecutions);
+            }
+        } else {
+            auto iter = std::find_if(processExecutions.begin(), processExecutions.end(), [inputRunnableId](std::pair<const std::pair<int, int>, std::vector<ExecutionInformation>>& a) { return a.first.first == inputRunnableId; });
+
+            while (iter != processExecutions.end()) {
+                if (static_cast<int>((*iter).second.size()) == inputCycle) {
+                    (*iter).second.push_back( { runnableExecutions[inputRunnableId][executionPermutationPointer[inputRunnableId]][inputCycle].startTime, (*iter).second.back().endTime } );
+                }
             }
         }
     }
@@ -508,6 +529,8 @@ void Simulation::SaveData() {
 
     rapidjson::Value resultObject(rapidjson::kObjectType);
 
+    resultObject.AddMember("Process Time", this->SaveProcessTime(allocator), allocator);
+
     resultObject.AddMember("Reaction Time Ranking", this->SaveReactionTime(allocator), allocator);
 
     resultObject.AddMember("Data Age Ranking", this->SaveDataAge(allocator), allocator);
@@ -534,6 +557,17 @@ void Simulation::SaveDag() {
 
 void Simulation::SaveMapping() {
     this->dag_->SaveMapping(this->simulationTime_);
+}
+
+rapidjson::Value Simulation::SaveProcessTime(rapidjson::Document::AllocatorType& allocator) {
+    rapidjson::Value processTimeArray(rapidjson::kArrayType);
+
+    rapidjson::Value processTimeObject(rapidjson::kObjectType);
+    processTimeObject.AddMember("End-to-End Process Time", static_cast<double>(this->ends_[2] - this->starts_[0]) / CLOCKS_PER_SEC, allocator);
+
+    processTimeArray.PushBack(processTimeObject, allocator);
+
+    return processTimeArray;
 }
 
 rapidjson::Value Simulation::SaveReactionTime(rapidjson::Document::AllocatorType& allocator) {
