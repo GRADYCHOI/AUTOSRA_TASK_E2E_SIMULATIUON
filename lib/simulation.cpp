@@ -419,6 +419,8 @@ void Simulation::TraceProcess(std::vector<int>& executionPermutationPointer,
                 if (static_cast<int>((*iter).second.size()) == inputCycle) {
                     (*iter).second.push_back( { runnableExecutions[inputRunnableId][executionPermutationPointer[inputRunnableId]][inputCycle].startTime, (*iter).second.back().endTime } );
                 }
+
+                iter = std::find_if(++iter, processExecutions.end(), [inputRunnableId](std::pair<const std::pair<int, int>, std::vector<ExecutionInformation>>& a) { return a.first.first == inputRunnableId; });
             }
         }
     }
