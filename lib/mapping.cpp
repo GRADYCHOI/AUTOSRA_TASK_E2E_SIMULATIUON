@@ -7,6 +7,18 @@ void RandomMapping::DoMapping(std::vector<std::shared_ptr<TASK>>& tasks, std::ve
     for (auto &runnable : runnables) {
         tasks[std::rand() % static_cast<int>(tasks.size())]->AddRunnable(runnable);
     }
+    int multi = -1;
+    std::cout << "single-core? or multi-core? (0, 1) : ";
+    std::cin >> multi;
+    
+    if (multi == 1) {
+        for (auto &task : tasks) {
+            int core = -1;
+            std::cout << task->GetId() << "task core(0, 1) : ";
+            std::cin >> core;
+            task->SetCore(core); 
+        }
+    }
 }
 
 void RateMapping::DoMapping(std::vector<std::shared_ptr<TASK>>& tasks, std::vector<std::shared_ptr<RUNNABLE>>& runnables) {
@@ -27,6 +39,19 @@ void RateMapping::DoMapping(std::vector<std::shared_ptr<TASK>>& tasks, std::vect
             }
         }
     }
+    
+    int multi = -1;
+    std::cout << "single-core? or multi-core? (0, 1) : ";
+    std::cin >> multi;
+    
+    if (multi == 1) {
+        for (auto &task : tasks) {
+            int core = -1;
+            std::cout << task->GetId() << "task core(0, 1) : ";
+            std::cin >> core;
+            task->SetCore(core); 
+        }
+    }
 }
 
 void InputMapping::DoMapping(std::vector<std::shared_ptr<TASK>>& tasks, std::vector<std::shared_ptr<RUNNABLE>>& runnables) { // defind input task - smallest period task.
@@ -42,4 +67,18 @@ void InputMapping::DoMapping(std::vector<std::shared_ptr<TASK>>& tasks, std::vec
         if (runnable->GetStatus() == 0) tasks[inputTask]->AddRunnable(runnable);
         else tasks[std::rand() % static_cast<int>(tasks.size())]->AddRunnable(runnable);
     }
+
+    int multi = -1;
+    std::cout << "single-core? or multi-core? (0, 1) : ";
+    std::cin >> multi;
+    
+    if (multi == 1) {
+        for (auto &task : tasks) {
+            int core = -1;
+            std::cout << task->GetId() << "task core(0, 1) : ";
+            std::cin >> core;
+            task->SetCore(core); 
+        }
+    }
 }
+
