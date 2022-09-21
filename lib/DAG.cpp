@@ -207,7 +207,7 @@ void DAG::SetRunnablePrecedence() {
 	}
 
     for (auto &outputRunnable : this->outputRunnables_) {
-		this->CheckPrecedence(precedenceOfRunnables, outRunnable, 0);
+		this->CheckPrecedence(precedenceOfRunnables, outputRunnable, 0);
 	}
 
     for (auto &precedence : precedenceOfRunnables) {
