@@ -241,7 +241,7 @@ void DAG::SetRunnableInputPrecedence() {
 	}
 
     for (auto &inputRunnable : this->inputRunnables_) {
-		this->CheckPrecedence(precedenceOfRunnables, inputRunnable, 0);
+		this->CheckPrecedenceInput(precedenceOfRunnables, inputRunnable, 0);
 	}
 
     for (auto &precedence : precedenceOfRunnables) {
