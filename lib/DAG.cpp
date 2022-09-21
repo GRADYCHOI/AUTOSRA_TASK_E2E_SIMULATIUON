@@ -238,7 +238,7 @@ void DAG::CheckPrecedence(std::vector<int>& precedenceOfRunnables, const std::sh
 		precedenceOfRunnables[runnable->GetId()] = precedence;
 	}
 	
-	if (runnable->GetStatus() != 1) {
+	if (runnable->GetStatus() != 0) {
         for (auto &inputRunnable : runnable->GetInputRunnables()) {
             if (precedenceOfRunnables[inputRunnable->GetId()] < ++precedence) {
 				CheckPrecedence(precedenceOfRunnables, inputRunnable, precedence);
