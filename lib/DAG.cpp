@@ -201,6 +201,10 @@ void DAG::SetRunnablePrecedence() {
     std::vector<int> precedenceOfRunnables(this->GetNumberOfRunnables(), -1);
     int maxPrecedence = -1;
 
+    for (auto &runnable : this->runnables_) {
+		runnable->SetPrecedence(-1);
+	}
+
 	std::clog << "===============================================[Debug : Runnable Precedence]===============================================" << std::endl;
     for (auto &outputRunnable : this->outputRunnables_) {
 		std::clog << " Output Runnable ID : " << outputRunnable->GetId() << std::endl;
@@ -234,6 +238,10 @@ void DAG::SetRunnableInputPrecedence() {
     // runnablePrecedence initialize
     std::vector<int> precedenceOfRunnables(this->GetNumberOfRunnables(), -1);
     int maxPrecedence = -1;
+    
+    for (auto &runnable : this->runnables_) {
+		runnable->SetPrecedence(-1);
+	}
 
 	std::clog << "===============================================[Debug : Runnable Precedence]===============================================" << std::endl;
     for (auto &inputRunnable : this->inputRunnables_) {
