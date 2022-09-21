@@ -26,6 +26,7 @@ int main(int argc, char *argv[]) {
     int mappingStrategy = -1;
     int permutationMethod = -1;
     int simulateMethod = -1;
+    int reprecedence = -1;
 
     std::shared_ptr<DAG> dag(new DAG());
 
@@ -36,6 +37,18 @@ int main(int argc, char *argv[]) {
         } catch (std::string error) {
             std::cout << error << std::endl;
             return 0;
+        }
+
+        std::system("clear");
+        std::cout << "*** Do you want reset precedence? ***" << "\n";
+        std::cout << " 0 : Import precedence from .json" << "\n";
+        std::cout << " 1 : Reset precedence" << "\n";
+        std::cout << "\n" << "Enter Number : ";
+
+        std::cin >> reprecedence;
+
+        if (reprecedence) {
+            dag->SetRunnablePrecedence();
         }
     } else {
         dag->GenerateDag();

@@ -199,6 +199,7 @@ const std::vector<std::shared_ptr<TASK>> DAG::GetTasksPriority() {
 void DAG::SetRunnablePrecedence() {
     // runnablePrecedence initialize
     std::vector<int> precedenceOfRunnables(this->GetNumberOfRunnables(), -1);
+    int maxPrecedence = -1;
 
 	std::clog << "===============================================[Debug : Runnable Precedence]===============================================" << std::endl;
     for (auto &inputRunnable : this->inputRunnables_) {
@@ -208,18 +209,22 @@ void DAG::SetRunnablePrecedence() {
     for (auto &inputRunnable : this->inputRunnables_) {
 		this->CheckPrecedence(precedenceOfRunnables, inputRunnable, 0);
 	}
+
+    for (auto &precedence : precedenceOfRunnables) {
+        maxPrecedence = (maxPrecedence > precedence) ? maxPrecedence : precedence;
+    }
 	
 	for (auto &runnable : this->runnables_) {
         std::clog << " [Set Precedence] Runnable ID : " << runnable->GetId() << ", Precedence : " << precedenceOfRunnables[runnable->GetId()] << std::endl;
-		runnable->SetPrecedence(precedenceOfRunnables[runnable->GetId()]);
+		runnable->SetPrecedence(maxPrecedence - precedenceOfRunnables[runnable->GetId()]);
 	}
 
     for (auto &outputRunnable : this->outputRunnables_) {
-        outputRunnable->SetPrecedence(0);
+        outputRunnable->SetPrecedence(maxPrecedence);
     }
 
     for (auto &inputRunnable : this->inputRunnables_) {
-		inputRunnable->SetPrecedence(INT_MAX);
+		inputRunnable->SetPrecedence(0);
 	}
 	
 	std::clog << "===========================================================================================================================" << std::endl;
