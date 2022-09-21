@@ -64,6 +64,7 @@ private:
 	
 	// Set Precedence
     void CheckPrecedence(std::vector<int>& precedenceOfRunnables, const std::shared_ptr<RUNNABLE>& runnable, int precedence);
+    void CheckPrecedenceInput(std::vector<int>& precedenceOfRunnables, const std::shared_ptr<RUNNABLE>& runnable, int precedence);
 
 
 public:
@@ -101,6 +102,7 @@ public:
 
     // Set Priority
     void SetRunnablePrecedence();
+    void SetRunnableInputPrecedence();
     void SetTaskPriority();
 
     void SetRunnableAllCase();

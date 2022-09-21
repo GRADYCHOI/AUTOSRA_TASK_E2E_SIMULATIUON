@@ -42,12 +42,16 @@ int main(int argc, char *argv[]) {
         std::system("clear");
         std::cout << "*** Do you want reset precedence? ***" << "\n";
         std::cout << " 0 : Import precedence from .json" << "\n";
-        std::cout << " 1 : Reset precedence" << "\n";
+        std::cout << " 1 : Reset to forward precedence" << "\n";
+        std::cout << " 2 : Reset to backward precedence" << "\n";
         std::cout << "\n" << "Enter Number : ";
 
         std::cin >> reprecedence;
 
-        if (reprecedence) {
+        if (reprecedence == 1) {
+            dag->SetRunnableInputPrecedence();
+        }
+        else if (reprecedence == 2) {
             dag->SetRunnablePrecedence();
         }
     } else {
