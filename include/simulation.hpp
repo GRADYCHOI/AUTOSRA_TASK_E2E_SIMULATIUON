@@ -14,6 +14,9 @@
 #include <numeric>
 #include <iomanip>
 #include <ctime>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <errno.h>
 #include "DAG.hpp"
 #include "communication.hpp"
 #include "simulation_types.hpp"
@@ -52,7 +55,7 @@ private:
     std::vector<std::vector<ResultInformation>> results_;
 	
 	// part of file name
-	std::string simulationTime_;
+    std::string dataDirectory_;
 
     // Estimate time
     std::vector<std::clock_t> starts_;

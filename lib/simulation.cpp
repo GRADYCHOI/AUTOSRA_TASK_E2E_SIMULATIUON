@@ -27,11 +27,18 @@ void Simulation::Initialize() {
     rawTime = time(NULL);
     pTimeInfo = localtime(&rawTime);
 
-    this->simulationTime_ = std::to_string(pTimeInfo->tm_year + 1900) + "_" + std::to_string(pTimeInfo->tm_mon + 1) + "_" + std::to_string(pTimeInfo->tm_mday) + "_" + std::to_string(pTimeInfo->tm_hour) + "_" + std::to_string(pTimeInfo->tm_min);
+    std::string simulationTime = std::to_string(pTimeInfo->tm_year + 1900) + "_" + std::to_string(pTimeInfo->tm_mon + 1) + "_" + std::to_string(pTimeInfo->tm_mday) + "_" + std::to_string(pTimeInfo->tm_hour) + "_" + std::to_string(pTimeInfo->tm_min);
+    this->dataDirectory_ = "../data/" + simulationTime;
 
     // reserve time vector
     this->starts_.resize(3);
     this->ends_.resize(3);
+
+    // make directory for save datas
+    if (mkdir(this->dataDirectory_, 0776) == -1 && errno != EEXIST) {
+        std::cerr << strerror(errno) << " directory create error : " << strerror(errno);
+        return -1;
+    }
 }
 
 void Simulation::GetRunnableScheduleInformations(int communicationMethod,
@@ -719,4 +726,8 @@ void Simulation::SaveDataToCSV() {
     runnablePriority.close();
     taskPriority.close();
     allCase.close();
+}
+
+void Simulation::SaveDataToCSV() {
+    if(mkdir("../data/"))
 }
