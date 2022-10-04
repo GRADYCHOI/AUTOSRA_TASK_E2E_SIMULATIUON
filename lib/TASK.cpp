@@ -11,19 +11,10 @@ void TASK::SetExecutionTime() {
 	this->executionTime_ = tmpExecutionTime;
 }
 
-const std::vector<std::shared_ptr<RUNNABLE>> TASK::GetRunnablesByPriorityInTask() {
-    std::vector<std::shared_ptr<RUNNABLE>> tmpRunnables(this->GetNumberOfRunnables());
-    std::copy(this->runnables_.begin(), this->runnables_.end(), tmpRunnables.begin());
-
-    std::sort(tmpRunnables.begin(), tmpRunnables.end(), [](std::shared_ptr<RUNNABLE> a, std::shared_ptr<RUNNABLE> b) { return a->GetPriorityInTask() < b->GetPriorityInTask(); });
-
-    return tmpRunnables;
-}
-
-const std::vector<std::shared_ptr<RUNNABLE>>& TASK::GetRunnablesByPrecedence() {
-    std::sort(this->runnables_.begin(), this->runnables_.end(), [](std::shared_ptr<RUNNABLE> a, std::shared_ptr<RUNNABLE> b) { return a->GetPrecedence() < b->GetPrecedence(); });
-
-    return this->runnables_;
+void TASK::SortRunnables(std::vector<int> sequence) {
+    for (auto &runnableId : sequence) {
+        std::find_if(this->runnables_.begin(), this->runnables_.end(), [runnableId](std::shared_ptr<RUNNABLE>0))
+    }
 }
 
 void TASK::AddRunnable(const std::shared_ptr<RUNNABLE> runnable) {
@@ -41,12 +32,14 @@ void TASK::AddRunnable(const std::shared_ptr<RUNNABLE> runnable) {
         runnable->SetTask(this->GetSharedPtr());
     }
 
-    SetExecutionTime();
+    this->SetExecutionTime();
 }
 
 void TASK::ClearMapping() {
     std::vector<std::shared_ptr<RUNNABLE>> tmpRunnables;
     tmpRunnables.swap(this->runnables_);
 	
+    this->priority_ = -1;
 	this->executionTime_ = -1.0;
+    this->core_ = -1;
 }
