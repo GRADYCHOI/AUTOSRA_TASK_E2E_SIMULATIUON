@@ -12,8 +12,22 @@ void TASK::SetExecutionTime() {
 }
 
 void TASK::SortRunnables(std::vector<int> sequence) {
-    for (auto &runnableId : sequence) {
-        std::find_if(this->runnables_.begin(), this->runnables_.end(), [runnableId](std::shared_ptr<RUNNABLE>0))
+    int index = 0;
+
+    for (auto currentIter = this->runnables_.begin(); currentIter < this->runnables_.end(); currentIter++) {
+        int runnableId = sequence[index];
+        auto destIter = std::find_if(currentIter, this->runnables_.end(), [runnableId](std::shared_ptr<RUNNABLE> a) { return a->id_ == runnableId; });
+
+        if (destIter == currentIter) {
+            ++index;
+            continue;
+        } else if (destIter != this->runnables_.end()) {
+            std::iter_swap(currentIter, destIter);
+            ++index;
+            continue;
+        } else {
+            throw std::invalid_argument("Call invalid Runnable in Task");
+        }
     }
 }
 

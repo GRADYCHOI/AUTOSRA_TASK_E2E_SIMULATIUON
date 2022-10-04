@@ -35,21 +35,27 @@ private:
     friend class Mapping;
     std::unique_ptr<Mapping> mapping_;
 
-    // Sorted by ID
+    // Entire Members
     std::vector<std::shared_ptr<TASK>> tasks_;
     std::vector<std::shared_ptr<RUNNABLE>> runnables_;
 
-    // Sorted by ID
+    // Special Members
+    std::vector<std::shared_ptr<TASK>> tasksInPriority_;
     std::vector<std::shared_ptr<RUNNABLE>> inputRunnables_;
     std::vector<std::shared_ptr<RUNNABLE>> outputRunnables_;
-	
-	// initializer
-	int InitializeMaxCycle();
-	float InitializeHyperPeriod();
+
+    // Status
+    int maxCycle_ = -1;
+    long long int hyperPeriod_ = -1;
+    double utilization_ = -1.0;
+    double utilizationBound_ = -1.0;
 	
 	// Save Input/Output Runnable list
     void SetInputRunnableList();
     void SetOutputRunnableList();
+
+	bool CheckMappable();
+    void ClearMapping();
 	
 	// Generate Runnables
     void GenerateRunnables(int numumberOfRunnables);
@@ -57,64 +63,61 @@ private:
 
     // Generate Tasks
     void GenerateTasks(int numberOfTasks);
-	
-	// Utilization
-	bool CheckMappable();
-    void ClearTaskMapping();
-	
-	// Set Precedence
-    void CheckPrecedence(std::vector<int>& precedenceOfRunnables, const std::shared_ptr<RUNNABLE>& runnable, int precedence);
-    void CheckPrecedenceInput(std::vector<int>& precedenceOfRunnables, const std::shared_ptr<RUNNABLE>& runnable, int precedence);
-
-
-public:
-    DAG() {}
-    ~DAG() { tasks_.clear(); runnables_.clear(); }
-
-	// Get Tasks & Runnables
-    const std::vector<std::shared_ptr<TASK>>& GetTasks() const { return tasks_; }
-    const std::vector<std::shared_ptr<RUNNABLE>>& GetRunnables() const { return runnables_; }
-	
-	const std::shared_ptr<TASK> GetTask(const int index) const { return tasks_[index]; }
-    const std::shared_ptr<RUNNABLE> GetRunnable(const int index) const { return runnables_[index]; }
-	
-	const int GetNumberOfTasks() { return static_cast<int>(tasks_.size()); }
-    const int GetNumberOfRunnables() { return static_cast<int>(runnables_.size()); }
-
-	// Get Input & Output Runnables
-    const std::vector<std::shared_ptr<RUNNABLE>>& GetInputRunnables() const { return inputRunnables_; }
-    const std::vector<std::shared_ptr<RUNNABLE>>& GetOutputRunnables() const { return outputRunnables_; }
-
-    const std::vector<std::shared_ptr<TASK>> GetTasksPriority();
-	
-	const int GetNumberOfInputRunnables() { return static_cast<int>(inputRunnables_.size()); }
-    const int GetNumberOfOutputRunnables() { return static_cast<int>(outputRunnables_.size()); }
-
-    const int GetMaxCycle();
-    const long long int GetHyperPeriod();
-
-	// Generate Command
-	void GenerateDag();
 
     // Mapping
     void SetMapping(std::unique_ptr<Mapping>&& newMapping) { mapping_ = std::move(newMapping); }
     void DoMapping() { mapping_->DoMapping(tasks_, runnables_); }
 
-    // Set Priority
+    // Set Precedence
     void SetRunnablePrecedence();
-    void SetRunnableInputPrecedence();
-    void SetTaskPriority();
+    void CheckPrecedence(std::vector<int>& precedenceOfRunnables, const std::shared_ptr<RUNNABLE>& runnable, int precedence);
 
-    void SetRunnableAllCase();
-    void SetPrecedenceRunnablePriority() {}
+    // Set Status
+    void SetMaxCycle();
+    void SetHyperPeriod();
+    void SetUtilization();
+    void SetUtilizationBound();
 
-    float GetUtilization();
+    // Parse from .json
+    void ParseDag(std::string jsonPath);
+    void ParseMapping(std::string jsonPath);
+
+public:
+    // Constructor
+    DAG(std::unique_ptr<Mapping>&& newMapping) { GenerateRunnables(); GenerateTasks(); DoMapping(); SetStatus(); }
+    DAG(std::unique_ptr<Mapping>&& newMapping, const std::string dagJsonPath) { ParseDag(dagJsonPath); GenerateTasks(); DoMapping(); SetStatus(); }
+
+    DAG(const std::string dagJsonPath, const std::string mappingJsonPath) { ParseDag(dagJsonPath); ParseMapping(mappingJsonPath); SetStatus(); }
+
+    // Destructor
+    ~DAG() {}
+
+	// Get Functions
+    const std::vector<std::shared_ptr<TASK>>& GetTasks() const { return tasks_; }
+	const std::shared_ptr<TASK> GetTask(const int index) const { return tasks_[index]; }
+    const int GetNumberOfTasks() { return static_cast<int>(tasks_.size()); }
+
+    const std::vector<std::shared_ptr<RUNNABLE>>& GetRunnables() const { return runnables_; }
+    const std::shared_ptr<RUNNABLE> GetRunnable(const int index) const { return runnables_[index]; }
+    const int GetNumberOfRunnables() { return static_cast<int>(runnables_.size()); }
+
+    const std::vector<std::shared_ptr<TASK>> GetTasksInPriority() const { return tasksInPriority_; }
+
+    const std::vector<std::shared_ptr<RUNNABLE>>& GetInputRunnables() const { return inputRunnables_; }
+    const std::shared_ptr<RUNNABLE> GetInputRunnable(const int index) const { return inputRunnables_[index]; }
+    const int GetNumberOfInputRunnables() { return static_cast<int>(inputRunnables_.size()); }
+
+    const std::vector<std::shared_ptr<RUNNABLE>>& GetOutputRunnables() const { return outputRunnables_; }
+    const std::shared_ptr<RUNNABLE> GetOutputRunnable(const int index) const { return outputRunnables_[index]; }
+    const int GetNumberOfOutputRunnables() { return static_cast<int>(outputRunnables_.size()); }
+
+    const int GetMaxCycle() const { return maxCycle_; };
+    const long long int GetHyperPeriod() const { return hyperPeriod_; }
+    const double GetUtilization() const {return utilization_; }
+    const double GetUtilizationBound() const {return utilizationBound_; }
 
     // Save to .json
-    void ParseDag(std::string jsonPath);
     void SaveDag(std::string thisTime);
-
-    void ParseMapping(std::string jsonPath);
     void SaveMapping(std::string thisTime);
 };
 
