@@ -699,20 +699,23 @@ void Simulation::SaveDataToCSV() {
 
     std::ofstream runnablePriority;
     runnablePriority.open (runnablePriorityFileName.c_str());
+    int count_all = 0;
+    int count_task = 0;
+    int count_runnable = 0;
 
     for (auto &reactionTime : this->GetBestReactionTime()) {
         std::vector<int> sequence = this->sequence_[reactionTime[0].sequenceIndex];
         int maxReactionTime = this->GetMaxReactionTime(reactionTime);
         int maxDataAge = this->GetMaxDataAge(reactionTime);
 
-        allCase << static_cast<double>(maxReactionTime) / 1000.0 << "," << static_cast<double>(maxDataAge) / 1000.0 << "\n";
+        allCase << count_all++ << "," << static_cast<double>(maxReactionTime) / 1000.0 << "," << static_cast<double>(maxDataAge) / 1000.0 << "\n";
 
         if (this->CheckTaskPriorityRunnablePriority(sequence)) {
-            taskPriority << static_cast<double>(maxReactionTime) / 1000.0 << "," << static_cast<double>(maxDataAge) / 1000.0 << "\n";
+            taskPriority << count_task++ << "," <<static_cast<double>(maxReactionTime) / 1000.0 << "," << static_cast<double>(maxDataAge) / 1000.0 << "\n";
         }
 
         if (this->CheckRunnablePriorityRunnablePriority(sequence)) {
-            runnablePriority << static_cast<double>(maxReactionTime) / 1000.0 << "," << static_cast<double>(maxDataAge) / 1000.0 << "\n";
+            runnablePriority << count_runnable++ << "," << static_cast<double>(maxReactionTime) / 1000.0 << "," << static_cast<double>(maxDataAge) / 1000.0 << "\n";
         }
     }
 
