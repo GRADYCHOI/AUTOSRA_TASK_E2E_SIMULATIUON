@@ -35,6 +35,9 @@ private:
     friend class Mapping;
     std::unique_ptr<Mapping> mapping_;
 
+    friend class Precedence;
+    std::unique_ptr<Precedence> precedence_;
+
     // Entire Members
     std::vector<std::shared_ptr<TASK>> tasks_;
     std::vector<std::shared_ptr<RUNNABLE>> runnables_;
@@ -67,10 +70,6 @@ private:
     // Mapping
     void SetMapping(std::unique_ptr<Mapping>&& newMapping) { mapping_ = std::move(newMapping); }
     void DoMapping() { mapping_->DoMapping(tasks_, runnables_); }
-
-    // Set Precedence
-    void SetRunnablePrecedence();
-    void CheckPrecedence(std::vector<int>& precedenceOfRunnables, const std::shared_ptr<RUNNABLE>& runnable, int precedence);
 
     // Set Status
     void SetMaxCycle();
