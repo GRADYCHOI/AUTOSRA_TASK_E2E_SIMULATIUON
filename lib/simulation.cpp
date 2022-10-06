@@ -490,13 +490,13 @@ int Simulation::GetDataAge(std::vector<int>& executionPermutationPointer,
 }
 
 std::vector<std::vector<ResultInformation>>& Simulation::GetBestReactionTime() {
-    std::sort(this->results_.begin(), this->results_.end(), [&, this](std::vector<ResultInformation>& a, std::vector<ResultInformation>& b) { return this->GetMaxReactionTime(a) < this->GetMaxReactionTime(b); });
+    //std::sort(this->results_.begin(), this->results_.end(), [&, this](std::vector<ResultInformation>& a, std::vector<ResultInformation>& b) { return this->GetMaxReactionTime(a) < this->GetMaxReactionTime(b); });
 
     return this->results_;
 }
 
 std::vector<std::vector<ResultInformation>>& Simulation::GetBestDataAge() {
-    std::sort(this->results_.begin(), this->results_.end(), [&, this](std::vector<ResultInformation>& a, std::vector<ResultInformation>& b) { return this->GetMaxDataAge(a) < this->GetMaxDataAge(b); });
+    //std::sort(this->results_.begin(), this->results_.end(), [&, this](std::vector<ResultInformation>& a, std::vector<ResultInformation>& b) { return this->GetMaxDataAge(a) < this->GetMaxDataAge(b); });
 
     return this->results_;
 }
