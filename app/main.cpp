@@ -23,9 +23,6 @@ int main(int argc, char *argv[]) {
 
     srand(time(NULL));
     bool dag_file = false;
-    int mappingStrategy = -1;
-    int permutationMethod = -1;
-    int simulateMethod = -1;
     int reprecedence = -1;
 
     std::shared_ptr<DAG> dag(new DAG());

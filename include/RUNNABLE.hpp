@@ -35,6 +35,9 @@ public:
     RUNNABLE(int id, int realId, int executionTime) : id_(id), realId_(realId), executionTime_((executionTime == 0) ? 1 : executionTime) {}
     ~RUNNABLE() {}
 
+    const int GetId() const { return id_; }
+    const int GetRealId() const { return realId_; }
+    const int GetExecutionTime() const { return executionTime_; }
     const int GetStatus() const { return status_; }
     const int GetPrecedence() const { return precedence_; }
 

@@ -1,6 +1,12 @@
 #include "DAG.hpp"
 
 
+void DAG::SetSTatus() {
+    void SetMaxCycle();
+    void SetHyperPeriod();
+    void SetUtilization();
+}
+
 void DAG::SetMaxCycle() {
     int minPeriod = INT_MAX;
 
@@ -85,7 +91,6 @@ void DAG::GenerateRunnables() {
     this->RandomEdge();
     this->SetInputRunnableList();
     this->SetOutputRunnableList();
-    this->SetUtilizationBound();
 	
 	std::clog << "=================================================[Debug : Runnable Status]=================================================" << std::endl;
     for (auto &runnable : inputRunnables_) std::clog << "[DAG.cpp] Runnable ID : " << runnable->id_ << ", Status : " << runnable->GetStatus() << std::endl;
@@ -168,6 +173,8 @@ bool DAG::CheckMappable() {
         }
     }
 
+    this->SetUtilizationBound();
+
     return ((static_cast<double>(sumOfExecutionTimes) / static_cast<double>(maxPeriod)) < this->GetUtilizationBound()) ? true : false;
 }
 
@@ -196,21 +203,9 @@ void DAG::SetTaskPriority() {
 	std::clog << "===========================================================================================================================" << std::endl;
 }
 
-void DAG::SetRunnableAllCase() {
-    std::clog << "==========================================[Debug : All Case -> Runnable Priority]==========================================" << "\n";
-
-    for (auto &task : this->tasks_) {
-        int taskPriority = task->GetPriority();
-
-        for (auto &runnable : task->GetRunnables()) {
-            runnable->SetPrecedence(taskPriority);
-        }
-    }
-}
-
 /* Save File & Parsing File Section */
 
-void DAG::SaveDag(std::string thisTime) {
+void DAG::SaveDag(std::string subDirectory) {
     rapidjson::Document doc;
     rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();
 
@@ -223,19 +218,18 @@ void DAG::SaveDag(std::string thisTime) {
         rapidjson::Value inputRunnableArray(rapidjson::kArrayType);
         rapidjson::Value outputRunnableArray(rapidjson::kArrayType);
 
-        runnableObject.AddMember("ID", runnable->GetRealId(), allocator);
-        runnableObject.AddMember("Execution Time", static_cast<double>(runnable->GetExecutionTime()) / 1000.0, allocator);
+        runnableObject.AddMember("ID", runnable->realId_, allocator);
+        runnableObject.AddMember("Execution Time", static_cast<double>(runnable->executionTime_) / 1000.0, allocator);
         runnableObject.AddMember("Status", runnable->GetStatus(), allocator);
         runnableObject.AddMember("Precedence", runnable->GetPrecedence(), allocator);
-        runnableObject.AddMember("Priority in Task", runnable->GetPriorityInTask(), allocator);
 
         for (auto &inputRunnable : runnable->GetInputRunnables()) {
-            inputRunnableArray.PushBack(inputRunnable->GetRealId(), allocator);
+            inputRunnableArray.PushBack(inputRunnable->realId_, allocator);
         }
         runnableObject.AddMember("Input Runnables's ID", inputRunnableArray, allocator);
 
         for (auto &outputRunnable : runnable->GetOutputRunnables()) {
-            outputRunnableArray.PushBack(outputRunnable->GetRealId(), allocator);
+            outputRunnableArray.PushBack(outputRunnable->realId_, allocator);
         }
         runnableObject.AddMember("Output Runnable's ID", outputRunnableArray, allocator);
 
@@ -246,15 +240,15 @@ void DAG::SaveDag(std::string thisTime) {
     for (auto &task : this->tasks_) {
         rapidjson::Value taskObject(rapidjson::kObjectType);
 
-        taskObject.AddMember("Period", static_cast<double>(task->GetPeriod()) / 1000.0, allocator);
-        taskObject.AddMember("Offset", static_cast<double>(task->GetOffset()) / 1000.0, allocator);
+        taskObject.AddMember("Period", static_cast<double>(task->period_) / 1000.0, allocator);
+        taskObject.AddMember("Offset", static_cast<double>(task->offset_) / 1000.0, allocator);
 
         taskArray.PushBack(taskObject, allocator);
     }
     dagObject.AddMember("Tasks", taskArray, allocator);
 
     // Save to json
-    std::string fileName = "../data/DAG_" + thisTime + ".json";
+    std::string fileName = "../data/" + subDirectory + "/DAG.json";
 
     std::ofstream ofs(fileName.c_str());
     rapidjson::OStreamWrapper osw(ofs);
@@ -349,7 +343,7 @@ void DAG::ParseMapping(std::string jsonPath) {
     ifs.close();
 }
 
-void DAG::SaveMapping(std::string thisTime) {
+void DAG::SaveMapping(std::string subDirectory) {
     rapidjson::Document doc;
     rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();
 
@@ -361,13 +355,13 @@ void DAG::SaveMapping(std::string thisTime) {
         rapidjson::Value taskObject(rapidjson::kObjectType);
         rapidjson::Value runnableArray(rapidjson::kArrayType);
 
-        taskObject.AddMember("Period", static_cast<double>(task->GetPeriod()) / 1000.0, allocator);
-        taskObject.AddMember("Offset", static_cast<double>(task->GetOffset()) / 1000.0, allocator);
+        taskObject.AddMember("Period", static_cast<double>(task->period_) / 1000.0, allocator);
+        taskObject.AddMember("Offset", static_cast<double>(task->offset_) / 1000.0, allocator);
         taskObject.AddMember("Priority", task->GetPriority(), allocator);
         taskObject.AddMember("Core", task->GetCore(), allocator);
 
         for (auto &runnable : task->GetRunnables()) {
-            runnableArray.PushBack(runnable->GetRealId(), allocator);
+            runnableArray.PushBack(runnable->realId_, allocator);
         }
         taskObject.AddMember("Runnables", runnableArray, allocator);
 
@@ -376,7 +370,7 @@ void DAG::SaveMapping(std::string thisTime) {
     dagObject.AddMember("Tasks", taskArray, allocator);
 
     // Save to json
-    std::string fileName = "../data/Mapping_" + thisTime + ".json";
+    std::string fileName = "../data/" + subDirectory + "/Mapping.json";
 
     std::ofstream ofs(fileName.c_str());
     rapidjson::OStreamWrapper osw(ofs);

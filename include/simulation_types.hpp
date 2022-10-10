@@ -2,17 +2,16 @@
 
 #define __SIMULATION_TYPES__HPP__
 
-struct ExecutionInformation {
+struct RequiredTime {
     long long int startTime;
     long long int endTime;
 };
 
 struct ResultInformation {
+    int cycle;
     int inputRunnableId;
     int outputRunnableId;
-    int sequenceIndex;
-    int reactionTime;
-    int dataAge;
+    RequiredTime time;
 };
 
 #endif

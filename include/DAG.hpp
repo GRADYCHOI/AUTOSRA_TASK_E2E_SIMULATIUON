@@ -72,6 +72,7 @@ private:
     void DoMapping() { mapping_->DoMapping(tasks_, runnables_); }
 
     // Set Status
+    void SetStatus();
     void SetMaxCycle();
     void SetHyperPeriod();
     void SetUtilization();
@@ -83,8 +84,8 @@ private:
 
 public:
     // Constructor
-    DAG(std::unique_ptr<Mapping>&& newMapping) { GenerateRunnables(); GenerateTasks(); DoMapping(); SetStatus(); }
-    DAG(std::unique_ptr<Mapping>&& newMapping, const std::string dagJsonPath) { ParseDag(dagJsonPath); GenerateTasks(); DoMapping(); SetStatus(); }
+    DAG(std::unique_ptr<Mapping>&& newMapping) { SetMapping(newMapping); GenerateRunnables(); GenerateTasks(); DoMapping(); SetStatus(); }
+    DAG(std::unique_ptr<Mapping>&& newMapping, const std::string dagJsonPath) { SetMapping(newMapping); ParseDag(dagJsonPath); GenerateTasks(); DoMapping(); SetStatus(); }
 
     DAG(const std::string dagJsonPath, const std::string mappingJsonPath) { ParseDag(dagJsonPath); ParseMapping(mappingJsonPath); SetStatus(); }
 
@@ -110,18 +111,14 @@ public:
     const std::shared_ptr<RUNNABLE> GetOutputRunnable(const int index) const { return outputRunnables_[index]; }
     const int GetNumberOfOutputRunnables() { return static_cast<int>(outputRunnables_.size()); }
 
-    const int GetMaxCycle() const { return maxCycle_; };
-    const long long int GetHyperPeriod() const { return hyperPeriod_; }
+    int GetMaxCycle() const { return maxCycle_; };
+    long long int GetHyperPeriod() const { return hyperPeriod_; }
     const double GetUtilization() const {return utilization_; }
     const double GetUtilizationBound() const {return utilizationBound_; }
 
     // Save to .json
-    void SaveDag(std::string thisTime);
-    void SaveMapping(std::string thisTime);
+    void SaveDag(std::string subDirectory);
+    void SaveMapping(std::string subDirectory);
 };
 
 #endif
-
-
-
-// g++ main.cpp DAG.cpp TASK.cpp RUNNABLE.cpp -o main -Wall

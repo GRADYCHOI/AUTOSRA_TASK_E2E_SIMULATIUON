@@ -36,64 +36,47 @@ private:
 
     // Command Method Pattern
     friend class Communication;
-    std::unique_ptr<Communication> execution_ = std::unique_ptr<Communication>(new RunnableImplicit());
     std::unique_ptr<Communication> communication_;
 
-    int maxCycle_;
-    long long int hyperPeriod_;
+    std::vector<bool> visitiedPermutationNumber_;
 
-    int numberOfTasks_;
-    int numberOfRunnables_;
-    int numberOfInputRunnables_;
-    int numberOfOutputRunnables_;
-
-    // std::map<std::pair<int, int>, std::vector<ExecutionInformation>> processExecutions;
-
-    std::vector<std::vector<int>> sequence_;
+    // std::map<std::pair<int, int>, std::vector<RequiredTime>> processExecutions;
 
 	// Store results of all cases
     std::vector<std::vector<ResultInformation>> results_;
-	
-	// part of file name
-    std::string dataDirectory_;
 
     // Estimate time
     std::vector<std::clock_t> starts_;
     std::vector<std::clock_t> ends_;
 
+    // Showing information
+    int maxCycle_;
+    double hyperPeriod_;
+    int numberOfTasks_;
+    int numberOfRunnables_;
+    int numberOfInputRunnables_;
+    int numberOfOutputRunnables_;
+    double utilization_;
+
+    // directory of save files
+    std::string dataDirectory_;
+
     void Initialize();
 
+    void SetSequence(int numberOfCase);
+
     const int GetNumberOfPermutation(int number);
-
-    void GetRunnableScheduleInformations(int communicationMethod,
-                                         std::vector<std::vector<std::vector<int>>>& runnableExecutionPermutation,
-                                         std::vector<std::vector<std::vector<int>>>& runnableCommunicationPermutation,
-                                         std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableExecutions,
-                                         std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications);
-
-    void GetRunnableExecutions(std::vector<std::vector<std::vector<int>>>& runnablePermutation, std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableExecutions) {
-        execution_->GetCommunicationTable(dag_, numberOfRunnables_, hyperPeriod_, runnablePermutation, runnableExecutions);
-    }
 	
-	// Command Pattern
-	void GetRunnableCommunications(std::vector<std::vector<std::vector<int>>>& runnablePermutation, std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications) {
-        communication_->GetCommunicationTable(dag_, numberOfRunnables_, hyperPeriod_, runnablePermutation, runnableCommunications);
-    }
+	// Strategy Pattern
+	void SetCommunication(std::unique_ptr<Communication>&& newCommunication) { communication_ = std::move(newCommunication); }
+
+	// Strategy Pattern
+	void GetRunnableCommunications() { communication_->GetTimeTable(dag_, runnableTimeTable); }
 	
-    int GetReactionTime(std::pair<const std::pair<int, int>, std::vector<ExecutionInformation>>& processExecution);
+    int GetReactionTime(std::pair<const std::pair<int, int>, std::vector<RequiredTime>>& processExecution);
     int GetDataAge(std::vector<int>& executionPermutationPointer,
-                   std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableExecutions,
-                   std::pair<const std::pair<int, int>, std::vector<ExecutionInformation>>& processExecution);
-
-    void SetSequence(int numberOfCase, std::vector<std::vector<std::vector<int>>>& runnableExecutionPermutation);
-    void SetTaskPriorityRunnablePriority(int numberOfCase, std::vector<std::vector<std::vector<int>>>& runnableExecutionPermutation);
-    void SetRunnablePriorityRunnablePriority(int numberOfCase, std::vector<std::vector<std::vector<int>>>& runnableExecutionPermutation);
-    
-    const int GetMaxOutputTaskPriority(std::shared_ptr<RUNNABLE> tmpRunnable);
-    const int GetMaxOutputRunnablePriority(std::shared_ptr<RUNNABLE> tmpRunnable);
-
-    bool CheckTaskPriorityRunnablePriority(std::vector<int>& currentSequence);
-    bool CheckRunnablePriorityRunnablePriority(std::vector<int>& currentSequence);
+                   std::vector<std::vector<std::vector<RequiredTime>>>& runnableExecutions,
+                   std::pair<const std::pair<int, int>, std::vector<RequiredTime>>& processExecution);
 
     std::vector<std::vector<ResultInformation>>& GetBestReactionTime();
     std::vector<std::vector<ResultInformation>>& GetBestDataAge();
@@ -103,35 +86,32 @@ private:
 
 	std::vector<ResultInformation> GetResult(int caseIndex,
                                 std::vector<std::vector<std::vector<int>>>& runnableExecutionPermutation,
-                                std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableExecutions,
+                                std::vector<std::vector<std::vector<RequiredTime>>>& runnableExecutions,
                                 std::vector<std::vector<std::vector<int>>>& runnableCommunicationPermutation,
-                                std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications);
+                                std::vector<std::vector<std::vector<RequiredTime>>>& runnableCommunications);
 
 public:
     Simulation(std::shared_ptr<DAG> newDag) { dag_ = newDag; Initialize(); }
     ~Simulation() {}
 
     void Simulate(int communicationMethod);
-
-	// Command Pattern
-	void SetCommunication(std::unique_ptr<Communication>&& newCommunication) { communication_ = std::move(newCommunication); }
 	
     void SetProcessExecutions(std::vector<int>& executionPermutationPointer,
-                              std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableExecutions,
+                              std::vector<std::vector<std::vector<RequiredTime>>>& runnableExecutions,
                               std::vector<int>& communicationPermutationPointer,
-                              std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications,
-                              std::map<std::pair<int, int>, std::vector<ExecutionInformation>>& processExecutions);
+                              std::vector<std::vector<std::vector<RequiredTime>>>& runnableCommunications,
+                              std::map<std::pair<int, int>, std::vector<RequiredTime>>& processExecutions);
     void TraceProcess(std::vector<int>& executionPermutationPointer,
-                      std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableExecutions,
+                      std::vector<std::vector<std::vector<RequiredTime>>>& runnableExecutions,
                       std::vector<int>& communicationPermutationPointer,
-                      std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications,
+                      std::vector<std::vector<std::vector<RequiredTime>>>& runnableCommunications,
                       int inputRunnableId,
                       int inputCycle,
                       int thisRunnableId,
                       int thisCycle,
                       int thisHyperPeriodCount,
                       std::vector<int>& worstCyclePerRunnable,
-                      std::map<std::pair<int, int>, std::vector<ExecutionInformation>>& processExecutions);
+                      std::map<std::pair<int, int>, std::vector<RequiredTime>>& processExecutions);
 
     void SaveDag();
     void SaveMapping();

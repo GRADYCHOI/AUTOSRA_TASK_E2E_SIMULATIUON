@@ -11,22 +11,22 @@ public:
     Communication() {}
     virtual ~Communication() {}
 
-    virtual void GetCommunicationTable(std::shared_ptr<DAG>& dag, int numberOfRunnables, long long int hyperPeriod, std::vector<std::vector<std::vector<int>>>& runnablePermutation, std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications) = 0;
+    virtual void GetTimeTable(std::shared_ptr<DAG>& dag, std::vector<std::vector<RequiredTime>>& runnableTimeTable) = 0;
 };
 
 class RunnableImplicit : public Communication {
 public:
-    void GetCommunicationTable(std::shared_ptr<DAG>& dag, int numberOfRunnables, long long int hyperPeriod, std::vector<std::vector<std::vector<int>>>& runnablePermutation, std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications);
+    void GetTimeTable(std::shared_ptr<DAG>& dag, std::vector<std::vector<RequiredTime>>& runnableTimeTable);
 };
 
 class TaskImplicit : public Communication {
 public:
-    void GetCommunicationTable(std::shared_ptr<DAG>& dag, int numberOfRunnables, long long int hyperPeriod, std::vector<std::vector<std::vector<int>>>& runnablePermutation, std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications);
+    void GetTimeTable(std::shared_ptr<DAG>& dag, std::vector<std::vector<RequiredTime>>& runnableTimeTable);
 };
 
 class LET : public Communication {
 public:
-    void GetCommunicationTable(std::shared_ptr<DAG>& dag, int numberOfRunnables, long long int hyperPeriod, std::vector<std::vector<std::vector<int>>>& runnablePermutation, std::vector<std::vector<std::vector<ExecutionInformation>>>& runnableCommunications);
+    void GetTimeTable(std::shared_ptr<DAG>& dag, std::vector<std::vector<RequiredTime>>& runnableTimeTable);
 };
 
 #endif
