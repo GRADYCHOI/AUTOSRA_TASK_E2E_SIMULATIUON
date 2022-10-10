@@ -123,6 +123,8 @@ void Simulation::Simulate(int communicationMethod) {
         std::cout << " - Number Of Output Runnables : " << this->numberOfOutputRunnables_ << "\n";
         std::cout << " - Utilization                : " << this->utilization_ << "\n";
 		std::cout << "===========================================================================================================================" << std::endl;
+
+        this->SaveData();
     }
 
     this->ends_[2] = std::clock();
@@ -147,120 +149,6 @@ void Simulation::SetSequence(int caseIndex) {
 
         this->sequence_.emplace_back(executionPermutationPointer);
     }
-}
-
-bool Simulation::CheckRunnablePriorityRunnablePriority(std::vector<int>& currentSequence) {
-    std::clog << "=================================[Debug : Output Runnable's Priority -> Runnable Priority]=================================" << "\n";
-
-    for (int index = 0; index < this->numberOfRunnables_; index++) {
-        this->dag_->GetRunnable(currentSequence[index])->SetPriorityInTask(index);
-    }
-
-    int prePrecedence = -1;
-    int preTaskPriority = -1;
-    int preOutputTaskPriority = -1;
-    int preOutputRunnablePriority = -1;
-    int currentPrecedence = -1;
-    int currentTaskPriority = -1;
-    int currentOutputTaskPriority = -1;
-    int currentOutputRunnablePriority = -1;
-
-    for (auto &runnable : currentSequence) {
-        std::shared_ptr<RUNNABLE> currentRunnable = this->dag_->GetRunnable(runnable);
-        currentPrecedence = currentRunnable->GetPrecedence();
-        currentTaskPriority = currentRunnable->GetTask()->GetPriority();
-        currentOutputTaskPriority = this->GetMaxOutputTaskPriority(currentRunnable);
-        currentOutputRunnablePriority = this->GetMaxOutputRunnablePriority(currentRunnable);
-
-        if (currentTaskPriority == 0) continue;
-
-        if (preTaskPriority > currentTaskPriority) {
-            return false;
-
-        } else if (preTaskPriority < currentTaskPriority) {
-            prePrecedence = currentPrecedence;
-            preTaskPriority = currentTaskPriority;
-            preOutputTaskPriority = currentOutputTaskPriority;
-            preOutputRunnablePriority = currentOutputRunnablePriority;
-
-        } else {
-            if (prePrecedence > currentPrecedence) {
-                return false;
-
-            } else if (prePrecedence < currentPrecedence) {
-                prePrecedence = currentPrecedence;
-                preTaskPriority = currentTaskPriority;
-                preOutputTaskPriority = currentOutputTaskPriority;
-                preOutputRunnablePriority = currentOutputRunnablePriority;
-
-            } else {
-                if (preOutputTaskPriority > currentOutputTaskPriority) { //
-                    return false;
-
-                } else if (preOutputTaskPriority > currentOutputTaskPriority) {
-                    prePrecedence = currentPrecedence;
-                    preTaskPriority = currentTaskPriority;
-                    preOutputTaskPriority = currentOutputTaskPriority;
-                    preOutputRunnablePriority = currentOutputRunnablePriority;
-
-                } else {
-                    if (preOutputRunnablePriority > currentOutputRunnablePriority) {
-                        return false;
-
-                    } else {
-                        prePrecedence = currentPrecedence;
-                        preTaskPriority = currentTaskPriority;
-                        preOutputTaskPriority = currentOutputTaskPriority;
-                        preOutputRunnablePriority = currentOutputRunnablePriority;
-                    }
-                }
-            }
-        }
-    }
-
-    return true;
-}
-
-std::vector<ResultInformation> Simulation::GetResult(int caseIndex,
-                                                     std::vector<std::vector<std::vector<int>>>& runnableExecutionPermutation,
-                                                     std::vector<std::vector<std::vector<RequiredTime>>>& runnableExecutions,
-                                                     std::vector<std::vector<std::vector<int>>>& runnableCommunicationPermutation,
-                                                     std::vector<std::vector<std::vector<RequiredTime>>>& runnableCommunications) {
-    std::clog << "=================================[Debug : Output Runnable's Priority -> Runnable Priority]=================================" << std::endl;
-    int executionCaseIndex = caseIndex;
-    std::vector<int> executionPermutationPointer(this->numberOfRunnables_);
-    for (auto &executionPermutation : runnableExecutionPermutation) {
-        int permutationPointerNumber = executionCaseIndex % static_cast<int>(executionPermutation.size());
-        executionCaseIndex /= static_cast<int>(executionPermutation.size());
-        
-        for (auto &runnableId : executionPermutation[permutationPointerNumber]) {
-            executionPermutationPointer[runnableId] = permutationPointerNumber;
-        }
-    }
-
-    int comunicationCaseIndex = caseIndex;
-    std::vector<int> communicationPermutationPointer(this->numberOfRunnables_);
-    for (auto &communicationPermutation : runnableCommunicationPermutation) {
-        int permutationPointerNumber = comunicationCaseIndex % static_cast<int>(communicationPermutation.size());
-        comunicationCaseIndex /= static_cast<int>(communicationPermutation.size());
-        
-        for (auto &runnableId : communicationPermutation[permutationPointerNumber]) {
-            communicationPermutationPointer[runnableId] = permutationPointerNumber;
-        }
-    }
-
-    std::map<std::pair<int, int>, std::vector<RequiredTime>> processExecutions;
-    this->SetProcessExecutions(executionPermutationPointer, runnableExecutions, communicationPermutationPointer, runnableCommunications, processExecutions);
-
-    std::vector<ResultInformation> result;
-
-    for (auto &processExecution : processExecutions) {
-        result.push_back({processExecution.first.first, processExecution.first.second, caseIndex, this->GetReactionTime(processExecution), this->GetDataAge(executionPermutationPointer, runnableExecutions, processExecution)});
-        //result.push_back({processExecution.first.first, processExecution.first.second, caseIndex, this->GetReactionTime(processExecution), 0});
-    }
-    std::clog << "ckpt 6" << std::endl;
-
-    return result;
 }
 
 void Simulation::SetProcessExecutions(std::vector<int>& executionPermutationPointer,
@@ -421,42 +309,6 @@ int Simulation::GetDataAge(std::vector<int>& executionPermutationPointer,
     }
 
     return WorstDataAge;
-}
-
-std::vector<std::vector<ResultInformation>>& Simulation::GetBestReactionTime() {
-    std::sort(this->results_.begin(), this->results_.end(), [&, this](std::vector<ResultInformation>& a, std::vector<ResultInformation>& b) { return this->GetMaxReactionTime(a) < this->GetMaxReactionTime(b); });
-
-    return this->results_;
-}
-
-std::vector<std::vector<ResultInformation>>& Simulation::GetBestDataAge() {
-    std::sort(this->results_.begin(), this->results_.end(), [&, this](std::vector<ResultInformation>& a, std::vector<ResultInformation>& b) { return this->GetMaxDataAge(a) < this->GetMaxDataAge(b); });
-
-    return this->results_;
-}
-
-const int Simulation::GetMaxReactionTime(std::vector<ResultInformation>& a) {
-    int maxReactionTime = 0;
-
-    for (auto &resultInformation : a) {
-        if (maxReactionTime < resultInformation.reactionTime) {
-            maxReactionTime = resultInformation.reactionTime;
-        }
-    }
-
-    return maxReactionTime;
-}
-
-const int Simulation::GetMaxDataAge(std::vector<ResultInformation>& a) {
-    int maxDataAge = 0;
-
-    for (auto &resultInformation : a) {
-        if (maxDataAge < resultInformation.dataAge) {
-            maxDataAge = resultInformation.dataAge;
-        }
-    }
-
-    return maxDataAge;
 }
 
 void Simulation::SaveData() {
