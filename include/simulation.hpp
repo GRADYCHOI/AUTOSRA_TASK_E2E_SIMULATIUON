@@ -38,6 +38,8 @@ private:
     friend class Communication;
     std::unique_ptr<Communication> communication_;
 
+    std::vector<std::vector<std::vector<int>>> sequenceMatrix_; // [task][precedence][runnable]
+
     std::vector<bool> visitiedPermutationNumber_;
 
     // std::map<std::pair<int, int>, std::vector<RequiredTime>> processExecutions;
@@ -63,7 +65,7 @@ private:
 
     void Initialize();
 
-    void SetSequence(int numberOfCase);
+    void SetSequence(int caseIndex);
 
     const int GetNumberOfPermutation(int number);
 	

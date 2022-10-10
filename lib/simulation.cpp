@@ -64,12 +64,38 @@ int Simulation::GetNumberOfCase() {
     return numberOfCase;
 }
 
+void Simulation::SetSequenceMatrix() {
+    std::vector<std::vector<std::vector<int>>>().swap(this->sequenceMatrix_);
+
+    int taskIndex = 0;
+    for (auto &task : this->dag_->GetTasks()) {
+        task->SortRunnablesByPrecedence();
+
+        int currentPrecedence = -1;
+
+        int precedenceIndex = 0;
+        for (auto &runnable : task->GetRunnables()) {
+            if (currentPrecedence == runnable->GetPrecedence()) {
+                
+            } else {
+                this->sequenceMatrix_[taskIndex][precedenceIndex].emplace_back(runnable->id_);
+            }
+
+            precedenceIndex += 1;
+        }
+
+        taskIndex += 1;
+    }
+}
+
 void Simulation::Simulate(int communicationMethod) {
     this->starts_[0] = std::clock();
     this->starts_[1] = std::clock();
 
+    this->SetSequenceMatrix();
+
     int numberOfCase = this->GetNumberOfCase();
-    this->visitiedPermutationNumber_.swap(std::vector<bool>)
+    std::vector<bool>(numberOfCase, false).swap(this->visitiedPermutationNumber_);
     
     this->ends_[1] = std::clock();
     this->starts_[2] = std::clock();
@@ -102,8 +128,8 @@ void Simulation::Simulate(int communicationMethod) {
     this->ends_[2] = std::clock();
 }
 
-void Simulation::SetSequence(int numberOfCase) {
-    this->visitiedPermutationNumber_[numberOfCase] = true;
+void Simulation::SetSequence(int caseIndex) {
+    this->visitiedPermutationNumber_[caseIndex] = true;
 
     for (int caseIndex = 0; caseIndex < numberOfCase; caseIndex++) {
         int caseNumber = caseIndex;
