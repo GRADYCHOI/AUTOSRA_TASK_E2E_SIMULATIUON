@@ -45,19 +45,9 @@ void Simulation::Initialize() {
 int Simulation::GetNumberOfCase() {
     int numberOfCase = 1;
 
-    for (auto &task : this->dag_->GetTasks()) {
-        task->SortRunnablesByPrecedence();
-
-        int sameCase = 1;
-        int currentPrecedence = -1;
-        for (auto &runnable : task->GetRunnables()) {
-            if (currentPrecedence == runnable->GetPrecedence()) {
-                sameCase += 1;
-            } else {
-                currentPrecedence = runnable->GetPrecedence();
-                numberOfCase *= sameCase;
-                sameCase = 1;
-            }
+    for (auto &taskIndexSequence : this->sequenceMatrix_) {
+        for (auto &precedenceIndexSequence = 0; taskIndexSequence) {
+            numberOfCase *= static_cast<int>(precedenceIndexSequence.size());
         }
     }
 
@@ -65,27 +55,30 @@ int Simulation::GetNumberOfCase() {
 }
 
 void Simulation::SetSequenceMatrix() {
-    std::vector<std::vector<std::vector<int>>>().swap(this->sequenceMatrix_);
+    std::vector<std::vector<std::vector<int>>> sequenceMatrix;
 
     int taskIndex = 0;
     for (auto &task : this->dag_->GetTasks()) {
-        task->SortRunnablesByPrecedence();
-
         int currentPrecedence = -1;
+        task->SortRunnablesByPrecedence();
+        sequenceMatrix.emplace_back(std::vector<std::vector<int>>());
 
         int precedenceIndex = 0;
         for (auto &runnable : task->GetRunnables()) {
             if (currentPrecedence == runnable->GetPrecedence()) {
-                
+                sequenceMatrix[taskIndex][precedenceIndex].emplace_back(runnable->id_);
             } else {
-                this->sequenceMatrix_[taskIndex][precedenceIndex].emplace_back(runnable->id_);
+                sequenceMatrix[taskIndex].emplace_back(std::vector<int>(1, runnable->id_));
+                precedenceIndex += 1;
             }
 
-            precedenceIndex += 1;
+            currentPrecedence = runnable->GetPrecedence();
         }
 
         taskIndex += 1;
     }
+
+    sequenceMatrix.swap(this->sequenceMatrix_);
 }
 
 void Simulation::Simulate(int communicationMethod) {
@@ -100,6 +93,8 @@ void Simulation::Simulate(int communicationMethod) {
     this->ends_[1] = std::clock();
     this->starts_[2] = std::clock();
 
+    std::clock_t simulationStart = std::clock();
+    std::clock_t simulationCheckpoint;
     for (int caseIndex = 0; caseIndex < numberOfCase; caseIndex++) {
         int simulationSeed = static_cast<int>();
 
@@ -125,6 +120,8 @@ void Simulation::Simulate(int communicationMethod) {
 		std::cout << "===========================================================================================================================" << std::endl;
 
         this->SaveData();
+
+        simulationCheckpoint = std::clock();
     }
 
     this->ends_[2] = std::clock();

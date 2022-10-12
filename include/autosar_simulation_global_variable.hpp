@@ -2,9 +2,13 @@
 
 #define __AUTOSAR_SIMULATION_GLOBAL_VARIABLE__HPP__
 
-int mappingStrategy = -1;
+// strategy pattern
+int mappingMethod = -1;
+int precedencePositionMethod = -1;
 int permutationMethod = -1;
 int simulateMethod = -1;
-int precedencePositionStrategy = -1;
+
+// Flag
+bool simulationFlag = true;
 
 #endif
