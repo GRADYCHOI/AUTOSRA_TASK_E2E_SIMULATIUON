@@ -26,9 +26,6 @@
 #include "rapidjson/prettywriter.h"
 #include "rapidjson/ostreamwrapper.h"
 
-const int RunnableImplicitMethod = 100;
-const int TaskImplicitMethod = 101;
-const int LETMethod = 102;
 
 class Simulation {
 private:
@@ -40,16 +37,13 @@ private:
 
     std::vector<std::vector<std::vector<int>>> sequenceMatrix_; // [task][precedence][runnable]
 
-    std::vector<bool> visitiedPermutationNumber_;
+    std::vector<bool> visitedPermutationNumber_;
+    std::vector<int> visitedWorstCycle_;
 
-    // std::map<std::pair<int, int>, std::vector<RequiredTime>> processExecutions;
+    std::map<int, std::map<int, std::vector<RequiredTime>> processExecutions_;
 
 	// Store results of all cases
     std::vector<std::vector<ResultInformation>> results_;
-
-    // Estimate time
-    std::vector<std::clock_t> starts_;
-    std::vector<std::clock_t> ends_;
 
     // Showing information
     int maxCycle_;
@@ -65,64 +59,45 @@ private:
 
     void Initialize();
 
-    void SetSequence(int caseIndex);
+    int GetNumberOfCase();
 
-    const int GetNumberOfPermutation(int number);
+    void SetSequence(int caseIndex);
+    void SetSequenceMatrix();
 	
 	// Strategy Pattern
 	void SetCommunication(std::unique_ptr<Communication>&& newCommunication) { communication_ = std::move(newCommunication); }
 
 	// Strategy Pattern
-	void GetRunnableCommunications() { communication_->GetTimeTable(dag_, runnableTimeTable); }
+	void SetRunnableCommunicationTimes(std::vector<std::vector<RequiredTime>>& runnableTimeTable) { communication_->SetTimeTable(); }
+
+    void SetProcessExecutions();
+    void TraceTime(auto& inputRunnableIter, int inputCycle, std::shared_ptr<RUNNABLE>& thisRunnable, int thisCycle);
+
+    void InitializeProcessExecutions();
+
+    void CreateProcessExecutions();
+    void TraceProcessExecutions(auto& inputRunnableIter, std::shared_ptr<RUNNABLE>& thisRunnable, std::vector<bool>& visitiedRunnable);
+
+    void CreateVisitedWorstCycle()
 	
-    int GetReactionTime(std::pair<const std::pair<int, int>, std::vector<RequiredTime>>& processExecution);
-    int GetDataAge(std::vector<int>& executionPermutationPointer,
-                   std::vector<std::vector<std::vector<RequiredTime>>>& runnableExecutions,
-                   std::pair<const std::pair<int, int>, std::vector<RequiredTime>>& processExecution);
+    int GetMaxReactionTime();
+    int GetMaxDataAge();
 
-    std::vector<std::vector<ResultInformation>>& GetBestReactionTime();
-    std::vector<std::vector<ResultInformation>>& GetBestDataAge();
+	ResultInformation GetResult();
 
-    const int GetMaxReactionTime(std::vector<ResultInformation>& a);
-    const int GetMaxDataAge(std::vector<ResultInformation>& a);
-
-	std::vector<ResultInformation> GetResult(int caseIndex,
-                                std::vector<std::vector<std::vector<int>>>& runnableExecutionPermutation,
-                                std::vector<std::vector<std::vector<RequiredTime>>>& runnableExecutions,
-                                std::vector<std::vector<std::vector<int>>>& runnableCommunicationPermutation,
-                                std::vector<std::vector<std::vector<RequiredTime>>>& runnableCommunications);
+    void SaveDataToCSV();
 
 public:
     Simulation(std::shared_ptr<DAG> newDag) { dag_ = newDag; Initialize(); }
     ~Simulation() {}
 
-    void Simulate(int communicationMethod);
-	
-    void SetProcessExecutions(std::vector<int>& executionPermutationPointer,
-                              std::vector<std::vector<std::vector<RequiredTime>>>& runnableExecutions,
-                              std::vector<int>& communicationPermutationPointer,
-                              std::vector<std::vector<std::vector<RequiredTime>>>& runnableCommunications,
-                              std::map<std::pair<int, int>, std::vector<RequiredTime>>& processExecutions);
-    void TraceProcess(std::vector<int>& executionPermutationPointer,
-                      std::vector<std::vector<std::vector<RequiredTime>>>& runnableExecutions,
-                      std::vector<int>& communicationPermutationPointer,
-                      std::vector<std::vector<std::vector<RequiredTime>>>& runnableCommunications,
-                      int inputRunnableId,
-                      int inputCycle,
-                      int thisRunnableId,
-                      int thisCycle,
-                      int thisHyperPeriodCount,
-                      std::vector<int>& worstCyclePerRunnable,
-                      std::map<std::pair<int, int>, std::vector<RequiredTime>>& processExecutions);
+    void Simulate();
 
-    void SaveDag();
-    void SaveMapping();
-    void SaveData();
-    void SaveDataToCSV();
-
+    /*
     rapidjson::Value SaveProcessTime(rapidjson::Document::AllocatorType& allocator);
     rapidjson::Value SaveReactionTime(rapidjson::Document::AllocatorType& allocator);
     rapidjson::Value SaveDataAge(rapidjson::Document::AllocatorType& allocator);
+    */
 };
 
 #endif

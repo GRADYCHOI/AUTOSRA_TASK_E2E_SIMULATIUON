@@ -40,8 +40,8 @@ public:
 	void SetPriority(const int priority) { priority_ = priority; }
     void SetCore(const int number) { core_ = number; }
 
-    void SortRunnables(const std::vector<int> sequence);
-    void SortRunnablesByPrecedence() { std::sort(runnables_.begin(), runnables_.end(), [](std::shared_ptr<RUNNABLE> &a, std::shared_ptr<RUNNABLE> &b) { return a->GetPrecedence() < b->GetPrecedence(); }) }
+    void SortRunnables(const std::vector<int>& sequence);
+    void SortRunnablesByPrecedence() { std::sort(runnables_.begin(), runnables_.end(), [](std::shared_ptr<RUNNABLE> &a, std::shared_ptr<RUNNABLE> &b) { return a->GetPrecedence() < b->GetPrecedence(); }); }
 
     void AddRunnable(const std::shared_ptr<RUNNABLE> runnable);
 

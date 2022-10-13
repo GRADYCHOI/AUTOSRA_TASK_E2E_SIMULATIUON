@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <memory>
+#include "simulation_types.hpp"
 
 
 class TASK;
@@ -13,6 +14,7 @@ private:
 	// Dynamic characters
     int status_ = 0; // 0 = input runnable, 1 = output runnable, 2 = middle runnable
 	int precedence_ = -1;
+    int maxCycle_ = -1;
 
     // relative Runnables
     std::vector<std::weak_ptr<RUNNABLE>> inputRunnables_;
@@ -32,6 +34,9 @@ public:
     const int realId_;
     const int executionTime_; // ns (nano second)
 
+    // time line
+    std::vector<RequiredTime> executionTimes_;
+
     RUNNABLE(int id, int realId, int executionTime) : id_(id), realId_(realId), executionTime_((executionTime == 0) ? 1 : executionTime) {}
     ~RUNNABLE() {}
 
@@ -40,6 +45,7 @@ public:
     const int GetExecutionTime() const { return executionTime_; }
     const int GetStatus() const { return status_; }
     const int GetPrecedence() const { return precedence_; }
+    const int GetMaxCycle() const { return maxCycle_; }
 
     const std::shared_ptr<TASK> GetTask() { return task_.lock(); }
 	
@@ -53,6 +59,7 @@ public:
     const std::vector<std::shared_ptr<RUNNABLE>>& GetOutputRunnables() const { return outputRunnables_; }
 	
 	void SetPrecedence(const int precedence) { precedence_ = precedence; }
+    void SetMaxCycle(const int maxCycle) { maxCycle_ = maxCycle; }
 
     void SetTask(const std::weak_ptr<TASK> task) { task_ = task; }
 

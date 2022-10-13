@@ -18,6 +18,7 @@
 #include <fstream>
 #include "TASK.hpp"
 #include "mapping.hpp"
+#include "precedence.hpp"
 #include "rapidjson/document.h"
 #include "rapidjson/writer.h"
 #include "rapidjson/prettywriter.h"
@@ -61,11 +62,11 @@ private:
     void ClearMapping();
 	
 	// Generate Runnables
-    void GenerateRunnables(int numumberOfRunnables);
+    void GenerateRunnables();
     void RandomEdge();
 
     // Generate Tasks
-    void GenerateTasks(int numberOfTasks);
+    void GenerateTasks();
 
     // Mapping
     void SetMapping(std::unique_ptr<Mapping>&& newMapping) { mapping_ = std::move(newMapping); }
@@ -84,9 +85,8 @@ private:
 
 public:
     // Constructor
-    DAG(std::unique_ptr<Mapping>&& newMapping) { SetMapping(newMapping); GenerateRunnables(); GenerateTasks(); DoMapping(); SetStatus(); }
-    DAG(std::unique_ptr<Mapping>&& newMapping, const std::string dagJsonPath) { SetMapping(newMapping); ParseDag(dagJsonPath); GenerateTasks(); DoMapping(); SetStatus(); }
-
+    DAG(std::unique_ptr<Mapping>& newMapping) { SetMapping(std::move(newMapping)); GenerateRunnables(); GenerateTasks(); DoMapping(); SetStatus(); }
+    DAG(std::unique_ptr<Mapping>& newMapping, const std::string dagJsonPath) { SetMapping(std::move(newMapping)); ParseDag(dagJsonPath); GenerateTasks(); DoMapping(); SetStatus(); }
     DAG(const std::string dagJsonPath, const std::string mappingJsonPath) { ParseDag(dagJsonPath); ParseMapping(mappingJsonPath); SetStatus(); }
 
     // Destructor
@@ -117,8 +117,8 @@ public:
     const double GetUtilizationBound() const {return utilizationBound_; }
 
     // Save to .json
-    void SaveDag(std::string subDirectory);
-    void SaveMapping(std::string subDirectory);
+    void SaveDag(std::string dataDirectory);
+    void SaveMapping(std::string dataDirectory);
 };
 
 #endif

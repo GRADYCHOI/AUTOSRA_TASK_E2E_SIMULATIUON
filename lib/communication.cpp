@@ -1,48 +1,65 @@
 #include "communication.hpp"
 
 
-void RunnableImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, std::vector<std::vector<RequiredTime>>& runnableTimeTable) {
-    // Get unit time
-    int unit = dag->GetTask(0)->period_;
-    for (auto &task : dag->GetTasks()) {
-        unit = std::gcd(unit, ((task->GetOffset() != 0) ? std::gcd(task->GetPeriod(), task->GetOffset()) : task->GetPeriod()));
+void Communication::InitializeMembers() {
+    // Set unit time
+    this->unit_ = this->dag_->GetTask(0)->period_;
+    for (auto &task : this->dag_->GetTasksInPriority()) {
+        this->unit_ = std::gcd(this->unit_, ((task->GetOffset() != 0) ? std::gcd(task->GetPeriod(), task->GetOffset()) : task->GetPeriod()));
     }
 
-    // Get number of cores
-    int numberOfCores = -1;
-    for (auto &task : dag->GetTasks()) {
-        numberOfCores = (numberOfCores > task->GetCore()) ? numberOfCores : task->GetCore();
+    // Set number of cores
+    this->numberOfCores_ = -1;
+    for (auto &task : this->dag_->GetTasksInPriority()) {
+        this->numberOfCores_ = (this->numberOfCores_ > task->GetCore()) ? this->numberOfCores_ : task->GetCore();
     }
 
-    // Set time table
+    // Create time-line vector
+    std::vector<int>(this->dag_->GetNumberOfRunnables(), this->unit_).swap(this->emptyTimes_);
+}
+
+void Communication::InitializeRunnables() {
+    for (auto &task : this->dag_->GetTasksInPriority()) {
+        for (auto &runnable : task->GetRunnables()) {
+            std::vector<RequiredTime>(static_cast<int>(this->dag_->GetHyperPeriod() / task->period_), 0).swap(runnable->executionTimes_);
+        }
+    }
+}
+
+void Communication::InitializeEmptyTimes() {
+    std::fill(this->emptyTimes_.begin(), this->emptyTimes_.end(), this->unit_);
+}
+
+void RunnableImplicit::SetCommunicationTable() {
+    // Seperate time-line by core
     for (int coreIndex = 0; coreIndex < numberOfCores; coreIndex++) {
-        // Set time vector
-        std::vector<int> emptyTimes(static_cast<int>(dag->GetHyperPeriod() / unit), unit);
+        // Reset time-line vector
+        this->InitializeEmptyTimes();
 
         // Set Time-Table
-        for (auto &task : dag->GetTask()) {
+        for (auto &task : this->dag_->GetTasksInPriority()) {
             if (task->GetCore() == coreIndex) {
-                int maxCycle = static_cast<int>(dag->GetHyperPeriod() / task->period_);
+                int maxCycle = static_cast<int>(this->dag_->GetHyperPeriod() / task->period_);
                 int unitIndex = (task->period_ * cycle + task->offset_) / unit;
 
                 for (int cycle = 0; cycle < maxCycle; cycle++) {
                     for (auto &runnable : task->GetRunnables()) {                  
                         // Regard time-line
-                        while (emptyTimes[unitIndex] == 0) unitIndex++;
+                        while (this->emptyTimes_[unitIndex] == 0) unitIndex++;
 
                         // Set start time
-                        runnableTimeTable[runnable->id_][cycle].startTime = static_cast<long long int>(unitIndex) * static_cast<long long int>(unit) + static_cast<long long int>(unit - currentEmptyTimes[unitIndex]);
+                        runnable->executionTimes_[cycle].startTime = static_cast<long long int>(unitIndex) * static_cast<long long int>(unit) + static_cast<long long int>(unit - this->emptyTimes_[unitIndex]);
 
                         int executionTime = runnable->executionTime_;
                         while (executionTime) {
-                            if (emptyTimes[unitIndex] < executionTime) {
-                                executionTime -= emptyTimes[unitIndex];
-                                emptyTimes[unitIndex] = 0;
+                            if (this->dag_->[unitIndex] < executionTime) {
+                                executionTime -= this->dag_->[unitIndex];
+                                this->dag_->[unitIndex] = 0;
 
                                 unitIndex++;
                             } else {
-                                runnableTimeTable[runnable->id_][cycle].endTime = static_cast<long long int>(unitIndex) * static_cast<long long int>(unit) + static_cast<long long int>(executionTime);
-                                emptyTimes[unitIndex] -= executionTime;
+                                runnable->executionTimes_[cycle].endTime = static_cast<long long int>(unitIndex) * static_cast<long long int>(unit) + static_cast<long long int>(executionTime);
+                                this->dag_->[unitIndex] -= executionTime;
                                 executionTime = 0;
                             }
                         }

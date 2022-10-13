@@ -9,6 +9,6 @@ int permutationMethod = -1;
 int simulateMethod = -1;
 
 // Flag
-bool simulationFlag = true;
+long long int limitProcessTime = -1;
 
 #endif

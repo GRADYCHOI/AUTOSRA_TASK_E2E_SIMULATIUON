@@ -1,10 +1,18 @@
 #include "DAG.hpp"
 
 
-void DAG::SetSTatus() {
+void DAG::SetStatus() {
     void SetMaxCycle();
     void SetHyperPeriod();
     void SetUtilization();
+
+    for (auto &task : this->tasks_) {
+        int maxCycle = this->hyperPeriod_ / task->period_;
+
+        for (auto &runnable : task->GetRunnables()) {
+            runnable->SetMaxCycle(maxCycle);
+        }
+    }
 }
 
 void DAG::SetMaxCycle() {
@@ -29,7 +37,7 @@ void DAG::SetHyperPeriod() {
     this->hyperPeriod_ = tmpPeriod;
 }
 
-void DAG::SetUtilizetion() {
+void DAG::SetUtilization() {
     double tmpUtilization = 0.0;
 
     for (auto &task : this->tasks_) {
@@ -39,7 +47,7 @@ void DAG::SetUtilizetion() {
     this->utilization_ = tmpUtilization;
 }
 
-void DAG::SetUtilizetionBound() {
+void DAG::SetUtilizationBound() {
     double tmpUtilizationBound = static_cast<double>(this->GetNumberOfTasks()) * (std::pow(2.0, (1.0 / static_cast<double>(this->GetNumberOfTasks()))) - 1.0);
 
     this->utilizationBound_ = tmpUtilizationBound;
@@ -204,8 +212,7 @@ void DAG::SetTaskPriority() {
 }
 
 /* Save File & Parsing File Section */
-
-void DAG::SaveDag(std::string subDirectory) {
+void DAG::SaveDag(std::string dataDirectory) {
     rapidjson::Document doc;
     rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();
 
@@ -248,7 +255,48 @@ void DAG::SaveDag(std::string subDirectory) {
     dagObject.AddMember("Tasks", taskArray, allocator);
 
     // Save to json
-    std::string fileName = "../data/" + subDirectory + "/DAG.json";
+    std::string fileName = dataDirectory + "/DAG.json";
+
+    std::ofstream ofs(fileName.c_str());
+    rapidjson::OStreamWrapper osw(ofs);
+
+    rapidjson::PrettyWriter<rapidjson::OStreamWrapper> writer(osw);
+    writer.SetFormatOptions(rapidjson::kFormatSingleLineArray);
+    dagObject.Accept(writer);
+
+    ofs.close();
+}
+
+void DAG::SaveMapping(std::string dataDirectory) {
+    rapidjson::Document doc;
+    rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();
+
+    rapidjson::Value dagObject(rapidjson::kObjectType);
+    rapidjson::Value runnableArray(rapidjson::kArrayType);
+    rapidjson::Value taskArray(rapidjson::kArrayType);
+
+    dagObject.AddMember("Utilization", this->utilizationBound_, allocator);
+
+    for (auto &task : this->tasks_) {
+        rapidjson::Value taskObject(rapidjson::kObjectType);
+        rapidjson::Value runnableArray(rapidjson::kArrayType);
+
+        taskObject.AddMember("Period", static_cast<double>(task->period_) / 1000.0, allocator);
+        taskObject.AddMember("Offset", static_cast<double>(task->offset_) / 1000.0, allocator);
+        taskObject.AddMember("Priority", task->GetPriority(), allocator);
+        taskObject.AddMember("Core", task->GetCore(), allocator);
+
+        for (auto &runnable : task->GetRunnables()) {
+            runnableArray.PushBack(runnable->realId_, allocator);
+        }
+        taskObject.AddMember("Runnables", runnableArray, allocator);
+
+        taskArray.PushBack(taskObject, allocator);
+    }
+    dagObject.AddMember("Tasks", taskArray, allocator);
+
+    // Save to json
+    std::string fileName = dataDirectory + "/Mapping.json";
 
     std::ofstream ofs(fileName.c_str());
     rapidjson::OStreamWrapper osw(ofs);
@@ -341,43 +389,4 @@ void DAG::ParseMapping(std::string jsonPath) {
     }
 
     ifs.close();
-}
-
-void DAG::SaveMapping(std::string subDirectory) {
-    rapidjson::Document doc;
-    rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();
-
-    rapidjson::Value dagObject(rapidjson::kObjectType);
-    rapidjson::Value runnableArray(rapidjson::kArrayType);
-    rapidjson::Value taskArray(rapidjson::kArrayType);
-
-    for (auto &task : this->tasks_) {
-        rapidjson::Value taskObject(rapidjson::kObjectType);
-        rapidjson::Value runnableArray(rapidjson::kArrayType);
-
-        taskObject.AddMember("Period", static_cast<double>(task->period_) / 1000.0, allocator);
-        taskObject.AddMember("Offset", static_cast<double>(task->offset_) / 1000.0, allocator);
-        taskObject.AddMember("Priority", task->GetPriority(), allocator);
-        taskObject.AddMember("Core", task->GetCore(), allocator);
-
-        for (auto &runnable : task->GetRunnables()) {
-            runnableArray.PushBack(runnable->realId_, allocator);
-        }
-        taskObject.AddMember("Runnables", runnableArray, allocator);
-
-        taskArray.PushBack(taskObject, allocator);
-    }
-    dagObject.AddMember("Tasks", taskArray, allocator);
-
-    // Save to json
-    std::string fileName = "../data/" + subDirectory + "/Mapping.json";
-
-    std::ofstream ofs(fileName.c_str());
-    rapidjson::OStreamWrapper osw(ofs);
-
-    rapidjson::PrettyWriter<rapidjson::OStreamWrapper> writer(osw);
-    writer.SetFormatOptions(rapidjson::kFormatSingleLineArray);
-    dagObject.Accept(writer);
-
-    ofs.close();
 }

@@ -15,76 +15,38 @@
 #include "rapidjson/prettywriter.h"
 
 
+srand(time(NULL));
+
 int main(int argc, char *argv[]) {
     //std::clog.setstate(std::ios_base::failbit);
-
-    // clear screen (only linux)
-    std::system("clear");
-
     srand(time(NULL));
-    bool dag_file = false;
-    int reprecedence = -1;
 
-    std::shared_ptr<DAG> dag(new DAG());
-
-    // Runnable & Task
-    if (argc > 1) {
-        try {
-            dag->ParseDag(argv[1]);
-        } catch (std::string error) {
-            std::cout << error << std::endl;
-            return 0;
-        }
-
-        std::system("clear");
-        std::cout << "*** Do you want reset precedence? ***" << "\n";
-        std::cout << " 0 : Import precedence from .json" << "\n";
-        std::cout << " 1 : Reset to forward precedence" << "\n";
-        std::cout << " 2 : Reset to backward precedence" << "\n";
-        std::cout << "\n" << "Enter Number : ";
-
-        std::cin >> reprecedence;
-
-        if (reprecedence == 1) {
-            dag->SetRunnableInputPrecedence();
-        }
-        else if (reprecedence == 2) {
-            dag->SetRunnablePrecedence();
-        }
+    std::shared_ptr<DAG> dag;
+    if (argc > 2) { // DAG.json + Mapping.json
+        dag = std::make_shared<DAG>(argv[1], argv[2]);
     } else {
-        dag->GenerateDag();
-    }
-
-    // Mapping
-    if (argc > 2) {
-        try {
-            dag->ParseMapping(argv[2]);
-        } catch (std::string error) {
-            std::cout << error << std::endl;
-            return 0;
-        }
-    } else {
-        std::system("clear");
+        std::cout << "\033[H\033[2J\033[3J";
         std::cout << "*** Select Mapping Strategy ***" << "\n";
         std::cout << " 0 : Input Mapping" << "\n";
         std::cout << " 1 : Rate Mapping" << "\n";
         std::cout << " 2 : Random Mapping" << "\n";
         std::cout << "\n" << "Enter Number : ";
-
         std::cin >> mappingStrategy;
+        
+        std::unique_ptr<Mapping> mappingClass;
         switch (mappingStrategy) {
             case 0 : {
-                dag->SetMapping(std::unique_ptr<Mapping>(new InputMapping()));
+                mappingClass = std::make_unique<InputMapping>();
                 break;
             }
 
             case 1 : {
-                dag->SetMapping(std::unique_ptr<Mapping>(new RateMapping()));
+                mappingClass = std::make_unique<RateMapping>();
                 break;
             }
 
             case 2 : {
-                dag->SetMapping(std::unique_ptr<Mapping>(new RandomMapping()));
+                mappingClass = std::make_unique<RandomMapping>();
                 break;
             }
 
@@ -94,12 +56,15 @@ int main(int argc, char *argv[]) {
             }
         }
 
-        dag->SetTaskPriority();
-        dag->SetRunnablePrecedence();
-        dag->DoMapping();
+        if (argc > 1) { // DAG.json
+            dag = std::make_shared<DAG>(mappingClass, argv[1]);
+        } else { // Random Generation
+            dag = std::make_shared<DAG>(mappingClass);
+        }
     }
 
-    std::system("clear");
+    /*
+    std::cout << "\033[H\033[2J\033[3J";
     std::cout << "*** Range of Cases ***" << "\n";
     std::cout << " 0 : All Case" << "\n";
     std::cout << " 1 : Precedence" << "\n";
@@ -122,30 +87,36 @@ int main(int argc, char *argv[]) {
             return 0;
         }
     }
+    */
 
-    std::unique_ptr<Simulation> simulation(new Simulation(dag));
+    std::unique_ptr<Simulation> simulation = std::make_unique<Simulation>(dag);
+
+    std::unique_ptr<Communication> communicationClass;
+    communicationClass = std::make_unique<RunnableImplicit>(dag);
     
-    std::system("clear");
+    /*
+    std::cout << "\033[H\033[2J\033[3J";
     std::cout << "*** Communication Method ***" << "\n";
     std::cout << " 0 : Runnable Implicit" << "\n";
     std::cout << " 1 : Task Implicit" << "\n";
     std::cout << " 2 : LET" << "\n";
     std::cout << "\n" << "Enter Number : ";
-
     std::cin >> simulateMethod;
+
+    std::unique_ptr<Communication> communicationClass;
     switch (simulateMethod) {
         case 0 : {
-            simulation->Simulate(RunnableImplicitMethod);
+            communicationClass = std::make_unique<RunnableImplicit>(dag);
             break;
         }
 
         case 1 : {
-            simulation->Simulate(TaskImplicitMethod);
+            communicationClass = std::make_unique<Task Implicit>(dag);
             break;
         }
 
         case 2 : {
-            simulation->Simulate(LETMethod);
+            communicationClass = std::make_unique<Task Implicit>(dag);
             break;
         }
 
@@ -154,14 +125,9 @@ int main(int argc, char *argv[]) {
             return 0;
         }
     }
+    */
+
+    simulation->Simulate();
     
-    std::clog << "[main.cpp] CheckPoint 1" << std::endl;
-    simulation->SaveDag();
-    std::clog << "[main.cpp] CheckPoint 2" << std::endl;
-    simulation->SaveData();
-    std::clog << "[main.cpp] CheckPoint 3" << std::endl;
-    simulation->SaveMapping();
-    std::clog << "[main.cpp] CheckPoint 4" << std::endl;
-    simulation->SaveDataToCSV();
     return 0;
 }

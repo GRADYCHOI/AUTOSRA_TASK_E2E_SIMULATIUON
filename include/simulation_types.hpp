@@ -8,10 +8,8 @@ struct RequiredTime {
 };
 
 struct ResultInformation {
-    int cycle;
-    int inputRunnableId;
-    int outputRunnableId;
-    RequiredTime time;
+    int reactionTime;
+    int dataAge;
 };
 
 #endif
