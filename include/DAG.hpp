@@ -59,7 +59,7 @@ private:
     void SetOutputRunnableList();
 
 	bool CheckMappable();
-    void ClearMapping();
+    void ClearTaskMapping();
 	
 	// Generate Runnables
     void GenerateRunnables();
@@ -67,6 +67,7 @@ private:
 
     // Generate Tasks
     void GenerateTasks();
+    void SetTaskPriority();
 
     // Mapping
     void SetMapping(std::unique_ptr<Mapping>&& newMapping) { mapping_ = std::move(newMapping); }

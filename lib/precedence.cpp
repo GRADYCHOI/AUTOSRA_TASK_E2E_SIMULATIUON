@@ -1,9 +1,7 @@
 #include "precedence.hpp"
 
 
-void InputToOutputPrecedence::SetPrecedence(std::vector<RUNNABLE>& runnables, std::vector<RUNNABLE>& inputRunnables, std::vector<RUNNABLE>& outputRunnables) {
-    int maxPrecedence = -1;
-
+void InputToOutputPrecedence::SetPrecedence(std::vector<std::shared_ptr<RUNNABLE>>& runnables, std::vector<std::shared_ptr<RUNNABLE>>& inputRunnables, std::vector<std::shared_ptr<RUNNABLE>>& outputRunnables) {
     std::clog << "\033[H\033[2J\033[3J";
 	std::clog << "===============================================[Debug : Runnable Precedence]===============================================" << std::endl;
 
@@ -23,9 +21,7 @@ void InputToOutputPrecedence::SetPrecedence(std::vector<RUNNABLE>& runnables, st
 	std::clog << "===========================================================================================================================" << std::endl;
 }
 
-void OutputToInputPrecedence::SetPrecedence(std::vector<RUNNABLE>& runnables, std::vector<RUNNABLE>& inputRunnables, std::vector<RUNNABLE>& outputRunnables) {
-    int maxPrecedence = -1;
-
+void OutputToInputPrecedence::SetPrecedence(std::vector<std::shared_ptr<RUNNABLE>>& runnables, std::vector<std::shared_ptr<RUNNABLE>>& inputRunnables, std::vector<std::shared_ptr<RUNNABLE>>& outputRunnables) {
     std::clog << "\033[H\033[2J\033[3J";
 	std::clog << "===============================================[Debug : Runnable Precedence]===============================================" << std::endl;
 
@@ -45,7 +41,7 @@ void OutputToInputPrecedence::SetPrecedence(std::vector<RUNNABLE>& runnables, st
 	std::clog << "===========================================================================================================================" << std::endl;
 }
 
-void InputToOutputPrecedence::CheckPrecedence(std::shared_ptr<RUNNABLE>& runnable, int precedence) {
+void InputToOutputPrecedence::CheckPrecedence(const std::shared_ptr<RUNNABLE>& runnable, int precedence) {
 	runnable->SetPrecedence(precedence);
 	
 	if (runnable->GetStatus() != 1) {
@@ -57,7 +53,7 @@ void InputToOutputPrecedence::CheckPrecedence(std::shared_ptr<RUNNABLE>& runnabl
     }
 }
 
-void OutputToInputPrecedence::CheckPrecedence(std::shared_ptr<RUNNABLE>& runnable, int precedence) {
+void OutputToInputPrecedence::CheckPrecedence(const std::shared_ptr<RUNNABLE>& runnable, int precedence) {
 	runnable->SetPrecedence(precedence);
     precedence++;
 	
@@ -70,13 +66,13 @@ void OutputToInputPrecedence::CheckPrecedence(std::shared_ptr<RUNNABLE>& runnabl
     }
 }
 
-void Precedence::SetInputOutputRunnablePrecedence(std::vector<RUNNABLE>& inputRunnables, std::vector<RUNNABLE>& outputRunnables) {
-    int maxPrecedence = INT_MIN;
+void Precedence::SetInputOutputRunnablePrecedence(std::vector<std::shared_ptr<RUNNABLE>>& inputRunnables, std::vector<std::shared_ptr<RUNNABLE>>& outputRunnables) {
+    int maxPrecedence = INT8_MIN;
     for (auto &inputRunnable : inputRunnables) {
         maxPrecedence = (maxPrecedence > inputRunnable->GetPrecedence()) ? maxPrecedence : inputRunnable->GetPrecedence();
     }
 
-    maxPrecedence = INT_MIN;
+    maxPrecedence = INT8_MIN;
     for (auto &outputRunnable : outputRunnables) {
         maxPrecedence = (maxPrecedence > outputRunnable->GetPrecedence()) ? maxPrecedence : outputRunnable->GetPrecedence();
     }
@@ -86,9 +82,9 @@ void Precedence::SetInputOutputRunnablePrecedence(std::vector<RUNNABLE>& inputRu
     std::cout << " 0 : Input Runnables  - Middle Runnalbes - Output Runnables" << "\n";
     std::cout << " 1 : Output Runnables - Middle Runnalbes - Input Runnables" << "\n";
     std::cout << "\n" << "Enter Number : ";
-    std::cin >> precedencePositionStrategy;
+    std::cin >> precedencePositionMethod;
 
-    switch (precedencePositionStrategy) {
+    switch (precedencePositionMethod) {
         case 0 : {
             for (auto &inputRunnable : inputRunnables) {
                 inputRunnable->SetPrecedence(0);
@@ -115,7 +111,7 @@ void Precedence::SetInputOutputRunnablePrecedence(std::vector<RUNNABLE>& inputRu
 
         default : {
             std::cout << "Wrong Precedence Strategy." << std::endl;
-            return 0;
+            throw 0;
         }
     }
 }

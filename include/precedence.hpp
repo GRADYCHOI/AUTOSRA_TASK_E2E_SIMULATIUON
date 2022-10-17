@@ -4,36 +4,37 @@
 
 #include "RUNNABLE.hpp"
 #include "TASK.hpp"
+#include "StrategyIndex.hpp"
 #include <cstdlib>
 #include <iostream>
 
 
 class Precedence {
 protected:
-    void SetInputOutputRunnablePrecedence();
+    void SetInputOutputRunnablePrecedence(std::vector<std::shared_ptr<RUNNABLE>>& inputRunnables, std::vector<std::shared_ptr<RUNNABLE>>& outputRunnables);
     virtual void CheckPrecedence(std::shared_ptr<RUNNABLE>& runnable, int precedence) = 0;
 
 public:
     Precedence() {}
     virtual ~Precedence() {}
 
-    virtual void SetPrecedence(std::vector<RUNNABLE>& runnables, std::vector<RUNNABLE>& inputRunnables, std::vector<RUNNABLE>& outputRunnables) = 0;
+    virtual void SetPrecedence(std::vector<std::shared_ptr<RUNNABLE>>& runnables, std::vector<std::shared_ptr<RUNNABLE>>& inputRunnables, std::vector<std::shared_ptr<RUNNABLE>>& outputRunnables) = 0;
 };
 
 class InputToOutputPrecedence : public Precedence {
 private:
-    void CheckPrecedence(std::shared_ptr<RUNNABLE>& runnable, int precedence);
+    void CheckPrecedence(const std::shared_ptr<RUNNABLE>& runnable, int precedence);
 
 public:
-    void SetPrecedence(std::vector<RUNNABLE>& runnables, std::vector<RUNNABLE>& inputRunnables, std::vector<RUNNABLE>& outputRunnables);
+    void SetPrecedence(std::vector<std::shared_ptr<RUNNABLE>>& runnables, std::vector<std::shared_ptr<RUNNABLE>>& inputRunnables, std::vector<std::shared_ptr<RUNNABLE>>& outputRunnables);
 };
 
 class OutputToInputPrecedence : public Precedence {
 private:
-    void CheckPrecedence(std::shared_ptr<RUNNABLE>& runnable, int precedence);
+    void CheckPrecedence(const std::shared_ptr<RUNNABLE>& runnable, int precedence);
 
 public:
-    void SetPrecedence(std::vector<RUNNABLE>& runnables, std::vector<RUNNABLE>& inputRunnables, std::vector<RUNNABLE>& outputRunnables);
+    void SetPrecedence(std::vector<std::shared_ptr<RUNNABLE>>& runnables, std::vector<std::shared_ptr<RUNNABLE>>& inputRunnables, std::vector<std::shared_ptr<RUNNABLE>>& outputRunnables);
 };
 
 #endif

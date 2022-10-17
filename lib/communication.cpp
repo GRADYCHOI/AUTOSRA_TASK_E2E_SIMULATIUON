@@ -5,7 +5,7 @@ void Communication::InitializeMembers() {
     // Set unit time
     this->unit_ = this->dag_->GetTask(0)->period_;
     for (auto &task : this->dag_->GetTasksInPriority()) {
-        this->unit_ = std::gcd(this->unit_, ((task->GetOffset() != 0) ? std::gcd(task->GetPeriod(), task->GetOffset()) : task->GetPeriod()));
+        this->unit_ = std::gcd(this->unit_, ((task->offset_ != 0) ? std::gcd(task->period_, task->offset_) : task->period_));
     }
 
     // Set number of cores
@@ -21,7 +21,7 @@ void Communication::InitializeMembers() {
 void Communication::InitializeRunnables() {
     for (auto &task : this->dag_->GetTasksInPriority()) {
         for (auto &runnable : task->GetRunnables()) {
-            std::vector<RequiredTime>(static_cast<int>(this->dag_->GetHyperPeriod() / task->period_), 0).swap(runnable->executionTimes_);
+            std::vector<RequiredTime>(static_cast<int>(this->dag_->GetHyperPeriod() / task->period_), {-1, -1}).swap(runnable->executionTimes_);
         }
     }
 }
@@ -30,9 +30,9 @@ void Communication::InitializeEmptyTimes() {
     std::fill(this->emptyTimes_.begin(), this->emptyTimes_.end(), this->unit_);
 }
 
-void RunnableImplicit::SetCommunicationTable() {
+void RunnableImplicit::SetTimeTable() {
     // Seperate time-line by core
-    for (int coreIndex = 0; coreIndex < numberOfCores; coreIndex++) {
+    for (int coreIndex = 0; coreIndex < this->numberOfCores_; coreIndex++) {
         // Reset time-line vector
         this->InitializeEmptyTimes();
 
@@ -40,26 +40,27 @@ void RunnableImplicit::SetCommunicationTable() {
         for (auto &task : this->dag_->GetTasksInPriority()) {
             if (task->GetCore() == coreIndex) {
                 int maxCycle = static_cast<int>(this->dag_->GetHyperPeriod() / task->period_);
-                int unitIndex = (task->period_ * cycle + task->offset_) / unit;
 
                 for (int cycle = 0; cycle < maxCycle; cycle++) {
+                    int unitIndex = (task->period_ * cycle + task->offset_) / this->unit_;
+
                     for (auto &runnable : task->GetRunnables()) {                  
                         // Regard time-line
                         while (this->emptyTimes_[unitIndex] == 0) unitIndex++;
 
                         // Set start time
-                        runnable->executionTimes_[cycle].startTime = static_cast<long long int>(unitIndex) * static_cast<long long int>(unit) + static_cast<long long int>(unit - this->emptyTimes_[unitIndex]);
+                        runnable->executionTimes_[cycle].startTime = static_cast<long long int>(unitIndex) * static_cast<long long int>(this->unit_) + static_cast<long long int>(this->unit_ - this->emptyTimes_[unitIndex]);
 
                         int executionTime = runnable->executionTime_;
                         while (executionTime) {
-                            if (this->dag_->[unitIndex] < executionTime) {
-                                executionTime -= this->dag_->[unitIndex];
-                                this->dag_->[unitIndex] = 0;
+                            if (this->emptyTimes_[unitIndex] < executionTime) {
+                                executionTime -= this->emptyTimes_[unitIndex];
+                                this->emptyTimes_[unitIndex] = 0;
 
                                 unitIndex++;
                             } else {
-                                runnable->executionTimes_[cycle].endTime = static_cast<long long int>(unitIndex) * static_cast<long long int>(unit) + static_cast<long long int>(executionTime);
-                                this->dag_->[unitIndex] -= executionTime;
+                                runnable->executionTimes_[cycle].endTime = static_cast<long long int>(unitIndex) * static_cast<long long int>(this->unit_) + static_cast<long long int>(executionTime);
+                                this->emptyTimes_[unitIndex] -= executionTime;
                                 executionTime = 0;
                             }
                         }
@@ -70,8 +71,8 @@ void RunnableImplicit::SetCommunicationTable() {
     }
 }
 
-void TaskImplicit::GetCommunicationTable(std::shared_ptr<DAG>& dag, std::vector<std::vector<RequiredTime>>& runnableTimeTable) {
+void TaskImplicit::SetTimeTable() {
 }
 
-void LET::GetCommunicationTable(std::shared_ptr<DAG>& dag, std::vector<std::vector<RequiredTime>>& runnableTimeTable) {
+void LET::SetTimeTable() {
 }

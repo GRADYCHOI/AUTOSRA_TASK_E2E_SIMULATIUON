@@ -2,7 +2,7 @@
 
 
 const std::vector<std::shared_ptr<RUNNABLE>> RUNNABLE::GetInputRunnables() {
-    std::vector<std::shared_ptr<RUNNABLE>> tmpRunnables();
+    std::vector<std::shared_ptr<RUNNABLE>> tmpRunnables;
     tmpRunnables.reserve(this->GetNumberOfInputRunnables());
 
     for (auto &inputRunnable : this->inputRunnables_) {

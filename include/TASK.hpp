@@ -13,7 +13,7 @@ class TASK : public std::enable_shared_from_this<TASK> {
 private:
 	// Dynamic characters
 	int priority_ = -1;
-	int executionTime_ = -1.0;
+	int executionTime_ = -1;
     int core_ = -1;
     std::vector<std::shared_ptr<RUNNABLE>> runnables_;
 	

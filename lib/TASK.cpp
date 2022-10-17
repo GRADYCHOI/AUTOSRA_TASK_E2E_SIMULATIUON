@@ -11,7 +11,7 @@ void TASK::SetExecutionTime() {
 	this->executionTime_ = tmpExecutionTime;
 }
 
-void TASK::SortRunnables(std::vector<int>& sequence) {
+void TASK::SortRunnables(const std::vector<int>& sequence) {
     int index = 0;
 
     for (auto currentIter = this->runnables_.begin(); currentIter < this->runnables_.end(); currentIter++) {

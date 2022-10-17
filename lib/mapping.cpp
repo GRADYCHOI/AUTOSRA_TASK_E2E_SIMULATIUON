@@ -14,7 +14,7 @@ void RandomMapping::DoMapping(std::vector<std::shared_ptr<TASK>>& tasks, std::ve
     if (multi == 1) {
         for (auto &task : tasks) {
             int core = -1;
-            std::cout << task->GetId() << "task core(0, 1) : ";
+            std::cout << task->id_ << "task core(0, 1) : ";
             std::cin >> core;
             task->SetCore(core); 
         }
@@ -23,15 +23,15 @@ void RandomMapping::DoMapping(std::vector<std::shared_ptr<TASK>>& tasks, std::ve
 
 void RateMapping::DoMapping(std::vector<std::shared_ptr<TASK>>& tasks, std::vector<std::shared_ptr<RUNNABLE>>& runnables) {
     double totalPeriod = 0;
-    for (auto &task : tasks) totalPeriod += task->GetPeriod();
+    for (auto &task : tasks) totalPeriod += task->period_;
 
     for (auto &runnable : runnables) {
         bool map = true;
         while (map) {
             int ran = std::rand() % static_cast<int>(tasks.size());
             for (auto &task : tasks) {
-                if (task->GetId() == ran) {
-                    if (task->GetNumberOfRunnables() <= std::ceil((((task->GetPeriod()/totalPeriod) * runnables.size())))) {
+                if (task->id_ == ran) {
+                    if (task->GetNumberOfRunnables() <= std::ceil((((task->period_/totalPeriod) * runnables.size())))) {
                         task->AddRunnable(runnable);
                         map = false;
                     }
@@ -47,7 +47,7 @@ void RateMapping::DoMapping(std::vector<std::shared_ptr<TASK>>& tasks, std::vect
     if (multi == 1) {
         for (auto &task : tasks) {
             int core = -1;
-            std::cout << task->GetId() << "task core(0, 1) : ";
+            std::cout << task->id_ << "task core(0, 1) : ";
             std::cin >> core;
             task->SetCore(core); 
         }
@@ -58,9 +58,9 @@ void InputMapping::DoMapping(std::vector<std::shared_ptr<TASK>>& tasks, std::vec
     int inputTask = 0;
     int inputTaskPeriod = 1000;
     for (auto &task : tasks) { 
-        if (task->GetPeriod() < inputTaskPeriod) {
-            inputTaskPeriod = task->GetPeriod();
-            inputTask = task->GetId();
+        if (task->period_ < inputTaskPeriod) {
+            inputTaskPeriod = task->period_;
+            inputTask = task->id_;
         }
     }
     for (auto &runnable : runnables) {
@@ -75,7 +75,7 @@ void InputMapping::DoMapping(std::vector<std::shared_ptr<TASK>>& tasks, std::vec
     if (multi == 1) {
         for (auto &task : tasks) {
             int core = -1;
-            std::cout << task->GetId() << "task core(0, 1) : ";
+            std::cout << task->id_ << "task core(0, 1) : ";
             std::cin >> core;
             task->SetCore(core); 
         }

@@ -41,7 +41,7 @@ void DAG::SetUtilization() {
     double tmpUtilization = 0.0;
 
     for (auto &task : this->tasks_) {
-        tmpUtilization += (static_cast<double>(task->executionTime_) / static_cast<double>(task->period_));
+        tmpUtilization += (static_cast<double>(task->GetExecutionTime()) / static_cast<double>(task->period_));
     }
 
     this->utilization_ = tmpUtilization;
@@ -146,7 +146,7 @@ void DAG::GenerateTasks() {
             
             std::shared_ptr<TASK> task(new TASK(taskIndex, tmpPeriod * 1000, tmpOffset * 1000));
             this->tasks_.push_back(task);
-            std::clog << "[DAG.cpp] Task ID : " << this->tasks_[taskIndex]->id_ << ", Period : " << this->tasks_[taskIndex]->GetPeriod() << ", Offset : " << this->tasks_[taskIndex]->GetOffset() << std::endl;
+            std::clog << "[DAG.cpp] Task ID : " << this->tasks_[taskIndex]->id_ << ", Period : " << this->tasks_[taskIndex]->period_ << ", Offset : " << this->tasks_[taskIndex]->offset_ << std::endl;
         }
 
         if (this->CheckMappable()) {
@@ -155,7 +155,7 @@ void DAG::GenerateTasks() {
         }
         else {
             std::cout << "Increse Tasks Period!" << std::endl;
-            this->ClearMapping();
+            this->ClearTaskMapping();
             std::vector<std::shared_ptr<TASK>>().swap(this->tasks_);
             std::cout << "\033[H\033[2J\033[3J";
 			std::cout << "[Task Generation] ReGeneration Tasks" << std::endl;
@@ -176,8 +176,8 @@ bool DAG::CheckMappable() {
     }
 
     for (auto &task : this->tasks_) {
-        if (maxPeriod < task->GetPeriod()) {
-            maxPeriod = task->GetPeriod();
+        if (maxPeriod < task->period_) {
+            maxPeriod = task->period_;
         }
     }
 
@@ -186,7 +186,7 @@ bool DAG::CheckMappable() {
     return ((static_cast<double>(sumOfExecutionTimes) / static_cast<double>(maxPeriod)) < this->GetUtilizationBound()) ? true : false;
 }
 
-void DAG::ClearMapping() {
+void DAG::ClearTaskMapping() {
     for (auto &task : this->tasks_) {
         task->ClearMapping();
     }
