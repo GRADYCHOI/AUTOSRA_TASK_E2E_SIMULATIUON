@@ -23,7 +23,10 @@ void Simulation::Initialize() {
     std::cout << " - Number Of Output Runnables : " << this->numberOfOutputRunnables_ << "\n";
     std::cout << " - Utilization                : " << this->utilization_ << "\n";
     std::cout << " - Utilization Bound          : " << this->utilizationBound_ << "\n";
-    std::cout << "===========================================================================================================================" << std::endl;
+    std::cout << "===========================================================================================================================" << "\n";
+
+    std::cout << "Select limitation of time (second) : ";
+    std::cin >> this->limitProcessTime_;
 
     // About File
     time_t rawTime;
@@ -32,13 +35,13 @@ void Simulation::Initialize() {
     rawTime = time(NULL);
     pTimeInfo = localtime(&rawTime);
 
-    std::string simulationTime =  + std::to_string(pTimeInfo->tm_mon + 1) + "_" + std::to_string(pTimeInfo->tm_mday);
-    this->dataDirectory_ = "../data/" + "T" + std::to_string(this->numberOfTasks_) + "R" + std::to_string(this->numberOfRunnables_) + "U" + std::to_string(this->utilization_) + "W" + simulationTime;
+    std::string simulationTime = std::to_string(pTimeInfo->tm_mon + 1) + "_" + std::to_string(pTimeInfo->tm_mday);
+    this->dataDirectory_ = "../data/T" + std::to_string(this->numberOfTasks_) + "R" + std::to_string(this->numberOfRunnables_) + "U" + std::to_string(this->utilization_) + "W" + simulationTime;
 
     // make directory for save datas
-    if (mkdir(this->dataDirectory_, 0776) == -1 && errno != EEXIST) {
+    if (mkdir(this->dataDirectory_.c_str(), 0776) == -1 && errno != EEXIST) {
         std::cerr << strerror(errno) << " directory create error : " << strerror(errno);
-        return -1;
+        throw 0;
     }
 
     // Save Dag & Mapping
@@ -50,7 +53,7 @@ int Simulation::GetNumberOfCase() {
     int numberOfCase = 1;
 
     for (auto &taskIndexSequence : this->sequenceMatrix_) {
-        for (auto &precedenceIndexSequence = 0; taskIndexSequence) {
+        for (auto &precedenceIndexSequence : taskIndexSequence) {
             numberOfCase *= static_cast<int>(precedenceIndexSequence.size());
         }
     }
@@ -60,45 +63,46 @@ int Simulation::GetNumberOfCase() {
 
 // TODO : sequenceMatrix에 맞춰 변경 후 task에도 반영시키기
 void Simulation::SetSequence(int caseIndex) {
-    this->visitiedPermutationNumber_[caseIndex] = true;
+    this->visitedPermutationNumber_[caseIndex] = true;
 
-    for (int caseIndex = 0; caseIndex < numberOfCase; caseIndex++) {
-        int caseNumber = caseIndex;
-        std::vector<int> executionPermutationPointer;
-        executionPermutationPointer.reserve(this->numberOfRunnables_);
+    for (auto runnableMatrix : this->sequenceMatrix_) { // 원본은 바뀌면 안된다.
+        for (auto &runnablesWithSamePrecedence : runnableMatrix) {
+            int permutationNumber = caseIndex % static_cast<int>(runnablesWithSamePrecedence.size());
+            caseIndex /= static_cast<int>(runnablesWithSamePrecedence.size());
 
-        for (auto &executionPermutation : runnableExecutionPermutation) {
-            int permutationPointerNumber = caseNumber % static_cast<int>(executionPermutation.size());
-            caseNumber /= static_cast<int>(executionPermutation.size());
-            
-            for (auto &runnableId : executionPermutation[permutationPointerNumber]) {
-                executionPermutationPointer.emplace_back(runnableId);
+            for (int index = 1; index < permutationNumber; index++) {
+                std::next_permutation(runnablesWithSamePrecedence.begin(), runnablesWithSamePrecedence.end(), [](std::shared_ptr<RUNNABLE>& a, std::shared_ptr<RUNNABLE>& b) { return a->id_ < b->id_; });
             }
         }
 
-        this->sequence_.emplace_back(executionPermutationPointer);
+        runnableMatrix[0][0]->GetTask()->SetSequence(runnableMatrix);
     }
 }
 
 void Simulation::SetSequenceMatrix() {
-    std::vector<std::vector<std::vector<int>>> sequenceMatrix;
+    std::vector<std::vector<std::vector<std::shared_ptr<RUNNABLE>>>> sequenceMatrix;
 
     int taskIndex = 0;
     for (auto &task : this->dag_->GetTasks()) {
-        int currentPrecedence = -1;
+        int currentPrecedence = -2;
+        std::clog << "[simulation.cpp] Checkpoint 1-1" << std::endl;
         task->SortRunnablesByPrecedence();
-        sequenceMatrix.emplace_back(std::vector<std::vector<int>>());
+        std::clog << "[simulation.cpp] Checkpoint 1-2" << std::endl;
+        sequenceMatrix.emplace_back(std::vector<std::vector<std::shared_ptr<RUNNABLE>>>());
+        std::clog << "[simulation.cpp] Checkpoint 1-3" << std::endl;
 
-        int precedenceIndex = 0;
+        int precedenceIndex = -1;
         for (auto &runnable : task->GetRunnables()) {
+            std::clog << "[simulation.cpp] Checkpoint 1-4" << std::endl;
             if (currentPrecedence == runnable->GetPrecedence()) {
-                sequenceMatrix[taskIndex][precedenceIndex].emplace_back(runnable->id_);
+                sequenceMatrix[taskIndex][precedenceIndex].emplace_back(runnable);
             } else {
-                sequenceMatrix[taskIndex].emplace_back(std::vector<int>(1, runnable->id_));
+                sequenceMatrix[taskIndex].emplace_back(std::vector<std::shared_ptr<RUNNABLE>>(1, runnable));
                 precedenceIndex += 1;
             }
-
+            std::clog << "[simulation.cpp] Checkpoint 1-5" << std::endl;
             currentPrecedence = runnable->GetPrecedence();
+            std::clog << "[simulation.cpp] Checkpoint 1-6" << std::endl;
         }
 
         taskIndex += 1;
@@ -108,14 +112,18 @@ void Simulation::SetSequenceMatrix() {
 }
 
 void Simulation::Simulate() {
+    std::clog << "[simulation.cpp] Checkpoint 1" << std::endl;
     this->SetSequenceMatrix();
 
+    std::clog << "[simulation.cpp] Checkpoint 2" << std::endl;
     int numberOfCase = this->GetNumberOfCase();
-    std::vector<bool>(numberOfCase, false).swap(this->visitiedPermutationNumber_);
+    std::vector<bool>(numberOfCase, false).swap(this->visitedPermutationNumber_);
 
+    std::clog << "[simulation.cpp] Checkpoint 3" << std::endl;
     // For Reduce malloc delay
     this->CreateProcessExecutions();
-    this->CreateWorstCycle();
+    std::clog << "[simulation.cpp] Checkpoint 4" << std::endl;
+    this->CreateVisitedWorstCycle();
 
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -124,18 +132,23 @@ void Simulation::Simulate() {
     std::clock_t simulationCheckpoint;
     for (int caseIndex = numberOfCase; caseIndex > 0; caseIndex--) {
         std::uniform_int_distribution<int> dis(0, caseIndex);
-        int simulationSeed = dis(gen());
+        int simulationSeed = dis(gen);
         int simulationIndex = -1;
 
+        std::clog << "[simulation.cpp] Checkpoint 5" << std::endl;
         for (int tmpSimulationIndex = 0; tmpSimulationIndex <= simulationSeed; tmpSimulationIndex++) {
-            while (this->visitiedPermutationNumber_[++simulationIndex]);
+            while (this->visitedPermutationNumber_[++simulationIndex]);
         }
 
+        std::clog << "[simulation.cpp] Checkpoint 6" << std::endl;
         this->SetSequence(simulationIndex);
+        std::clog << "[simulation.cpp] Checkpoint 7" << std::endl;
         ResultInformation result = this->GetResult();
 
+        std::clog << "[simulation.cpp] Checkpoint 8" << std::endl;
         this->SaveDataToCSV(simulationIndex, result);
 
+        std::clog << "[simulation.cpp] Checkpoint 9" << std::endl;
         simulationCheckpoint = std::clock();
 		
 		std::cout << "\033[H\033[2J\033[3J";
@@ -152,18 +165,19 @@ void Simulation::Simulate() {
         std::cout << " - Number Of Output Runnables : " << std::setw(23) << this->numberOfOutputRunnables_ << "\n";
         std::cout << " - Utilization                : " << std::setw(23) << this->utilization_ << "\n";
         std::cout << " - Utilization Bound          : " << std::setw(23) << this->utilizationBound_ << "\n";
-        std::cout << " - Simulation Process Time    : " << std::setw(23) << static_cast<double>(simulationCheckpoint - simulationStart) / CLOCKS_PER_SEC << "ms\n"
+        std::cout << " - Simulation Process Time    : " << std::setw(23) << static_cast<double>(simulationCheckpoint - simulationStart) / CLOCKS_PER_SEC << "ms\n";
 		std::cout << "===========================================================================================================================" << std::endl;
 
-        
-        if (static_cast<long long int>(simulationCheckpoint - simulationStart) > limitProcessTime) {
-            break;
+        if (this->limitProcessTime_ != 0) {
+            if (static_cast<long long int>(simulationCheckpoint - simulationStart) > this->limitProcessTime_) {
+                break;
+            }
         }
     }
 }
 
 ResultInformation Simulation::GetResult() {
-    this->GetRunnableCommunications(runnableTimeTable);
+    this->SetRunnableCommunicationTimes();
     this->SetProcessExecutions();
 
     ResultInformation result;
@@ -179,14 +193,15 @@ void Simulation::SetProcessExecutions() {
     for (auto &inputRunnable : this->dag_->GetInputRunnables()) {
         this->InitializeVisitedWorstCycle();
         auto inputRunnableIter = this->processExecutions_.find(inputRunnable->id_);
+        int maxCycle = inputRunnable->GetMaxCycle();
 
-        for (int cycle = 0; cycle < eachMaxCycle; cycle++) {
-            this->TraceProcess(inputRunnableIter, cycle, inputRunnable, cycle, 0);
+        for (int cycle = 0; cycle < maxCycle; cycle++) {
+            this->TraceTime(inputRunnableIter, cycle, inputRunnable, cycle);
         }
     }
 }
 
-void Simulation::TraceTime(auto& inputRunnableIter, int inputCycle, std::shared_ptr<RUNNABLE>& thisRunnable, int thisCycle) {
+void Simulation::TraceTime(auto& inputRunnableIter, int inputCycle, const std::shared_ptr<RUNNABLE>& thisRunnable, int thisCycle) {
     if (this->visitedWorstCycle_[thisRunnable->id_] < thisCycle) {
         this->visitedWorstCycle_[thisRunnable->id_] = thisCycle;
 
@@ -194,7 +209,7 @@ void Simulation::TraceTime(auto& inputRunnableIter, int inputCycle, std::shared_
             for (auto &outputRunnable : thisRunnable->GetOutputRunnables()) {
                 int thisBaseCycle = thisCycle % thisRunnable->GetMaxCycle();
                 int outputMaxCycle = outputRunnable->GetMaxCycle();
-                int outputCycle = visitedWorstCycle[outputRunnable->id_];
+                int outputCycle = this->visitedWorstCycle_[outputRunnable->id_];
 
                 while (thisRunnable->executionTimes_[thisBaseCycle].endTime > outputRunnable->executionTimes_[(outputCycle < outputMaxCycle) ? outputCycle : (outputCycle % outputMaxCycle)].startTime) {
                     outputCycle++;
@@ -207,7 +222,7 @@ void Simulation::TraceTime(auto& inputRunnableIter, int inputCycle, std::shared_
             auto outputRunnableIter = inputRunnableIter->second.find(thisRunnable->id_);
 
             outputRunnableIter->second[inputCycle].startTime = thisRunnable->executionTimes_[inputCycle].startTime;
-            outputRunnableIter->second[inputCycle].endTime = thisRunnable->executionTimes_[(thisCycle < thisMaxCycle].endTime + (this->hyperPeriod_ * hyperPeriodCount);
+            outputRunnableIter->second[inputCycle].endTime = thisRunnable->executionTimes_[thisCycle % thisMaxCycle].endTime + (this->hyperPeriod_ * static_cast<int>(thisCycle / thisMaxCycle));
         }
     } else {
         for (auto &outputRunnablePair : inputRunnableIter->second) {
@@ -225,34 +240,38 @@ void Simulation::CreateProcessExecutions() {
     std::vector<bool> visitiedRunnable(this->numberOfRunnables_, false);
 
     for (auto &inputRunnable : this->dag_->GetInputRunnables()) {
-        std::fill(visitiedRunnable.start(), visitiedRunnable.end(), false);
+        std::fill(visitiedRunnable.begin(), visitiedRunnable.end(), false);
         auto inputRunnableIter = this->processExecutions_.find(inputRunnable->id_);
 
-        this->TraceHyperPeriodCount(inputRunnableIter, inputRunnable, visitiedRunnable);
+        this->TraceProcessExecutions(inputRunnableIter, inputRunnable, visitiedRunnable);
     }
 }
 
-void Simulation::TraceProcessExecutions(auto& inputRunnableIter, std::shared_ptr<RUNNABLE>& thisRunnable, std::vector<bool>& visitiedRunnable) {
-    if !(visitiedRunnable[thisRunnable->id_]) {
+void Simulation::TraceProcessExecutions(auto& inputRunnableIter, const std::shared_ptr<RUNNABLE>& thisRunnable, std::vector<bool>& visitiedRunnable) {
+    if (!visitiedRunnable[thisRunnable->id_]) {
         visitiedRunnable[thisRunnable->id_] = true;
 
         if (thisRunnable->GetStatus() != 1) {
             for (auto &outputRunnable : thisRunnable->GetOutputRunnables()) {
-                this->TraceProcess(inputRunnable, outputRunnable, processExecutions);
+                this->TraceProcessExecutions(inputRunnableIter, outputRunnable, visitiedRunnable);
             }
         } else {
             auto outputRunnableIter = inputRunnableIter->second.find(thisRunnable->id_);
 
-            if (outputIter == inputRunnableIter->end()) {
-                inputIter->insert({thisRunnable->id_, std::vector<RequiredTime>(thisRunnable->GetMaxCycle(), {-1, -1})});
+            if (outputRunnableIter == inputRunnableIter->second.end()) {
+                inputRunnableIter->second.insert({thisRunnable->id_, std::vector<RequiredTime>(thisRunnable->GetMaxCycle(), {-1, -1})});
             }
         }
     }
 }
 
 void Simulation::InitializeProcessExecutions() {
+    RequiredTime initializedRquiredTime = {-1, -1};
+
     for (auto &inputRunnablesPair : this->processExecutions_) {
-        std::fill(inputRunnablesPair.second.start(), inputRunnablesPair.second.end(), -1);
+        for (auto &outputRunnablesPair : inputRunnablesPair.second) {
+            std::fill(outputRunnablesPair.second.begin(), outputRunnablesPair.second.end(), initializedRquiredTime);
+        }
     }
 }
 
@@ -261,7 +280,7 @@ void Simulation::CreateVisitedWorstCycle() {
 }
 
 void Simulation::InitializeVisitedWorstCycle() {
-    std::fill(this->visitedWorstCycle_.start(), this->visitedWorstCycle_.end(), -1);
+    std::fill(this->visitedWorstCycle_.begin(), this->visitedWorstCycle_.end(), -1);
 }
 
 int Simulation::GetMaxReactionTime() {
@@ -271,14 +290,14 @@ int Simulation::GetMaxReactionTime() {
 
     for (auto &inputRunnablePair : this->processExecutions_) {
         for (auto &outputRunnablePair : inputRunnablePair.second) {
-            maxCycle = static_cast<int>(outputRunnablesPair.second.size());
-            tmpEndTime = outputRunnablesPair.second[maxCycle - 1].endTime;
+            maxCycle = static_cast<int>(outputRunnablePair.second.size());
+            tmpEndTime = outputRunnablePair.second[maxCycle - 1].endTime;
 
             for (int index = maxCycle - 1; index >= 0; --index) {
-                if (tmpEndTime > outputRunnablesPair.second[index].endTime) {
-                    tmpEndTime = outputRunnablesPair.second[index].endTime;
-                    if (worstReactionTime < (outputRunnablesPair.second[index].endTime - outputRunnablesPair.second[index].startTime)) {
-                        worstReactionTime = outputRunnablesPair.second[index].endTime - outputRunnablesPair.second[index].startTime;
+                if (tmpEndTime > outputRunnablePair.second[index].endTime) {
+                    tmpEndTime = outputRunnablePair.second[index].endTime;
+                    if (worstReactionTime < (outputRunnablePair.second[index].endTime - outputRunnablePair.second[index].startTime)) {
+                        worstReactionTime = outputRunnablePair.second[index].endTime - outputRunnablePair.second[index].startTime;
                     }
                 }
             }
@@ -297,16 +316,16 @@ int Simulation::GetMaxDataAge() {
 
     for (auto &inputRunnablePair : this->processExecutions_) {
         for (auto &outputRunnablePair : inputRunnablePair.second) {
-            maxCycle = static_cast<int>(outputRunnablesPair.second.size());
-            tmpEndTime = outputRunnablesPair.second[maxCycle - 1].endTime;
+            maxCycle = static_cast<int>(outputRunnablePair.second.size());
+            tmpEndTime = outputRunnablePair.second[maxCycle - 1].endTime;
             std::shared_ptr<RUNNABLE> outputRunnable = this->dag_->GetRunnable(outputRunnablePair.first);
 
             for (int index = maxCycle - 1; index >= 0; --index) {
-                if (tmpEndTime > outputRunnablesPair.second[index].endTime) {
-                    endCycle = (tmpEndTime % this->hyperPeriod_) / outputRunnable->period_;
+                if (tmpEndTime > outputRunnablePair.second[index].endTime) {
+                    endCycle = (tmpEndTime % this->hyperPeriod_) / outputRunnable->GetTask()->period_;
 
-                    tmpEndTime = outputRunnablesPair.second[index].endTime;
-                    startCycle = (tmpEndTime % this->hyperPeriod_) / outputRunnable->period_ + 1;
+                    tmpEndTime = outputRunnablePair.second[index].endTime;
+                    startCycle = (tmpEndTime % this->hyperPeriod_) / outputRunnable->GetTask()->period_ + 1;
 
                     if (endCycle > startCycle) {
                         if (worstDataAge < (outputRunnable->executionTimes_[endCycle].endTime - outputRunnable->executionTimes_[startCycle].endTime)) {

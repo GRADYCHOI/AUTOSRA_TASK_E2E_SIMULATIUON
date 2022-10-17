@@ -2,9 +2,9 @@
 
 
 void DAG::SetStatus() {
-    void SetMaxCycle();
-    void SetHyperPeriod();
-    void SetUtilization();
+    this->SetMaxCycle();
+    this->SetHyperPeriod();
+    this->SetUtilization();
 
     for (auto &task : this->tasks_) {
         int maxCycle = this->hyperPeriod_ / task->period_;

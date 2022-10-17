@@ -4,7 +4,6 @@
 
 #include "RUNNABLE.hpp"
 #include "TASK.hpp"
-#include "StrategyIndex.hpp"
 #include <cstdlib>
 #include <iostream>
 
@@ -12,7 +11,7 @@
 class Precedence {
 protected:
     void SetInputOutputRunnablePrecedence(std::vector<std::shared_ptr<RUNNABLE>>& inputRunnables, std::vector<std::shared_ptr<RUNNABLE>>& outputRunnables);
-    virtual void CheckPrecedence(std::shared_ptr<RUNNABLE>& runnable, int precedence) = 0;
+    virtual void CheckPrecedence(const std::shared_ptr<RUNNABLE>& runnable, int precedence) = 0;
 
 public:
     Precedence() {}

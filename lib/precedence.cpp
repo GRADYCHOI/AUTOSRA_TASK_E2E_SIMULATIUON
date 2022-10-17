@@ -82,6 +82,7 @@ void Precedence::SetInputOutputRunnablePrecedence(std::vector<std::shared_ptr<RU
     std::cout << " 0 : Input Runnables  - Middle Runnalbes - Output Runnables" << "\n";
     std::cout << " 1 : Output Runnables - Middle Runnalbes - Input Runnables" << "\n";
     std::cout << "\n" << "Enter Number : ";
+    int precedencePositionMethod = -1;
     std::cin >> precedencePositionMethod;
 
     switch (precedencePositionMethod) {

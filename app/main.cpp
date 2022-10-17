@@ -15,8 +15,6 @@
 #include "rapidjson/prettywriter.h"
 
 
-srand(time(NULL));
-
 int main(int argc, char *argv[]) {
     //std::clog.setstate(std::ios_base::failbit);
     srand(time(NULL));
@@ -31,10 +29,11 @@ int main(int argc, char *argv[]) {
         std::cout << " 1 : Rate Mapping" << "\n";
         std::cout << " 2 : Random Mapping" << "\n";
         std::cout << "\n" << "Enter Number : ";
-        std::cin >> mappingStrategy;
+        int mappingMethod = -1;
+        std::cin >> mappingMethod;
         
         std::unique_ptr<Mapping> mappingClass;
-        switch (mappingStrategy) {
+        switch (mappingMethod) {
             case 0 : {
                 mappingClass = std::make_unique<InputMapping>();
                 break;
@@ -59,7 +58,33 @@ int main(int argc, char *argv[]) {
         if (argc > 1) { // DAG.json
             dag = std::make_shared<DAG>(mappingClass, argv[1]);
         } else { // Random Generation
-            dag = std::make_shared<DAG>(mappingClass);
+            std::cout << "\033[H\033[2J\033[3J";
+            std::cout << "*** What do you want precedence strategy? ***" << "\n";
+            std::cout << " 0 : Input Runnables to Output Runnables" << "\n";
+            std::cout << " 1 : Output Runnables to Input Runnables" << "\n";
+            std::cout << "\n" << "Enter Number : ";
+            int precedenceMethod = -1;
+            std::cin >> precedenceMethod;
+
+            std::unique_ptr<Precedence> precedenceClass;
+            switch (precedenceMethod) {
+                case 0 : {
+                    precedenceClass = std::make_unique<InputToOutputPrecedence>();
+                    break;
+                }
+
+                case 1 : {
+                    precedenceClass = std::make_unique<OutputToInputPrecedence>();
+                    break;
+                }
+                
+                default : {
+                    std::cout << "Wrong Precedence Strategy." << std::endl;
+                    return 0;
+                }
+            }
+
+            dag = std::make_shared<DAG>(mappingClass, precedenceClass);
         }
     }
 
@@ -90,9 +115,8 @@ int main(int argc, char *argv[]) {
     */
 
     std::unique_ptr<Simulation> simulation = std::make_unique<Simulation>(dag);
-
-    std::unique_ptr<Communication> communicationClass;
-    communicationClass = std::make_unique<RunnableImplicit>(dag);
+    std::unique_ptr<Communication> communicationClass = std::make_unique<RunnableImplicit>(dag);
+    simulation->SetCommunication(std::move(communicationClass));
     
     /*
     std::cout << "\033[H\033[2J\033[3J";

@@ -70,11 +70,14 @@ private:
     void SetTaskPriority();
 
     // Mapping
-    void SetMapping(std::unique_ptr<Mapping>&& newMapping) { mapping_ = std::move(newMapping); }
+    void SetMapping(std::unique_ptr<Mapping>& newMapping) { mapping_ = std::move(newMapping); }
     void DoMapping() { mapping_->DoMapping(tasks_, runnables_); }
 
+    // Precedence
+    void SetPrecedence(std::unique_ptr<Precedence>& newPrecedence) { precedence_ = std::move(newPrecedence); }
+    void DoPrecedence() { precedence_->SetPrecedence(runnables_, inputRunnables_, outputRunnables_); }
+
     // Set Status
-    void SetStatus();
     void SetMaxCycle();
     void SetHyperPeriod();
     void SetUtilization();
@@ -86,8 +89,8 @@ private:
 
 public:
     // Constructor
-    DAG(std::unique_ptr<Mapping>& newMapping) { SetMapping(std::move(newMapping)); GenerateRunnables(); GenerateTasks(); DoMapping(); SetStatus(); }
-    DAG(std::unique_ptr<Mapping>& newMapping, const std::string dagJsonPath) { SetMapping(std::move(newMapping)); ParseDag(dagJsonPath); GenerateTasks(); DoMapping(); SetStatus(); }
+    DAG(std::unique_ptr<Mapping>& newMapping, std::unique_ptr<Precedence>& newPrecedence) { SetMapping(newMapping); SetPrecedence(newPrecedence); GenerateRunnables(); GenerateTasks(); DoMapping(); DoPrecedence(); SetStatus(); }
+    DAG(std::unique_ptr<Mapping>& newMapping, const std::string dagJsonPath) { SetMapping(newMapping); ParseDag(dagJsonPath); GenerateTasks(); DoMapping(); SetStatus(); }
     DAG(const std::string dagJsonPath, const std::string mappingJsonPath) { ParseDag(dagJsonPath); ParseMapping(mappingJsonPath); SetStatus(); }
 
     // Destructor
@@ -116,6 +119,9 @@ public:
     long long int GetHyperPeriod() const { return hyperPeriod_; }
     const double GetUtilization() const {return utilization_; }
     const double GetUtilizationBound() const {return utilizationBound_; }
+
+    // Set Status
+    void SetStatus();
 
     // Save to .json
     void SaveDag(std::string dataDirectory);

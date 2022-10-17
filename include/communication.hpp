@@ -19,7 +19,7 @@ protected:
     void InitializeRunnables();
 
 public:
-    Communication(std::shared_ptr<DAG>& dag) : dag_(dag) { InitializeMembers(); InitializeRunnables(); }
+    Communication(std::shared_ptr<DAG> newDag) : dag_(newDag) { InitializeMembers(); InitializeRunnables(); }
     ~Communication() { emptyTimes_.clear(); }
     
     virtual void SetTimeTable() = 0;
@@ -27,16 +27,22 @@ public:
 
 class RunnableImplicit : public Communication {
 public:
+    using Communication::Communication;
+
     void SetTimeTable();
 };
 
 class TaskImplicit : public Communication {
 public:
+    using Communication::Communication;
+
     void SetTimeTable();
 };
 
 class LET : public Communication {
 public:
+    using Communication::Communication;
+    
     void SetTimeTable();
 };
 
