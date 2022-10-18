@@ -106,6 +106,8 @@ void Simulation::SetSequenceMatrix() {
 }
 
 void Simulation::Simulate() {
+    std::cout << "\033[H\033[2J\033[3J";
+    std::cout << "Preprocessing...";
     this->SetSequenceMatrix();
 
     int numberOfCase = this->GetNumberOfCase();
@@ -114,6 +116,7 @@ void Simulation::Simulate() {
     // For Reduce malloc delay
     this->CreateProcessExecutions();
     this->CreateVisitedWorstCycle();
+    std::cout << " End.";
 
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -143,7 +146,7 @@ void Simulation::Simulate() {
         std::clog << "[simulation.cpp] Checkpoint 6\n";
         simulationCheckpoint = std::clock();
 		
-		//std::cout << "\033[H\033[2J\033[3J";
+		std::cout << "\033[H\033[2J\033[3J";
 		std::cout << "===========================================================================================================================\n";
         std::cout << " - Simulation Case            : " << std::setw(10) << (numberOfCase - caseIndex + 1) << " / " << std::setw(10) << numberOfCase << "\n";
         std::cout << " - Simulation Seed            : " << std::setw(23) << simulationIndex << "\n";

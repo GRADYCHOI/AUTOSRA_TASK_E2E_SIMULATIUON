@@ -15,7 +15,7 @@ protected:
 
 public:
     Precedence() {}
-    virtual ~Precedence() {}
+    virtual ~Precedence() { std::clog << "Delete Precedence Class" << std::endl; }
 
     virtual void SetPrecedence(std::vector<std::shared_ptr<RUNNABLE>>& runnables, std::vector<std::shared_ptr<RUNNABLE>>& inputRunnables, std::vector<std::shared_ptr<RUNNABLE>>& outputRunnables) = 0;
 };

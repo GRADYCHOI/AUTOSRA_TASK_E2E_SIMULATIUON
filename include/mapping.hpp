@@ -5,12 +5,13 @@
 #include "RUNNABLE.hpp"
 #include "TASK.hpp"
 #include <cstdlib>
+#include <iostream>
 
 
 class Mapping {
 public:
     Mapping() {}
-    virtual ~Mapping() {}
+    virtual ~Mapping() { std::clog << "Delete Mapping Class" << std::endl; }
 
     virtual void DoMapping(std::vector<std::shared_ptr<TASK>>& tasks, std::vector<std::shared_ptr<RUNNABLE>>& runnables) = 0;
 };

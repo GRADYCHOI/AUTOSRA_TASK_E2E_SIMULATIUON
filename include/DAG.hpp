@@ -93,7 +93,7 @@ public:
     DAG(const std::string dagJsonPath, const std::string mappingJsonPath) { ParseDag(dagJsonPath); ParseMapping(mappingJsonPath); SetStatus(); }
 
     // Destructor
-    ~DAG() {}
+    ~DAG() { std::clog << "Delete DAG Class" << std::endl; }
 
 	// Get Functions
     const std::vector<std::shared_ptr<TASK>>& GetTasks() const { return tasks_; }

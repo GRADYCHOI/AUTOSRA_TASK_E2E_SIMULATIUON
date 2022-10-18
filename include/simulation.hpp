@@ -92,7 +92,7 @@ private:
 
 public:
     Simulation(std::shared_ptr<DAG> newDag) : dag_(newDag) { Initialize(); }
-    ~Simulation() {}
+    ~Simulation() { std::clog << "Delete Simulation Class" << std::endl; }
 
     void Simulate();
 
