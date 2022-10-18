@@ -149,8 +149,11 @@ void DAG::GenerateTasks() {
             std::clog << "[DAG.cpp] Task ID : " << this->tasks_[taskIndex]->id_ << ", Period : " << this->tasks_[taskIndex]->period_ << ", Offset : " << this->tasks_[taskIndex]->offset_ << std::endl;
         }
 
+        this->DoMapping();
+
         if (this->CheckMappable()) {
             std::cout << "This Mappable!" << std::endl;
+            this->SetTaskPriority();
             mappableFlag = true;
         }
         else {
@@ -168,22 +171,10 @@ void DAG::GenerateTasks() {
 }
 
 bool DAG::CheckMappable() {
-    int sumOfExecutionTimes = 0;
-    int maxPeriod = 0;
-
-    for (auto &runnable : this->runnables_) {
-        sumOfExecutionTimes += runnable->GetExecutionTime();
-    }
-
-    for (auto &task : this->tasks_) {
-        if (maxPeriod < task->period_) {
-            maxPeriod = task->period_;
-        }
-    }
-
     this->SetUtilizationBound();
+    this->SetUtilization();
 
-    return ((static_cast<double>(sumOfExecutionTimes) / static_cast<double>(maxPeriod)) < this->GetUtilizationBound()) ? true : false;
+    return this->utilization_ < this->utilizationBound_;
 }
 
 void DAG::ClearTaskMapping() {

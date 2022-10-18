@@ -5,7 +5,7 @@ void Simulation::Initialize() {
     this->dag_->SetStatus();
 
     this->maxCycle_ = this->dag_->GetMaxCycle();
-    this->hyperPeriod_ = static_cast<double>(this->dag_->GetHyperPeriod()) / 1000.0;
+    this->hyperPeriod_ = static_cast<double>(this->dag_->GetHyperPeriod());
     this->numberOfTasks_ = this->dag_->GetNumberOfTasks();
     this->numberOfRunnables_ = this->dag_->GetNumberOfRunnables();
     this->numberOfInputRunnables_ = this->dag_->GetNumberOfInputRunnables();
@@ -131,6 +131,7 @@ void Simulation::Simulate() {
     std::clock_t simulationStart = std::clock();
     std::clock_t simulationCheckpoint;
     for (int caseIndex = numberOfCase; caseIndex > 0; caseIndex--) {
+        std::clog << "[simulation.cpp] Checkpoint 0" << std::endl;
         std::uniform_int_distribution<int> dis(0, caseIndex);
         int simulationSeed = dis(gen);
         int simulationIndex = -1;
@@ -153,23 +154,23 @@ void Simulation::Simulate() {
 		
 		std::cout << "\033[H\033[2J\033[3J";
 		std::cout << "===========================================================================================================================\n";
-        std::cout << " - Simulation Case            : " << std::setw(10) << (caseIndex + 1) << " / " << std::setw(10) << numberOfCase << "\n";
+        std::cout << " - Simulation Case            : " << std::setw(10) << (numberOfCase - caseIndex + 1) << " / " << std::setw(10) << numberOfCase << "\n";
         std::cout << " - Simulation Seed            : " << std::setw(23) << simulationIndex << "\n";
-        std::cout << " - Reaction Time              : " << std::setw(23) << static_cast<double>(result.reactionTime) / 1000.0 << "ms\n";
-        std::cout << " - Data Age                   : " << std::setw(23) << static_cast<double>(result.dataAge) / 1000.0 << "ms\n";
-        std::cout << " - Max Cycle                  : " << std::setw(23) << this->maxCycle_ << "\n";
-        std::cout << " - Hyper Period               : " << std::setw(23) << static_cast<double>(this->hyperPeriod_) / 1000.0 << "ms\n";
+        std::cout << " - Reaction Time              : " << std::setw(20) << static_cast<double>(result.reactionTime) / 1000.0 << " ms\n";
+        std::cout << " - Data Age                   : " << std::setw(20) << static_cast<double>(result.dataAge) / 1000.0 << " ms\n";
+        std::cout << " - Max Cycle                  : " << std::setw(17) << this->maxCycle_ << " cycle\n";
+        std::cout << " - Hyper Period               : " << std::setw(20) << static_cast<double>(this->hyperPeriod_) / 1000.0 << " ms\n";
         std::cout << " - Number Of Tasks            : " << std::setw(23) << this->numberOfTasks_ << "\n";
         std::cout << " - Number Of Runanbles        : " << std::setw(23) << this->numberOfRunnables_ << "\n";
         std::cout << " - Number Of Input Runnables  : " << std::setw(23) << this->numberOfInputRunnables_ << "\n";
         std::cout << " - Number Of Output Runnables : " << std::setw(23) << this->numberOfOutputRunnables_ << "\n";
         std::cout << " - Utilization                : " << std::setw(23) << this->utilization_ << "\n";
         std::cout << " - Utilization Bound          : " << std::setw(23) << this->utilizationBound_ << "\n";
-        std::cout << " - Simulation Process Time    : " << std::setw(23) << static_cast<double>(simulationCheckpoint - simulationStart) / CLOCKS_PER_SEC << "ms\n";
+        std::cout << " - Simulation Process Time    : " << std::setw(10) << static_cast<double>(simulationCheckpoint - simulationStart) / CLOCKS_PER_SEC << " / " << std::setw(8) << this->limitProcessTime_ << " s\n";
 		std::cout << "===========================================================================================================================" << std::endl;
 
         if (this->limitProcessTime_ != 0) {
-            if (static_cast<long long int>(simulationCheckpoint - simulationStart) > this->limitProcessTime_) {
+            if (static_cast<long long int>(static_cast<double>(simulationCheckpoint - simulationStart) / CLOCKS_PER_SEC) > this->limitProcessTime_) {
                 break;
             }
         }
@@ -177,21 +178,34 @@ void Simulation::Simulate() {
 }
 
 ResultInformation Simulation::GetResult() {
+    std::clog << "[simulation.cpp] Checkpoint 7-1" << std::endl;
     this->SetRunnableCommunicationTimes();
+    std::clog << "[simulation.cpp] Checkpoint 7-2" << std::endl;
     this->SetProcessExecutions();
+    std::clog << "[simulation.cpp] Checkpoint 7-3" << std::endl;
 
     ResultInformation result;
     result.reactionTime = this->GetMaxReactionTime();
+    std::clog << "[simulation.cpp] Checkpoint 7-4" << std::endl;
     result.dataAge = this->GetMaxDataAge();
 
     return result;
 }
 
 void Simulation::SetProcessExecutions() {
+    std::clog << "[simulation.cpp] Checkpoint 7-2-1" << std::endl;
     this->InitializeProcessExecutions();
+    std::clog << "[simulation.cpp] Checkpoint 7-2-2" << std::endl;
+
+    for (auto &inputRunnablesPair : this->processExecutions_) {
+        for (auto &outputRunnablesPair : inputRunnablesPair.second) {
+            std::clog << "[simulation.cpp] Input Runnable ID : " << inputRunnablesPair.first << ", Output Runnable ID : " << outputRunnablesPair.first << std::endl;
+        }
+    }
 
     for (auto &inputRunnable : this->dag_->GetInputRunnables()) {
         this->InitializeVisitedWorstCycle();
+
         auto inputRunnableIter = this->processExecutions_.find(inputRunnable->id_);
         int maxCycle = inputRunnable->GetMaxCycle();
 
@@ -208,11 +222,16 @@ void Simulation::TraceTime(auto& inputRunnableIter, int inputCycle, const std::s
         if (thisRunnable->GetStatus() != 1) {
             for (auto &outputRunnable : thisRunnable->GetOutputRunnables()) {
                 int thisBaseCycle = thisCycle % thisRunnable->GetMaxCycle();
+                int thisHyperPeriodCount = thisCycle / thisRunnable->GetMaxCycle();
                 int outputMaxCycle = outputRunnable->GetMaxCycle();
-                int outputCycle = this->visitedWorstCycle_[outputRunnable->id_];
+                int outputCycle = (this->visitedWorstCycle_[outputRunnable->id_] != -1) ? this->visitedWorstCycle_[outputRunnable->id_] : 0;
 
-                while (thisRunnable->executionTimes_[thisBaseCycle].endTime > outputRunnable->executionTimes_[(outputCycle < outputMaxCycle) ? outputCycle : (outputCycle % outputMaxCycle)].startTime) {
-                    outputCycle++;
+                while (thisRunnable->executionTimes_[thisBaseCycle].endTime > outputRunnable->executionTimes_[outputCycle % outputMaxCycle].startTime) {
+                    ++outputCycle;
+
+                    if (thisHyperPeriodCount < (outputCycle / outputMaxCycle)) {
+                        break;
+                    }
                 }
 
                 this->TraceTime(inputRunnableIter, inputCycle, outputRunnable, outputCycle);
@@ -221,15 +240,19 @@ void Simulation::TraceTime(auto& inputRunnableIter, int inputCycle, const std::s
             int thisMaxCycle = thisRunnable->GetMaxCycle();
             auto outputRunnableIter = inputRunnableIter->second.find(thisRunnable->id_);
 
-            outputRunnableIter->second[inputCycle].startTime = thisRunnable->executionTimes_[inputCycle].startTime;
-            outputRunnableIter->second[inputCycle].endTime = thisRunnable->executionTimes_[thisCycle % thisMaxCycle].endTime + (this->hyperPeriod_ * static_cast<int>(thisCycle / thisMaxCycle));
+            outputRunnableIter->second[inputCycle].startTime = this->dag_->GetRunnable(inputRunnableIter->first)->executionTimes_[inputCycle].startTime;
+            outputRunnableIter->second[inputCycle].endTime = thisRunnable->executionTimes_[thisCycle % thisMaxCycle].endTime + (this->hyperPeriod_ * static_cast<long long int>(thisCycle / thisMaxCycle));
         }
     } else {
         for (auto &outputRunnablePair : inputRunnableIter->second) {
-            if (outputRunnablePair.second[inputCycle].endTime < outputRunnablePair.second[inputCycle - 1].endTime) {
-                outputRunnablePair.second[inputCycle].startTime = thisRunnable->executionTimes_[inputCycle].startTime;
-                outputRunnablePair.second[inputCycle].endTime = outputRunnablePair.second[inputCycle - 1].endTime;
+            if (inputCycle != 0) {
+                if (outputRunnablePair.second[inputCycle].endTime < outputRunnablePair.second[inputCycle - 1].endTime) {
+                    outputRunnablePair.second[inputCycle].startTime = this->dag_->GetRunnable(inputRunnableIter->first)->executionTimes_[inputCycle].startTime;
+                    outputRunnablePair.second[inputCycle].endTime = outputRunnablePair.second[inputCycle - 1].endTime;
+                }
             }
+
+            for (int i = 0; i < 10000; i++) std::clog << "";
         }
     }
 }
@@ -238,6 +261,10 @@ void Simulation::CreateProcessExecutions() {
     std::map<int, std::map<int, std::vector<RequiredTime>>>().swap(this->processExecutions_);
 
     std::vector<bool> visitiedRunnable(this->numberOfRunnables_, false);
+
+    for (auto &inputRunnable : this->dag_->GetInputRunnables()) {
+        this->processExecutions_.insert({inputRunnable->id_, std::map<int, std::vector<RequiredTime>>()});
+    }
 
     for (auto &inputRunnable : this->dag_->GetInputRunnables()) {
         std::fill(visitiedRunnable.begin(), visitiedRunnable.end(), false);
@@ -259,7 +286,8 @@ void Simulation::TraceProcessExecutions(auto& inputRunnableIter, const std::shar
             auto outputRunnableIter = inputRunnableIter->second.find(thisRunnable->id_);
 
             if (outputRunnableIter == inputRunnableIter->second.end()) {
-                inputRunnableIter->second.insert({thisRunnable->id_, std::vector<RequiredTime>(thisRunnable->GetMaxCycle(), {-1, -1})});
+                std::clog << "[simulation.cpp] output runnable ID : " << thisRunnable->id_ << std::endl;
+                inputRunnableIter->second.insert({thisRunnable->id_, std::vector<RequiredTime>(this->dag_->GetRunnable(inputRunnableIter->first)->GetMaxCycle(), {-1, -1})});
             }
         }
     }
@@ -292,6 +320,10 @@ int Simulation::GetMaxReactionTime() {
         for (auto &outputRunnablePair : inputRunnablePair.second) {
             maxCycle = static_cast<int>(outputRunnablePair.second.size());
             tmpEndTime = outputRunnablePair.second[maxCycle - 1].endTime;
+
+            if (worstReactionTime < (outputRunnablePair.second[maxCycle - 1].endTime - outputRunnablePair.second[maxCycle - 1].startTime)) {
+                worstReactionTime = outputRunnablePair.second[maxCycle - 1].endTime - outputRunnablePair.second[maxCycle - 1].startTime;
+            }
 
             for (int index = maxCycle - 1; index >= 0; --index) {
                 if (tmpEndTime > outputRunnablePair.second[index].endTime) {

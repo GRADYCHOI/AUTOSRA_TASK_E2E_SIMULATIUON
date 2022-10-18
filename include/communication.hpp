@@ -20,7 +20,7 @@ protected:
 
 public:
     Communication(std::shared_ptr<DAG> newDag) : dag_(newDag) { InitializeMembers(); InitializeRunnables(); }
-    ~Communication() { emptyTimes_.clear(); }
+    ~Communication() {}
     
     virtual void SetTimeTable() = 0;
 };

@@ -89,8 +89,7 @@ private:
 
 public:
     // Constructor
-    DAG(std::unique_ptr<Mapping>& newMapping, std::unique_ptr<Precedence>& newPrecedence) { SetMapping(newMapping); SetPrecedence(newPrecedence); GenerateRunnables(); GenerateTasks(); DoMapping(); DoPrecedence(); SetStatus(); }
-    DAG(std::unique_ptr<Mapping>& newMapping, const std::string dagJsonPath) { SetMapping(newMapping); ParseDag(dagJsonPath); GenerateTasks(); DoMapping(); SetStatus(); }
+    DAG(std::unique_ptr<Mapping>& newMapping, std::unique_ptr<Precedence>& newPrecedence) { SetMapping(newMapping); SetPrecedence(newPrecedence); GenerateRunnables(); GenerateTasks(); DoPrecedence(); SetStatus(); }
     DAG(const std::string dagJsonPath, const std::string mappingJsonPath) { ParseDag(dagJsonPath); ParseMapping(mappingJsonPath); SetStatus(); }
 
     // Destructor

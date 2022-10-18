@@ -13,6 +13,7 @@ void Communication::InitializeMembers() {
     for (auto &task : this->dag_->GetTasksInPriority()) {
         this->numberOfCores_ = (this->numberOfCores_ > task->GetCore()) ? this->numberOfCores_ : task->GetCore();
     }
+    this->numberOfCores_ += 1;
 
     // Create time-line vector
     std::vector<int>(this->dag_->GetNumberOfRunnables(), this->unit_).swap(this->emptyTimes_);

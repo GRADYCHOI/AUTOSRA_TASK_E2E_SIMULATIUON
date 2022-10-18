@@ -18,6 +18,10 @@ void RandomMapping::DoMapping(std::vector<std::shared_ptr<TASK>>& tasks, std::ve
             std::cin >> core;
             task->SetCore(core); 
         }
+    } else {
+        for (auto &task : tasks) {
+            task->SetCore(0); 
+        }
     }
 }
 
@@ -51,6 +55,10 @@ void RateMapping::DoMapping(std::vector<std::shared_ptr<TASK>>& tasks, std::vect
             std::cin >> core;
             task->SetCore(core); 
         }
+    } else {
+        for (auto &task : tasks) {
+            task->SetCore(0); 
+        }
     }
 }
 
@@ -78,6 +86,10 @@ void InputMapping::DoMapping(std::vector<std::shared_ptr<TASK>>& tasks, std::vec
             std::cout << task->id_ << "task core(0, 1) : ";
             std::cin >> core;
             task->SetCore(core); 
+        }
+    } else {
+        for (auto &task : tasks) {
+            task->SetCore(0); 
         }
     }
 }

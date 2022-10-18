@@ -16,7 +16,7 @@
 
 
 int main(int argc, char *argv[]) {
-    //std::clog.setstate(std::ios_base::failbit);
+    std::clog.setstate(std::ios_base::failbit);
     srand(time(NULL));
 
     std::shared_ptr<DAG> dag;
@@ -55,37 +55,34 @@ int main(int argc, char *argv[]) {
             }
         }
 
-        if (argc > 1) { // DAG.json
-            dag = std::make_shared<DAG>(mappingClass, argv[1]);
-        } else { // Random Generation
-            std::cout << "\033[H\033[2J\033[3J";
-            std::cout << "*** What do you want precedence strategy? ***" << "\n";
-            std::cout << " 0 : Input Runnables to Output Runnables" << "\n";
-            std::cout << " 1 : Output Runnables to Input Runnables" << "\n";
-            std::cout << "\n" << "Enter Number : ";
-            int precedenceMethod = -1;
-            std::cin >> precedenceMethod;
+        // Random Generation
+        std::cout << "\033[H\033[2J\033[3J";
+        std::cout << "*** What do you want precedence strategy? ***" << "\n";
+        std::cout << " 0 : Input Runnables to Output Runnables" << "\n";
+        std::cout << " 1 : Output Runnables to Input Runnables" << "\n";
+        std::cout << "\n" << "Enter Number : ";
+        int precedenceMethod = -1;
+        std::cin >> precedenceMethod;
 
-            std::unique_ptr<Precedence> precedenceClass;
-            switch (precedenceMethod) {
-                case 0 : {
-                    precedenceClass = std::make_unique<InputToOutputPrecedence>();
-                    break;
-                }
-
-                case 1 : {
-                    precedenceClass = std::make_unique<OutputToInputPrecedence>();
-                    break;
-                }
-                
-                default : {
-                    std::cout << "Wrong Precedence Strategy." << std::endl;
-                    return 0;
-                }
+        std::unique_ptr<Precedence> precedenceClass;
+        switch (precedenceMethod) {
+            case 0 : {
+                precedenceClass = std::make_unique<InputToOutputPrecedence>();
+                break;
             }
 
-            dag = std::make_shared<DAG>(mappingClass, precedenceClass);
+            case 1 : {
+                precedenceClass = std::make_unique<OutputToInputPrecedence>();
+                break;
+            }
+            
+            default : {
+                std::cout << "Wrong Precedence Strategy." << std::endl;
+                return 0;
+            }
         }
+
+        dag = std::make_shared<DAG>(mappingClass, precedenceClass);
     }
 
     /*
