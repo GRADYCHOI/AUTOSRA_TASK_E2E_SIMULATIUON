@@ -8,8 +8,8 @@ struct RequiredTime {
 };
 
 struct ResultInformation {
-    int reactionTime;
-    int dataAge;
+    long long int reactionTime;
+    long long int dataAge;
 };
 
 #endif

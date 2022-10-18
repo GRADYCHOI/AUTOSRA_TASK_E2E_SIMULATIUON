@@ -35,7 +35,7 @@ void Simulation::Initialize() {
     rawTime = time(NULL);
     pTimeInfo = localtime(&rawTime);
 
-    std::string simulationTime = std::to_string(pTimeInfo->tm_mon + 1) + "_" + std::to_string(pTimeInfo->tm_mday);
+    std::string simulationTime = std::to_string(pTimeInfo->tm_mon + 1) + "_" + std::to_string(pTimeInfo->tm_mday) + "_" + std::to_string(pTimeInfo->tm_hour) + "_" + std::to_string(pTimeInfo->tm_min);
     this->dataDirectory_ = "../data/T" + std::to_string(this->numberOfTasks_) + "R" + std::to_string(this->numberOfRunnables_) + "U" + std::to_string(this->utilization_) + "W" + simulationTime;
 
     // make directory for save datas
@@ -85,24 +85,18 @@ void Simulation::SetSequenceMatrix() {
     int taskIndex = 0;
     for (auto &task : this->dag_->GetTasks()) {
         int currentPrecedence = -2;
-        std::clog << "[simulation.cpp] Checkpoint 1-1" << std::endl;
         task->SortRunnablesByPrecedence();
-        std::clog << "[simulation.cpp] Checkpoint 1-2" << std::endl;
         sequenceMatrix.emplace_back(std::vector<std::vector<std::shared_ptr<RUNNABLE>>>());
-        std::clog << "[simulation.cpp] Checkpoint 1-3" << std::endl;
 
         int precedenceIndex = -1;
         for (auto &runnable : task->GetRunnables()) {
-            std::clog << "[simulation.cpp] Checkpoint 1-4" << std::endl;
             if (currentPrecedence == runnable->GetPrecedence()) {
                 sequenceMatrix[taskIndex][precedenceIndex].emplace_back(runnable);
             } else {
                 sequenceMatrix[taskIndex].emplace_back(std::vector<std::shared_ptr<RUNNABLE>>(1, runnable));
                 precedenceIndex += 1;
             }
-            std::clog << "[simulation.cpp] Checkpoint 1-5" << std::endl;
             currentPrecedence = runnable->GetPrecedence();
-            std::clog << "[simulation.cpp] Checkpoint 1-6" << std::endl;
         }
 
         taskIndex += 1;
@@ -112,17 +106,13 @@ void Simulation::SetSequenceMatrix() {
 }
 
 void Simulation::Simulate() {
-    std::clog << "[simulation.cpp] Checkpoint 1" << std::endl;
     this->SetSequenceMatrix();
 
-    std::clog << "[simulation.cpp] Checkpoint 2" << std::endl;
     int numberOfCase = this->GetNumberOfCase();
     std::vector<bool>(numberOfCase, false).swap(this->visitedPermutationNumber_);
 
-    std::clog << "[simulation.cpp] Checkpoint 3" << std::endl;
     // For Reduce malloc delay
     this->CreateProcessExecutions();
-    std::clog << "[simulation.cpp] Checkpoint 4" << std::endl;
     this->CreateVisitedWorstCycle();
 
     std::random_device rd;
@@ -131,28 +121,29 @@ void Simulation::Simulate() {
     std::clock_t simulationStart = std::clock();
     std::clock_t simulationCheckpoint;
     for (int caseIndex = numberOfCase; caseIndex > 0; caseIndex--) {
-        std::clog << "[simulation.cpp] Checkpoint 0" << std::endl;
+        std::clog << "[simulation.cpp] Checkpoint 1\n";
         std::uniform_int_distribution<int> dis(0, caseIndex);
         int simulationSeed = dis(gen);
         int simulationIndex = -1;
 
-        std::clog << "[simulation.cpp] Checkpoint 5" << std::endl;
+        std::clog << "[simulation.cpp] Checkpoint 2\n";
         for (int tmpSimulationIndex = 0; tmpSimulationIndex <= simulationSeed; tmpSimulationIndex++) {
             while (this->visitedPermutationNumber_[++simulationIndex]);
         }
 
-        std::clog << "[simulation.cpp] Checkpoint 6" << std::endl;
+        std::clog << "[simulation.cpp] Checkpoint 3\n";
         this->SetSequence(simulationIndex);
-        std::clog << "[simulation.cpp] Checkpoint 7" << std::endl;
+
+        std::clog << "[simulation.cpp] Checkpoint 4\n";
         ResultInformation result = this->GetResult();
 
-        std::clog << "[simulation.cpp] Checkpoint 8" << std::endl;
+        std::clog << "[simulation.cpp] Checkpoint 5\n";
         this->SaveDataToCSV(simulationIndex, result);
 
-        std::clog << "[simulation.cpp] Checkpoint 9" << std::endl;
+        std::clog << "[simulation.cpp] Checkpoint 6\n";
         simulationCheckpoint = std::clock();
 		
-		std::cout << "\033[H\033[2J\033[3J";
+		//std::cout << "\033[H\033[2J\033[3J";
 		std::cout << "===========================================================================================================================\n";
         std::cout << " - Simulation Case            : " << std::setw(10) << (numberOfCase - caseIndex + 1) << " / " << std::setw(10) << numberOfCase << "\n";
         std::cout << " - Simulation Seed            : " << std::setw(23) << simulationIndex << "\n";
@@ -178,30 +169,18 @@ void Simulation::Simulate() {
 }
 
 ResultInformation Simulation::GetResult() {
-    std::clog << "[simulation.cpp] Checkpoint 7-1" << std::endl;
     this->SetRunnableCommunicationTimes();
-    std::clog << "[simulation.cpp] Checkpoint 7-2" << std::endl;
     this->SetProcessExecutions();
-    std::clog << "[simulation.cpp] Checkpoint 7-3" << std::endl;
 
     ResultInformation result;
     result.reactionTime = this->GetMaxReactionTime();
-    std::clog << "[simulation.cpp] Checkpoint 7-4" << std::endl;
     result.dataAge = this->GetMaxDataAge();
 
     return result;
 }
 
 void Simulation::SetProcessExecutions() {
-    std::clog << "[simulation.cpp] Checkpoint 7-2-1" << std::endl;
     this->InitializeProcessExecutions();
-    std::clog << "[simulation.cpp] Checkpoint 7-2-2" << std::endl;
-
-    for (auto &inputRunnablesPair : this->processExecutions_) {
-        for (auto &outputRunnablesPair : inputRunnablesPair.second) {
-            std::clog << "[simulation.cpp] Input Runnable ID : " << inputRunnablesPair.first << ", Output Runnable ID : " << outputRunnablesPair.first << std::endl;
-        }
-    }
 
     for (auto &inputRunnable : this->dag_->GetInputRunnables()) {
         this->InitializeVisitedWorstCycle();
@@ -251,8 +230,6 @@ void Simulation::TraceTime(auto& inputRunnableIter, int inputCycle, const std::s
                     outputRunnablePair.second[inputCycle].endTime = outputRunnablePair.second[inputCycle - 1].endTime;
                 }
             }
-
-            for (int i = 0; i < 10000; i++) std::clog << "";
         }
     }
 }
@@ -286,7 +263,6 @@ void Simulation::TraceProcessExecutions(auto& inputRunnableIter, const std::shar
             auto outputRunnableIter = inputRunnableIter->second.find(thisRunnable->id_);
 
             if (outputRunnableIter == inputRunnableIter->second.end()) {
-                std::clog << "[simulation.cpp] output runnable ID : " << thisRunnable->id_ << std::endl;
                 inputRunnableIter->second.insert({thisRunnable->id_, std::vector<RequiredTime>(this->dag_->GetRunnable(inputRunnableIter->first)->GetMaxCycle(), {-1, -1})});
             }
         }
@@ -311,9 +287,9 @@ void Simulation::InitializeVisitedWorstCycle() {
     std::fill(this->visitedWorstCycle_.begin(), this->visitedWorstCycle_.end(), -1);
 }
 
-int Simulation::GetMaxReactionTime() {
+long long int Simulation::GetMaxReactionTime() {
     long long int tmpEndTime = -1;
-    long long int worstReactionTime =  0;
+    long long int worstReactionTime = 0;
     int maxCycle = -1;
 
     for (auto &inputRunnablePair : this->processExecutions_) {
@@ -336,10 +312,10 @@ int Simulation::GetMaxReactionTime() {
         }
     }
 
-    return static_cast<int>(worstReactionTime);
+    return worstReactionTime;
 }
 
-int Simulation::GetMaxDataAge() {
+long long int Simulation::GetMaxDataAge() {
     long long int tmpEndTime = -1;
     long long int worstDataAge =  0;
     int maxCycle = -1;
@@ -373,7 +349,7 @@ int Simulation::GetMaxDataAge() {
         }
     }
 
-    return static_cast<int>(worstDataAge);
+    return worstDataAge;
 }
 
 void Simulation::SaveDataToCSV(int simulationIndex, ResultInformation& result) {

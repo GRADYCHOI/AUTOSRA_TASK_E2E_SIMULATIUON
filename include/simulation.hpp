@@ -58,7 +58,7 @@ private:
     double utilizationBound_;
 
     long long int limitProcessTime_;
-    
+
     // directory of save files
     std::string dataDirectory_;
 
@@ -83,8 +83,8 @@ private:
     void CreateVisitedWorstCycle();
     void InitializeVisitedWorstCycle();
 	
-    int GetMaxReactionTime();
-    int GetMaxDataAge();
+    long long int GetMaxReactionTime();
+    long long int GetMaxDataAge();
 
 	ResultInformation GetResult();
 
