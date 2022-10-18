@@ -150,7 +150,7 @@ void Simulation::Simulate() {
 		std::cout << "===========================================================================================================================\n";
         std::cout << " - Simulation Case            : " << std::setw(10) << (numberOfCase - caseIndex + 1) << " / " << std::setw(10) << numberOfCase << "\n";
         std::cout << " - Simulation Seed            : " << std::setw(23) << simulationIndex << "\n";
-        std::cout << " - Reaction Time              : " << std::setw(20) << static_cast<double>(result.reactionTime) / 1000.0 << " ms\n";
+        std::cout << " - Reaction Time              : " << std::setw(16) << result.reactionTime / 1000 << "." << std::setw(3) << result.reactionTime % 1000 << " ms\n";
         std::cout << " - Data Age                   : " << std::setw(20) << static_cast<double>(result.dataAge) / 1000.0 << " ms\n";
         std::cout << " - Max Cycle                  : " << std::setw(17) << this->maxCycle_ << " cycle\n";
         std::cout << " - Hyper Period               : " << std::setw(20) << static_cast<double>(this->hyperPeriod_) / 1000.0 << " ms\n";
