@@ -45,7 +45,7 @@ private:
     std::map<int, std::map<int, std::vector<RequiredTime>>> processExecutions_;
 
 	// Store results of all cases
-    std::vector<std::vector<ResultInformation>> results_;
+    std::vector<ResultInformation> results_;
 
     // Showing information
     int maxCycle_;

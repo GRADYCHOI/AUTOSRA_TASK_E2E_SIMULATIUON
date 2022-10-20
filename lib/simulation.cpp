@@ -124,26 +124,22 @@ void Simulation::Simulate() {
     std::clock_t simulationStart = std::clock();
     std::clock_t simulationCheckpoint;
     for (int caseIndex = numberOfCase; caseIndex > 0; caseIndex--) {
-        std::clog << "[simulation.cpp] Checkpoint 1\n";
         std::uniform_int_distribution<int> dis(0, caseIndex);
         int simulationSeed = dis(gen);
         int simulationIndex = -1;
 
-        std::clog << "[simulation.cpp] Checkpoint 2\n";
         for (int tmpSimulationIndex = 0; tmpSimulationIndex <= simulationSeed; tmpSimulationIndex++) {
             while (this->visitedPermutationNumber_[++simulationIndex]);
         }
 
-        std::clog << "[simulation.cpp] Checkpoint 3\n";
         this->SetSequence(simulationIndex);
 
-        std::clog << "[simulation.cpp] Checkpoint 4\n";
         ResultInformation result = this->GetResult();
+        result.seedNumber = simulationIndex;
+        this->results_.emplace_back(result);
 
-        std::clog << "[simulation.cpp] Checkpoint 5\n";
-        this->SaveDataToCSV(simulationIndex, result);
+        //this->SaveDataToCSV(result);
 
-        std::clog << "[simulation.cpp] Checkpoint 6\n";
         simulationCheckpoint = std::clock();
 		
 		std::cout << "\033[H\033[2J\033[3J";
@@ -169,6 +165,45 @@ void Simulation::Simulate() {
             }
         }
     }
+
+    this->SaveAllDataToCSV();
+}
+
+void Simulation::GetDetailResult() {
+    std::cout << "\033[H\033[2J\033[3J";
+    std::cout << "===========================================================================================================================\n";
+    std::cout << " - Simulation Case            : " << std::setw(10) << (numberOfCase - caseIndex + 1) << " / " << std::setw(10) << numberOfCase << "\n";
+    std::cout << " - Simulation Seed            : " << std::setw(23) << simulationIndex << "\n";
+    std::cout << " - Reaction Time              : " << std::setw(16) << result.reactionTime / 1000 << "." << std::setw(3) << result.reactionTime % 1000 << " ms\n";
+    std::cout << " - Data Age                   : " << std::setw(20) << static_cast<double>(result.dataAge) / 1000.0 << " ms\n";
+    std::cout << " - Max Cycle                  : " << std::setw(17) << this->maxCycle_ << " cycle\n";
+    std::cout << " - Hyper Period               : " << std::setw(20) << static_cast<double>(this->hyperPeriod_) / 1000.0 << " ms\n";
+    std::cout << " - Number Of Tasks            : " << std::setw(23) << this->numberOfTasks_ << "\n";
+    std::cout << " - Number Of Runanbles        : " << std::setw(23) << this->numberOfRunnables_ << "\n";
+    std::cout << " - Number Of Input Runnables  : " << std::setw(23) << this->numberOfInputRunnables_ << "\n";
+    std::cout << " - Number Of Output Runnables : " << std::setw(23) << this->numberOfOutputRunnables_ << "\n";
+    std::cout << " - Utilization                : " << std::setw(23) << this->utilization_ << "\n";
+    std::cout << " - Utilization Bound          : " << std::setw(23) << this->utilizationBound_ << "\n";
+    std::cout << " - Simulation Process Time    : " << std::setw(10) << static_cast<double>(simulationCheckpoint - simulationStart) / CLOCKS_PER_SEC << " / " << std::setw(8) << this->limitProcessTime_ << " s\n";
+    std::cout << "===========================================================================================================================" << std::endl;
+
+    // Create Large vector
+    this->CreateProcessExecutions();
+    this->CreateVisitedWorstCycle();
+
+    std::clock_t simulationStart = std::clock();
+    std::clock_t simulationCheckpoint;
+
+    this->SetSequence(simulationIndex);
+
+    std::clog << "[simulation.cpp] Checkpoint 4\n";
+    ResultInformation result = this->GetResult();
+
+    std::clog << "[simulation.cpp] Checkpoint 5\n";
+    this->SaveDataToCSV(simulationIndex, result);
+
+    std::clog << "[simulation.cpp] Checkpoint 6\n";
+    simulationCheckpoint = std::clock();
 }
 
 ResultInformation Simulation::GetResult() {
@@ -180,6 +215,10 @@ ResultInformation Simulation::GetResult() {
     result.dataAge = this->GetMaxDataAge();
 
     return result;
+}
+
+void Simulation::GetDetail() {
+
 }
 
 void Simulation::SetProcessExecutions() {
@@ -208,7 +247,7 @@ void Simulation::TraceTime(auto& inputRunnableIter, int inputCycle, const std::s
                 int outputMaxCycle = outputRunnable->GetMaxCycle();
                 int outputCycle = (this->visitedWorstCycle_[outputRunnable->id_] != -1) ? this->visitedWorstCycle_[outputRunnable->id_] : 0;
 
-                while (thisRunnable->executionTimes_[thisBaseCycle].endTime > outputRunnable->executionTimes_[outputCycle % outputMaxCycle].startTime) {
+                while (thisRunnable->executionTimes_[thisBaseCycle].endTime >= outputRunnable->executionTimes_[outputCycle % outputMaxCycle].startTime) {
                     ++outputCycle;
 
                     if (thisHyperPeriodCount < (outputCycle / outputMaxCycle)) {
@@ -290,7 +329,7 @@ void Simulation::InitializeVisitedWorstCycle() {
     std::fill(this->visitedWorstCycle_.begin(), this->visitedWorstCycle_.end(), -1);
 }
 
-long long int Simulation::GetMaxReactionTime() {
+long long int Simulation::GetWorstReactionTime() {
     long long int tmpEndTime = -1;
     long long int worstReactionTime = 0;
     int maxCycle = -1;
@@ -318,7 +357,7 @@ long long int Simulation::GetMaxReactionTime() {
     return worstReactionTime;
 }
 
-long long int Simulation::GetMaxDataAge() {
+long long int Simulation::GetWorstDataAge() {
     long long int tmpEndTime = -1;
     long long int worstDataAge =  0;
     int maxCycle = -1;
@@ -355,14 +394,174 @@ long long int Simulation::GetMaxDataAge() {
     return worstDataAge;
 }
 
-void Simulation::SaveDataToCSV(int simulationIndex, ResultInformation& result) {
-    // Save to json
+void Simulation::InitializeResultsMap(std::map<int, std::map<int, std::vector<ResultInformation>>>& results, int seedNumber) {
+    int maxCycle = -1;
+
+    for (auto &inputRunnablePair : this->processExecutions_) {
+        auto inputRunnableIter = results.insert({inputRunnablePair.first, std::map<int, std::vector<ResultInformation>>()});
+
+        for (auto &outputRunnablePair : inputRunnablePair.second) {
+            maxCycle = static_cast<int>(outputRunnablePair.second.size());
+
+            auto outputRunnableIter = inputRunnableIter.insert({inputRunnablePair.first, std::map<int, std::vector<ResultInformation>>(maxCycle, {seedNumber, -1, -1})});
+        }
+    }
+}
+
+void Simulation::GetReactionTimeList(std::map<int, std::map<int, std::vector<ResultInformation>>>& results) {
+    long long int tmpEndTime = -1;
+    int maxCycle = -1;
+
+    for (auto &inputRunnablePair : this->processExecutions_) {
+        for (auto &outputRunnablePair : inputRunnablePair.second) {
+            maxCycle = static_cast<int>(outputRunnablePair.second.size());
+            tmpEndTime = outputRunnablePair.second[maxCycle - 1].endTime;
+
+            outputRunnablePair.second[maxCycle - 1].reactionTime = (outputRunnablePair.second[maxCycle - 1].endTime - outputRunnablePair.second[maxCycle - 1].startTime;
+
+            for (int index = maxCycle - 1; index >= 0; --index) {
+                if (tmpEndTime > outputRunnablePair.second[index].endTime) {
+                    tmpEndTime = outputRunnablePair.second[index].endTime;
+                    outputRunnablePair.second[index].reactionTime = (outputRunnablePair.second[index].endTime - outputRunnablePair.second[index].startTime;
+                } else {
+                    outputRunnablePair.second[index].reactionTime = -1;
+                }
+            }
+        }
+    }
+}
+
+void Simulation::GetDataAgeList(std::map<int, std::map<int, std::vector<ResultInformation>>>& results) {
+    long long int tmpEndTime = -1;
+    int maxCycle = -1;
+    int startCycle = -1;
+    int endCycle = -1;
+
+    for (auto &inputRunnablePair : this->processExecutions_) {
+        for (auto &outputRunnablePair : inputRunnablePair.second) {
+            maxCycle = static_cast<int>(outputRunnablePair.second.size());
+            tmpEndTime = outputRunnablePair.second[maxCycle - 1].endTime;
+            std::shared_ptr<RUNNABLE> outputRunnable = this->dag_->GetRunnable(outputRunnablePair.first);
+
+            for (int index = maxCycle - 1; index >= 0; --index) {
+                if (tmpEndTime > outputRunnablePair.second[index].endTime) {
+                    endCycle = (tmpEndTime % this->hyperPeriod_) / outputRunnable->GetTask()->period_;
+
+                    tmpEndTime = outputRunnablePair.second[index].endTime;
+                    startCycle = (tmpEndTime % this->hyperPeriod_) / outputRunnable->GetTask()->period_ + 1;
+
+                    if (endCycle > startCycle) {
+                        outputRunnablePair.second[maxCycle - 1].reactionTime = outputRunnable->executionTimes_[endCycle].endTime - outputRunnable->executionTimes_[startCycle].endTime;
+                    } else {
+                        outputRunnablePair.second[maxCycle - 1].reactionTime = outputRunnable->executionTimes_[endCycle].endTime - outputRunnable->executionTimes_[startCycle].endTime;
+                    }
+                }
+            }
+        }
+    }
+}
+
+void Simulation::SaveDataToCSV(ResultInformation& result) {
     std::string fileDirectory = this->dataDirectory_ + "/Result.csv";
 
     std::ofstream resultFile;
     resultFile.open (fileDirectory.c_str(), std::ios_base::out | std::ios_base::app);
 
-    resultFile << simulationIndex << "," << static_cast<double>(result.reactionTime) / 1000.0 << "," << static_cast<double>(result.dataAge) / 1000.0 << "\n";
+    resultFile << result.seedNumber << "," << static_cast<double>(result.reactionTime / 1000) + static_cast<double>(result.reactionTime) % 1000.0 << "," << static_cast<double>(result.dataAge / 1000) + static_cast<double>(result.dataAge) % 1000.0 << "\n";
+
+    resultFile.close();
+}
+
+void Simulation::SaveAllDataToCSV() {
+    std::string fileDirectory = this->dataDirectory_ + "/Result.csv";
+
+    std::sort(this->results_.begin(), this->results_.end(), [](ResultInformation &a, ResultInformation &b) { return a.resultTime < b.resultTime; });
+
+    std::ofstream resultFile;
+    resultFile.open (fileDirectory.c_str(), std::ios_base::out | std::ios_base::app);
+
+    for (auto &result : this->results_) {
+        resultFile << result.seedNumber << "," << static_cast<double>(result.reactionTime / 1000) + static_cast<double>(result.reactionTime) % 1000.0 << "," << static_cast<double>(result.dataAge / 1000) + static_cast<double>(result.dataAge) % 1000.0 << "\n";
+    }
+
+    resultFile.close();
+}
+
+void Simulation::SaveDetailToJson() {
+    rapidjson::Document doc;
+    rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();
+
+    rapidjson::Value resultObject(rapidjson::kObjectType);
+    resultObject.AddMember("Seed Number", this->results_[0].seedNumber, allocator);
+
+    rapidjson::Value reactionTime(rapidjson::kArrayType);
+    reactionTime.AddMember("Reaction Time", this->results_[0].reactionTime, allocator);
+
+    rapidjson::Value onePath(rapidjson::kArrayType);
+    for (auto &task : this->tasks_) {
+        rapidjson::Value taskObject(rapidjson::kObjectType);
+        rapidjson::Value runnableArray(rapidjson::kArrayType);
+
+        taskObject.AddMember("Period", static_cast<double>(task->period_) / 1000.0, allocator);
+        taskObject.AddMember("Offset", static_cast<double>(task->offset_) / 1000.0, allocator);
+        taskObject.AddMember("Priority", task->GetPriority(), allocator);
+        taskObject.AddMember("Core", task->GetCore(), allocator);
+
+        for (auto &runnable : task->GetRunnables()) {
+            runnableArray.PushBack(runnable->realId_, allocator);
+        }
+        taskObject.AddMember("Runnables", runnableArray, allocator);
+
+        onePath.PushBack(taskObject, allocator);
+    }
+    reactionTime.AddMember("Tasks", onePath, allocator);
+
+    // Save to json
+    std::string fileName = dataDirectory + "/Detail_" + std::to_string(seedNumber) + ".json";
+
+    std::ofstream ofs(fileName.c_str());
+    rapidjson::OStreamWrapper osw(ofs);
+
+    rapidjson::PrettyWriter<rapidjson::OStreamWrapper> writer(osw);
+    writer.SetFormatOptions(rapidjson::kFormatSingleLineArray);
+    dagObject.Accept(writer);
+
+    ofs.close();
+}
+
+
+ResultInformation Simulation::ParseData(int seedNumber) {
+    std::string fileDirectory = this->dataDirectory_ + "/Result.csv";
+    ResultInformation result = {-1, -1, -1};
+
+    std::ifstream resultFile;
+    resultFile.open (fileDirectory.c_str(), std::ios_base::in);
+
+    if (resultFile.fail()) { // Exception
+        throw std::invalid_argument("Result.csv isn't exist in Directory");
+    }
+
+    std::string stringSeedNumber = std::to_string(seedNumber);
+    std::string stringBuffer;
+    while (std::getline(resultFile, stringBuffer, ',')) {
+        if (stringSeedNumber == stringBuffer) {
+            result.seedNumber = std::stoi(stringBuffer);
+
+            std::getline(resultFile, stringBuffer, ',');
+            result.reactionTime = static_cast<long long int>(std::stold(stringBuffer) * 1000.0);
+
+            std::getline(resultFile, stringBuffer, ',');
+            result.dataAge = static_cast<long long int>(std::stold(stringBuffer) * 1000.0);
+
+        } else {
+            std::getline(resultFile, stringBuffer, ','); // waste reactionTime Cols
+            std::getline(resultFile, stringBuffer, ','); // waste dataAge Cols
+        }
+    }
+
+    if (result.seedNumber == -1) { // Can't Read Seed Number
+        throw std::invalid_argument("Can't read seed number in Result.csv");
+    }
 
     resultFile.close();
 }

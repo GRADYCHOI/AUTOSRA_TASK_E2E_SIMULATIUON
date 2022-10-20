@@ -8,6 +8,7 @@ struct RequiredTime {
 };
 
 struct ResultInformation {
+    int seedNumber;
     long long int reactionTime;
     long long int dataAge;
 };
