@@ -2,8 +2,8 @@
 
 
 void Simulation::Initialize() {
+    // Initialize Dag's Informations
     this->dag_->SetStatus();
-
     this->maxCycle_ = this->dag_->GetMaxCycle();
     this->hyperPeriod_ = static_cast<double>(this->dag_->GetHyperPeriod());
     this->numberOfTasks_ = this->dag_->GetNumberOfTasks();
@@ -12,21 +12,6 @@ void Simulation::Initialize() {
     this->numberOfOutputRunnables_ = this->dag_->GetNumberOfOutputRunnables();
     this->utilization_ = this->dag_->GetUtilization();
     this->utilizationBound_ = this->dag_->GetUtilizationBound();
-
-    std::cout << "\033[H\033[2J\033[3J";
-    std::cout << "===========================================================================================================================\n";
-    std::cout << " - Max Cycle                  : " << this->maxCycle_ << "\n";
-    std::cout << " - Hyper Period               : " << this->hyperPeriod_ << "\n";
-    std::cout << " - Number Of Tasks            : " << this->numberOfTasks_ << "\n";
-    std::cout << " - Number Of Runanbles        : " << this->numberOfRunnables_ << "\n";
-    std::cout << " - Number Of Input Runnables  : " << this->numberOfInputRunnables_ << "\n";
-    std::cout << " - Number Of Output Runnables : " << this->numberOfOutputRunnables_ << "\n";
-    std::cout << " - Utilization                : " << this->utilization_ << "\n";
-    std::cout << " - Utilization Bound          : " << this->utilizationBound_ << "\n";
-    std::cout << "===========================================================================================================================" << "\n";
-
-    std::cout << "Select limitation of time (second) : ";
-    std::cin >> this->limitProcessTime_;
 
     // About File
     time_t rawTime;
@@ -44,7 +29,7 @@ void Simulation::Initialize() {
         throw 0;
     }
 
-    // Save Dag & Mapping
+    // Save Dag & Mapping   
     this->dag_->SaveDag(this->dataDirectory_);
     this->dag_->SaveMapping(this->dataDirectory_);
 }
@@ -106,6 +91,10 @@ void Simulation::SetSequenceMatrix() {
 }
 
 void Simulation::Simulate() {
+    int limitProcessTime;
+    std::cout << "Select limitation of time (second) : ";
+    std::cin >> limitProcessTime;
+
     std::cout << "\033[H\033[2J\033[3J";
     std::cout << "Preprocessing...";
     this->SetSequenceMatrix();
@@ -170,23 +159,6 @@ void Simulation::Simulate() {
 }
 
 void Simulation::GetDetailResult() {
-    std::cout << "\033[H\033[2J\033[3J";
-    std::cout << "===========================================================================================================================\n";
-    std::cout << " - Simulation Case            : " << std::setw(10) << (numberOfCase - caseIndex + 1) << " / " << std::setw(10) << numberOfCase << "\n";
-    std::cout << " - Simulation Seed            : " << std::setw(23) << simulationIndex << "\n";
-    std::cout << " - Reaction Time              : " << std::setw(16) << result.reactionTime / 1000 << "." << std::setw(3) << result.reactionTime % 1000 << " ms\n";
-    std::cout << " - Data Age                   : " << std::setw(20) << static_cast<double>(result.dataAge) / 1000.0 << " ms\n";
-    std::cout << " - Max Cycle                  : " << std::setw(17) << this->maxCycle_ << " cycle\n";
-    std::cout << " - Hyper Period               : " << std::setw(20) << static_cast<double>(this->hyperPeriod_) / 1000.0 << " ms\n";
-    std::cout << " - Number Of Tasks            : " << std::setw(23) << this->numberOfTasks_ << "\n";
-    std::cout << " - Number Of Runanbles        : " << std::setw(23) << this->numberOfRunnables_ << "\n";
-    std::cout << " - Number Of Input Runnables  : " << std::setw(23) << this->numberOfInputRunnables_ << "\n";
-    std::cout << " - Number Of Output Runnables : " << std::setw(23) << this->numberOfOutputRunnables_ << "\n";
-    std::cout << " - Utilization                : " << std::setw(23) << this->utilization_ << "\n";
-    std::cout << " - Utilization Bound          : " << std::setw(23) << this->utilizationBound_ << "\n";
-    std::cout << " - Simulation Process Time    : " << std::setw(10) << static_cast<double>(simulationCheckpoint - simulationStart) / CLOCKS_PER_SEC << " / " << std::setw(8) << this->limitProcessTime_ << " s\n";
-    std::cout << "===========================================================================================================================" << std::endl;
-
     // Create Large vector
     this->CreateProcessExecutions();
     this->CreateVisitedWorstCycle();
@@ -204,6 +176,8 @@ void Simulation::GetDetailResult() {
 
     std::clog << "[simulation.cpp] Checkpoint 6\n";
     simulationCheckpoint = std::clock();
+
+    this->DisplayResult(result, simulationStart, simulationCheckpoint);
 }
 
 ResultInformation Simulation::GetResult() {
@@ -217,8 +191,41 @@ ResultInformation Simulation::GetResult() {
     return result;
 }
 
-void Simulation::GetDetail() {
+void Simulation::GetDetailResult() {
 
+}
+
+void Simulation::DisplayDag() {
+    std::cout << "\033[H\033[2J\033[3J";
+    std::cout << "===========================================================================================================================\n";
+    std::cout << " - Max Cycle                  : " << this->maxCycle_ << "\n";
+    std::cout << " - Hyper Period               : " << this->hyperPeriod_ << "\n";
+    std::cout << " - Number Of Tasks            : " << this->numberOfTasks_ << "\n";
+    std::cout << " - Number Of Runanbles        : " << this->numberOfRunnables_ << "\n";
+    std::cout << " - Number Of Input Runnables  : " << this->numberOfInputRunnables_ << "\n";
+    std::cout << " - Number Of Output Runnables : " << this->numberOfOutputRunnables_ << "\n";
+    std::cout << " - Utilization                : " << this->utilization_ << "\n";
+    std::cout << " - Utilization Bound          : " << this->utilizationBound_ << "\n";
+    std::cout << "===========================================================================================================================" << std::endl;
+}
+
+void Simulation::DisplayResult(ResultInformation& result, std::clock_t simulationStart, std::clock_t simulationCheckpoint, int limitProcessTime) {
+    std::cout << "\033[H\033[2J\033[3J";
+    std::cout << "===========================================================================================================================\n";
+    std::cout << " - Simulation Case            : " << std::setw(10) << (numberOfCase - caseIndex + 1) << " / " << std::setw(10) << numberOfCase << "\n";
+    std::cout << " - Simulation Seed            : " << std::setw(23) << simulationIndex << "\n";
+    std::cout << " - Reaction Time              : " << std::setw(16) << result.reactionTime / 1000 << "." << std::setw(3) << result.reactionTime % 1000 << " ms\n";
+    std::cout << " - Data Age                   : " << std::setw(20) << static_cast<double>(result.dataAge) / 1000.0 << " ms\n";
+    std::cout << " - Max Cycle                  : " << std::setw(17) << this->maxCycle_ << " cycle\n";
+    std::cout << " - Hyper Period               : " << std::setw(20) << static_cast<double>(this->hyperPeriod_) / 1000.0 << " ms\n";
+    std::cout << " - Number Of Tasks            : " << std::setw(23) << this->numberOfTasks_ << "\n";
+    std::cout << " - Number Of Runanbles        : " << std::setw(23) << this->numberOfRunnables_ << "\n";
+    std::cout << " - Number Of Input Runnables  : " << std::setw(23) << this->numberOfInputRunnables_ << "\n";
+    std::cout << " - Number Of Output Runnables : " << std::setw(23) << this->numberOfOutputRunnables_ << "\n";
+    std::cout << " - Utilization                : " << std::setw(23) << this->utilization_ << "\n";
+    std::cout << " - Utilization Bound          : " << std::setw(23) << this->utilizationBound_ << "\n";
+    std::cout << " - Simulation Process Time    : " << std::setw(10) << static_cast<double>(simulationCheckpoint - simulationStart) / CLOCKS_PER_SEC << " / " << std::setw(8) << limitProcessTime << " s\n";
+    std::cout << "===========================================================================================================================" << std::endl;
 }
 
 void Simulation::SetProcessExecutions() {
@@ -282,12 +289,8 @@ void Simulation::CreateProcessExecutions() {
     std::vector<bool> visitiedRunnable(this->numberOfRunnables_, false);
 
     for (auto &inputRunnable : this->dag_->GetInputRunnables()) {
-        this->processExecutions_.insert({inputRunnable->id_, std::map<int, std::vector<RequiredTime>>()});
-    }
-
-    for (auto &inputRunnable : this->dag_->GetInputRunnables()) {
         std::fill(visitiedRunnable.begin(), visitiedRunnable.end(), false);
-        auto inputRunnableIter = this->processExecutions_.find(inputRunnable->id_);
+        auto inputRunnableIter = this->processExecutions_.insert({inputRunnable->id_, std::map<int, std::vector<RequiredTime>>()});
 
         this->TraceProcessExecutions(inputRunnableIter, inputRunnable, visitiedRunnable);
     }
@@ -305,18 +308,16 @@ void Simulation::TraceProcessExecutions(auto& inputRunnableIter, const std::shar
             auto outputRunnableIter = inputRunnableIter->second.find(thisRunnable->id_);
 
             if (outputRunnableIter == inputRunnableIter->second.end()) {
-                inputRunnableIter->second.insert({thisRunnable->id_, std::vector<RequiredTime>(this->dag_->GetRunnable(inputRunnableIter->first)->GetMaxCycle(), {-1, -1})});
+                inputRunnableIter->second.insert({thisRunnable->id_, std::vector<RequiredTime>(this->dag_->GetRunnable(inputRunnableIter->first)->GetMaxCycle(), {static_cast<long long int>(-1), static_cast<long long int>(-1)})});
             }
         }
     }
 }
 
 void Simulation::InitializeProcessExecutions() {
-    RequiredTime initializedRquiredTime = {-1, -1};
-
-    for (auto &inputRunnablesPair : this->processExecutions_) {
-        for (auto &outputRunnablesPair : inputRunnablesPair.second) {
-            std::fill(outputRunnablesPair.second.begin(), outputRunnablesPair.second.end(), initializedRquiredTime);
+    for (auto& [inputRunnableId, outputRunnablePair] : this->processExecutions_) {
+        for (auto& [outputRunnableId, executionTime] : outputRunnablePair) {
+            std::fill(executionTime.begin(), executionTime.end(), {static_cast<long long int>(-1), static_cast<long long int>(-1)});
         }
     }
 }
@@ -475,13 +476,13 @@ void Simulation::SaveDataToCSV(ResultInformation& result) {
 void Simulation::SaveAllDataToCSV() {
     std::string fileDirectory = this->dataDirectory_ + "/Result.csv";
 
-    std::sort(this->results_.begin(), this->results_.end(), [](ResultInformation &a, ResultInformation &b) { return a.resultTime < b.resultTime; });
+    std::sort(this->results_.begin(), this->results_.end(), [](ResultInformation &a, ResultInformation &b) { return a.reactionTime < b.reactionTime; });
 
     std::ofstream resultFile;
     resultFile.open (fileDirectory.c_str(), std::ios_base::out | std::ios_base::app);
 
     for (auto &result : this->results_) {
-        resultFile << result.seedNumber << "," << static_cast<double>(result.reactionTime / 1000) + static_cast<double>(result.reactionTime) % 1000.0 << "," << static_cast<double>(result.dataAge / 1000) + static_cast<double>(result.dataAge) % 1000.0 << "\n";
+        resultFile << result.seedNumber << "," << static_cast<double>(result.reactionTime / 1000) + (static_cast<double>(result.reactionTime % 1000) / 1000.0) << "," << static_cast<double>(result.dataAge / 1000) + (static_cast<double>(result.dataAge % 1000) / 1000.0) << "\n";
     }
 
     resultFile.close();

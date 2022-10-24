@@ -57,8 +57,6 @@ private:
     double utilization_;
     double utilizationBound_;
 
-    long long int limitProcessTime_;
-
     // directory of save files
     std::string dataDirectory_;
 
@@ -87,8 +85,10 @@ private:
     long long int GetMaxDataAge();
 
 	ResultInformation GetResult();
+    void GetDetailResult();
 
     void SaveDataToCSV(int simulationIndex, ResultInformation& result);
+    void SaveAllDataToCSV();
 
 public:
     Simulation(std::shared_ptr<DAG> newDag) : dag_(newDag) { Initialize(); }
