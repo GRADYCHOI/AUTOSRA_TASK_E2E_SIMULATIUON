@@ -13,7 +13,14 @@ void Simulation::Initialize() {
     this->utilization_ = this->dag_->GetUtilization();
     this->utilizationBound_ = this->dag_->GetUtilizationBound();
 
-    // About File
+    // Pre-save Dag & Mapping   
+    this->SetDataDirectory();
+    this->MakeDataDirectory();
+    this->dag_->SaveDag(this->dataDirectory_);
+    this->dag_->SaveMapping(this->dataDirectory_);
+}
+
+void Simulation::SetDataDirectory() {
     time_t rawTime;
     struct tm* pTimeInfo;
 
@@ -22,16 +29,14 @@ void Simulation::Initialize() {
 
     std::string simulationTime = std::to_string(pTimeInfo->tm_mon + 1) + "_" + std::to_string(pTimeInfo->tm_mday) + "_" + std::to_string(pTimeInfo->tm_hour) + "_" + std::to_string(pTimeInfo->tm_min);
     this->dataDirectory_ = "../data/T" + std::to_string(this->numberOfTasks_) + "R" + std::to_string(this->numberOfRunnables_) + "U" + std::to_string(this->utilization_) + "W" + simulationTime;
+}
 
+void Simulation::MakeDataDirectory() {
     // make directory for save datas
     if (mkdir(this->dataDirectory_.c_str(), 0776) == -1 && errno != EEXIST) {
         std::cerr << strerror(errno) << " directory create error : " << strerror(errno);
         throw 0;
     }
-
-    // Save Dag & Mapping   
-    this->dag_->SaveDag(this->dataDirectory_);
-    this->dag_->SaveMapping(this->dataDirectory_);
 }
 
 int Simulation::GetNumberOfCase() {
@@ -44,50 +49,6 @@ int Simulation::GetNumberOfCase() {
     }
 
     return numberOfCase;
-}
-
-// TODO : sequenceMatrix에 맞춰 변경 후 task에도 반영시키기
-void Simulation::SetSequence(int caseIndex) {
-    this->visitedPermutationNumber_[caseIndex] = true;
-
-    for (auto runnableMatrix : this->sequenceMatrix_) { // 원본은 바뀌면 안된다.
-        for (auto &runnablesWithSamePrecedence : runnableMatrix) {
-            int permutationNumber = caseIndex % static_cast<int>(runnablesWithSamePrecedence.size());
-            caseIndex /= static_cast<int>(runnablesWithSamePrecedence.size());
-
-            for (int index = 1; index < permutationNumber; index++) {
-                std::next_permutation(runnablesWithSamePrecedence.begin(), runnablesWithSamePrecedence.end(), [](std::shared_ptr<RUNNABLE>& a, std::shared_ptr<RUNNABLE>& b) { return a->id_ < b->id_; });
-            }
-        }
-
-        runnableMatrix[0][0]->GetTask()->SetSequence(runnableMatrix);
-    }
-}
-
-void Simulation::SetSequenceMatrix() {
-    std::vector<std::vector<std::vector<std::shared_ptr<RUNNABLE>>>> sequenceMatrix;
-
-    int taskIndex = 0;
-    for (auto &task : this->dag_->GetTasks()) {
-        int currentPrecedence = -2;
-        task->SortRunnablesByPrecedence();
-        sequenceMatrix.emplace_back(std::vector<std::vector<std::shared_ptr<RUNNABLE>>>());
-
-        int precedenceIndex = -1;
-        for (auto &runnable : task->GetRunnables()) {
-            if (currentPrecedence == runnable->GetPrecedence()) {
-                sequenceMatrix[taskIndex][precedenceIndex].emplace_back(runnable);
-            } else {
-                sequenceMatrix[taskIndex].emplace_back(std::vector<std::shared_ptr<RUNNABLE>>(1, runnable));
-                precedenceIndex += 1;
-            }
-            currentPrecedence = runnable->GetPrecedence();
-        }
-
-        taskIndex += 1;
-    }
-
-    sequenceMatrix.swap(this->sequenceMatrix_);
 }
 
 void Simulation::Simulate() {

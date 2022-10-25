@@ -13,7 +13,7 @@ class RUNNABLE : public std::enable_shared_from_this<RUNNABLE> {
 private:
 	// Dynamic characters
     int status_ = 0; // 0 = input runnable, 1 = output runnable, 2 = middle runnable
-	int precedence_ = -1;
+	long long int precedence_ = -1;
     int maxCycle_ = -1;
 
     // relative Runnables
@@ -21,7 +21,7 @@ private:
     std::vector<std::shared_ptr<RUNNABLE>> outputRunnables_;
     
     // mapped Task
-    std::weak_ptr<TASK> task_; 
+    std::weak_ptr<TASK> task_;
 
     void SetStatus() { status_ = (inputRunnables_.size()) ? ((outputRunnables_.size()) ? 2 : 1) : 0; }
 	
@@ -32,17 +32,17 @@ public:
 	// Inherent characters
     const int id_;
     const int realId_;
-    const int executionTime_; // ns (nano second)
+    const long long int executionTime_; // ns (nano second)
 
     // time line
     std::vector<RequiredTime> executionTimes_;
 
-    RUNNABLE(int id, int realId, int executionTime) : id_(id), realId_(realId), executionTime_((executionTime == 0) ? 1 : executionTime) {}
+    RUNNABLE(int id, int realId, long long int executionTime) : id_(id), realId_(realId), executionTime_((executionTime <= 0) ? 1 : executionTime) {}
     ~RUNNABLE() {}
 
     const int GetId() const { return id_; }
     const int GetRealId() const { return realId_; }
-    const int GetExecutionTime() const { return executionTime_; }
+    const long long int GetExecutionTime() const { return executionTime_; }
     const int GetStatus() const { return status_; }
     const int GetPrecedence() const { return precedence_; }
     const int GetMaxCycle() const { return maxCycle_; }
@@ -55,7 +55,6 @@ public:
     const std::shared_ptr<RUNNABLE> GetInputRunnable(int index) { return inputRunnables_[index].lock(); }
     const std::shared_ptr<RUNNABLE> GetOutputRunnable(int index) const { return outputRunnables_[index]; }
 
-    const std::vector<std::shared_ptr<RUNNABLE>> GetInputRunnables();
     const std::vector<std::shared_ptr<RUNNABLE>>& GetOutputRunnables() const { return outputRunnables_; }
 	
 	void SetPrecedence(const int precedence) { precedence_ = precedence; }

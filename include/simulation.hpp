@@ -33,10 +33,12 @@ private:
     std::shared_ptr<DAG> dag_;
 
     // Command Method Pattern
+    friend class Sequence;
+    std::unique_ptr<Sequence> sequence_;
+
+    // Command Method Pattern
     friend class Communication;
     std::unique_ptr<Communication> communication_;
-
-    std::vector<std::vector<std::vector<std::shared_ptr<RUNNABLE>>>> sequenceMatrix_; // [task][precedence][runnable]
 
     std::vector<bool> visitedPermutationNumber_;
     std::vector<int> visitedWorstCycle_;
@@ -57,7 +59,7 @@ private:
     double utilization_;
     double utilizationBound_;
 
-    // directory of save files
+    // directory of files
     std::string dataDirectory_;
 
     void Initialize();
@@ -81,14 +83,18 @@ private:
     void CreateVisitedWorstCycle();
     void InitializeVisitedWorstCycle();
 	
+	ResultInformation GetResult();
     long long int GetMaxReactionTime();
     long long int GetMaxDataAge();
+    void SaveDataToCSV(ResultInformation& result);
 
-	ResultInformation GetResult();
-    void GetDetailResult();
+    void GetDetailResult(std::map<int, std::vector<ResultInformation>>& results);
+    void GetReactionTimes(std::map<int, std::vector<int>>& reactionTimes);
+    void GetDataAges(std::map<int, std::vector<int>>& dataAges);
+    void SaveAllDataToCSV(std::map<int, std::vector<ResultInformation>>& results);
 
-    void SaveDataToCSV(int simulationIndex, ResultInformation& result);
-    void SaveAllDataToCSV();
+    void SetDataDirectory();
+    void MakeDataDirectory();
 
 public:
     Simulation(std::shared_ptr<DAG> newDag) : dag_(newDag) { Initialize(); }

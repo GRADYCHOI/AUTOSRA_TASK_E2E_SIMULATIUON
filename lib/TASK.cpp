@@ -2,7 +2,7 @@
 
 
 void TASK::SetExecutionTime() {
-	int tmpExecutionTime = 0;
+	long long int tmpExecutionTime = 0;
 	
 	for (auto &runnable : this->runnables_) {
 		tmpExecutionTime += runnable->GetExecutionTime();
@@ -28,33 +28,27 @@ void TASK::SetSequence(const std::vector<std::vector<std::shared_ptr<RUNNABLE>>>
     }
 
     if (static_cast<int>(tmpSequenceMatrix.size()) == this->GetNumberOfRunnables()) {
-        tmpSequenceMatrix.swap(this->runnables_);
+        tmpSequenceMatrix.swap(this->runnablesInSequence_);
+    } else {
+        throw std::invalid_argument("Number of Runnables are not matched with Parameter");
     }
 }
 
-void TASK::AddRunnable(const std::shared_ptr<RUNNABLE> runnable) {
-    bool searchFlag = false;
-    
-    for (auto &existRunnable : this->runnables_) {
-        if (runnable->GetId() == existRunnable->GetId()) {
-            searchFlag = true;
-            break;
-        }
-    }
+void TASK::AddRunnable(const std::shared_ptr<RUNNABLE> runnable) { 
+    auto runnableIter = std::find_if(this->runnables_.begin(), this->runnables_.end(), [&runnable](std::shared_ptr<RUNNABLE> a) { return a->id_ == runnable->id_; });
 
-    if (!searchFlag) {
+    if (runnableIter == this->runnables_.end()) {
         this->runnables_.push_back(runnable);
         runnable->SetTask(this->GetSharedPtr());
-    }
 
-    this->SetExecutionTime();
+        this->SetExecutionTime();
+    }
 }
 
 void TASK::ClearMapping() {
-    std::vector<std::shared_ptr<RUNNABLE>> tmpRunnables;
-    tmpRunnables.swap(this->runnables_);
+    std::vector<std::shared_ptr<RUNNABLE>>().swap(this->runnables_);
 	
     this->priority_ = -1;
-	this->executionTime_ = -1.0;
+	this->executionTime_ = -1;
     this->core_ = -1;
 }

@@ -27,8 +27,6 @@
 #include "rapidjson/ostreamwrapper.h"
 
 
-#define UTILIZATION 0.67
-
 class DAG
 { 
 private:
@@ -78,7 +76,8 @@ private:
     void DoPrecedence() { precedence_->SetPrecedence(runnables_, inputRunnables_, outputRunnables_); }
 
     // Set Status
-    void SetMaxCycle();
+    void SetDagMaxCycle();
+    void SetRunnableMaxCycle();
     void SetHyperPeriod();
     void SetUtilization();
     void SetUtilizationBound();
@@ -93,7 +92,7 @@ public:
     DAG(const std::string dagJsonPath, const std::string mappingJsonPath) { ParseDag(dagJsonPath); ParseMapping(mappingJsonPath); SetStatus(); }
 
     // Destructor
-    ~DAG() { std::clog << "Delete DAG Class" << std::endl; }
+    ~DAG() {}
 
 	// Get Functions
     const std::vector<std::shared_ptr<TASK>>& GetTasks() const { return tasks_; }

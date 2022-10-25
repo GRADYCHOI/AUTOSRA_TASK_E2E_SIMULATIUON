@@ -2,20 +2,13 @@
 
 
 void DAG::SetStatus() {
-    this->SetMaxCycle();
+    this->SetDagMaxCycle();
+    this->SetRunnableMaxCycle();
     this->SetHyperPeriod();
     this->SetUtilization();
-
-    for (auto &task : this->tasks_) {
-        int maxCycle = this->hyperPeriod_ / task->period_;
-
-        for (auto &runnable : task->GetRunnables()) {
-            runnable->SetMaxCycle(maxCycle);
-        }
-    }
 }
 
-void DAG::SetMaxCycle() {
+void DAG::SetDagMaxCycle() {
     int minPeriod = INT_MAX;
 
     for (auto &task : this->tasks_) {
@@ -25,6 +18,16 @@ void DAG::SetMaxCycle() {
     }
 
     this->maxCycle_ = static_cast<int>(this->GetHyperPeriod() / minPeriod);
+}
+
+void DAG::SetRunnableMaxCycle() {
+    for (auto &task : this->tasks_) {
+        int maxCycle = static_cast<int>(this->hyperPeriod_ / static_cast<long long int>(task->period_));
+
+        for (auto &runnable : task->GetRunnables()) {
+            runnable->SetMaxCycle(maxCycle);
+        }
+    }
 }
 
 void DAG::SetHyperPeriod() {
@@ -81,11 +84,12 @@ void DAG::GenerateRunnables() {
     int numberOfRunnables;
 
     std::cout << "\033[H\033[2J\033[3J";
-    std::cout << "[Runnable Generation] Number of Runnables : ";
+    std::cout << "*** How many Runnables to Generate? ***" << "\n";
+    std::cout << "Enter Number : ";
     std::cin >> numberOfRunnables;
 
-    std::cout << "\033[H\033[2J\033[3J";
-    std::cout << "[Runnable Generation] Random Generation Start" << std::endl;
+    std::clog << "\033[H\033[2J\033[3J";
+    std::clog << "[Runnable Generation] Random Generation Start" << std::endl;
 
 	std::clog << "===============================================[Debug : Runnable Generation}===============================================" << std::endl;
     for (int runnableIndex = 0; runnableIndex < numberOfRunnables; runnableIndex++) {
@@ -93,25 +97,20 @@ void DAG::GenerateRunnables() {
         this->runnables_.push_back(runnable);
         std::clog << "[DAG.cpp] Runnable ID : " << runnable->id_ << ", Execution Time : " << runnable->GetExecutionTime() << std::endl;
     }
-	
-	std::clog << "===========================================================================================================================" << std::endl;
 
     this->RandomEdge();
     this->SetInputRunnableList();
     this->SetOutputRunnableList();
 	
-	std::clog << "=================================================[Debug : Runnable Status]=================================================" << std::endl;
-    for (auto &runnable : inputRunnables_) std::clog << "[DAG.cpp] Runnable ID : " << runnable->id_ << ", Status : " << runnable->GetStatus() << std::endl;
-	
-	std::cout << "[Runnable Generation] Random Generation End" << std::endl;
-	
+	std::clog << "[Runnable Generation] Random Generation End" << std::endl;
 	std::clog << "===========================================================================================================================" << std::endl;
 }
 
 void DAG::RandomEdge() { //Runnable edge random generation
     int rate = -1;
 
-    std::cout << "[Runnable Generation] Enter Edge Rate(20~40) : ";
+    std::cout << "*** Enter Runnables' Edge Rate (Recommend : 20 ~ 40 (%)) ***" << "\n";
+    std::cout << "Enter Number : ";
     std::cin >> rate; 
 
     for (auto &runnable : this->runnables_) {
@@ -127,16 +126,17 @@ void DAG::GenerateTasks() {
     int numberOfTasks;
 
     std::cout << "\033[H\033[2J\033[3J";
-    std::cout << "[Task Generation] Number of Tasks : ";
+    std::cout << "*** How many Tasks to Generate? ***" << "\n";
     std::cin >> numberOfTasks;
 
-    std::cout << "\033[H\033[2J\033[3J";
-	std::cout << "[Task Generation] Generation Start" << std::endl;
+    std::clog << "\033[H\033[2J\033[3J";
+	std::clog << "[Task Generation] Generation Start" << std::endl;
+
+	std::clog << "=================================================[Debug : Task Generation}=================================================" << std::endl;
     int tmpPeriod = -1;
     int tmpOffset = -1;
     bool mappableFlag = false;
 
-	std::clog << "=================================================[Debug : Task Generation}=================================================" << std::endl;
     while(!mappableFlag) {
         for (int taskIndex = 0; taskIndex < numberOfTasks; taskIndex++) {
             std::cout << "[Task Generation] " << taskIndex << " -th Task's Period : ";
@@ -159,9 +159,6 @@ void DAG::GenerateTasks() {
         else {
             std::cout << "Increse Tasks Period!" << std::endl;
             this->ClearTaskMapping();
-            std::vector<std::shared_ptr<TASK>>().swap(this->tasks_);
-            std::cout << "\033[H\033[2J\033[3J";
-			std::cout << "[Task Generation] ReGeneration Tasks" << std::endl;
         }
     }
 	
@@ -181,6 +178,8 @@ void DAG::ClearTaskMapping() {
     for (auto &task : this->tasks_) {
         task->ClearMapping();
     }
+
+    std::vector<std::shared_ptr<TASK>>().swap(this->tasks_);
 }
 
 void DAG::SetTaskPriority() {

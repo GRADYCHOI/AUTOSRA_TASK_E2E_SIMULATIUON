@@ -13,9 +13,11 @@ class TASK : public std::enable_shared_from_this<TASK> {
 private:
 	// Dynamic characters
 	int priority_ = -1;
-	int executionTime_ = -1;
+	long long int executionTime_ = -1;
     int core_ = -1;
+
     std::vector<std::shared_ptr<RUNNABLE>> runnables_;
+    std::vector<std::shared_ptr<RUNNABLE>> runnablesInSequence_;
 	
 	void SetExecutionTime();
 
@@ -29,7 +31,7 @@ public:
     ~TASK() {}
     
     const int GetPriority() const { return priority_; }
-    const int GetExecutionTime() { return executionTime_; }
+    const long long int GetExecutionTime() { return executionTime_; }
     const int GetCore() const { return core_; }
 
     const int GetNumberOfRunnables() { return static_cast<int>(runnables_.size()); }
