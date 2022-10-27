@@ -43,6 +43,7 @@ void OutputToInputPrecedence::SetPrecedence(std::vector<std::shared_ptr<RUNNABLE
 
 void InputToOutputPrecedence::CheckPrecedence(const std::shared_ptr<RUNNABLE>& runnable, int precedence) {
 	runnable->SetPrecedence(precedence);
+    precedence++;
 	
 	if (runnable->GetStatus() != 1) {
         for (auto &outputRunnable : runnable->GetOutputRunnables()) {
@@ -111,8 +112,7 @@ void Precedence::SetInputOutputRunnablePrecedence(std::vector<std::shared_ptr<RU
         }
 
         default : {
-            std::cout << "Wrong Precedence Strategy." << std::endl;
-            throw 0;
+            throw std::invalid_argument("Wrong Precedence Strategy.");
         }
     }
 }

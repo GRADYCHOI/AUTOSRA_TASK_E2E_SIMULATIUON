@@ -11,26 +11,13 @@ void TASK::SetExecutionTime() {
 	this->executionTime_ = tmpExecutionTime;
 }
 
-void TASK::SetSequence(const std::vector<std::vector<std::shared_ptr<RUNNABLE>>>& sequenceMatrix) {
-    std::vector<std::shared_ptr<RUNNABLE>> tmpSequenceMatrix;
-    tmpSequenceMatrix.reserve(this->GetNumberOfRunnables());
-
-    for (auto &samePrecedenceRunnables : sequenceMatrix) {
-        for (auto &runnable : samePrecedenceRunnables) {
-            auto destIter = std::find_if(this->runnables_.begin(), this->runnables_.end(), [&runnable](std::shared_ptr<RUNNABLE> a) { return a->id_ == runnable->id_; });
-
-            if (destIter != this->runnables_.end()) {
-                tmpSequenceMatrix.emplace_back(runnable);
-            } else {
-                throw std::invalid_argument("Call invalid Runnable in Task");
-            }
-        }
-    }
-
-    if (static_cast<int>(tmpSequenceMatrix.size()) == this->GetNumberOfRunnables()) {
-        tmpSequenceMatrix.swap(this->runnablesInSequence_);
+void TASK::SetSequence(const std::vector<std::shared_ptr<RUNNABLE>>& sequence) {
+    // 검증 부분이 매우 취약하지만, 속도를 위해 포기함.
+    if (static_cast<int>(sequence.size()) == this->GetNumberOfRunnables()) {
+        std::vector<std::shared_ptr<RUNNABLE>>().swap(this->runnablesInSequence_);
+        this->runnablesInSequence_.assign(sequence.begin(), sequence.end());
     } else {
-        throw std::invalid_argument("Number of Runnables are not matched with Parameter");
+        throw std::invalid_argument("Wrong Runnable in a Task");
     }
 }
 

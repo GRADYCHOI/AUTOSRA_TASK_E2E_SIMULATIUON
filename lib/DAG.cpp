@@ -6,6 +6,7 @@ void DAG::SetStatus() {
     this->SetRunnableMaxCycle();
     this->SetHyperPeriod();
     this->SetUtilization();
+    this->SetUtilizationBound();
 }
 
 void DAG::SetDagMaxCycle() {
@@ -265,7 +266,8 @@ void DAG::SaveMapping(std::string dataDirectory) {
     rapidjson::Value runnableArray(rapidjson::kArrayType);
     rapidjson::Value taskArray(rapidjson::kArrayType);
 
-    dagObject.AddMember("Utilization", this->utilizationBound_, allocator);
+    dagObject.AddMember("Utilization", this->utilization_, allocator);
+    dagObject.AddMember("Utilization Bound", this->utilizationBound_, allocator);
 
     for (auto &task : this->tasks_) {
         rapidjson::Value taskObject(rapidjson::kObjectType);

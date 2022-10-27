@@ -13,7 +13,7 @@ class RUNNABLE : public std::enable_shared_from_this<RUNNABLE> {
 private:
 	// Dynamic characters
     int status_ = 0; // 0 = input runnable, 1 = output runnable, 2 = middle runnable
-	long long int precedence_ = -1;
+	int precedence_ = -1;
     int maxCycle_ = -1;
 
     // relative Runnables
@@ -55,7 +55,8 @@ public:
     const std::shared_ptr<RUNNABLE> GetInputRunnable(int index) { return inputRunnables_[index].lock(); }
     const std::shared_ptr<RUNNABLE> GetOutputRunnable(int index) const { return outputRunnables_[index]; }
 
-    const std::vector<std::shared_ptr<RUNNABLE>>& GetOutputRunnables() const { return outputRunnables_; }
+    const std::vector<std::shared_ptr<RUNNABLE>> GetInputRunnables();
+    const std::vector<std::shared_ptr<RUNNABLE>> GetOutputRunnables() const { return outputRunnables_; }
 	
 	void SetPrecedence(const int precedence) { precedence_ = precedence; }
     void SetMaxCycle(const int maxCycle) { maxCycle_ = maxCycle; }

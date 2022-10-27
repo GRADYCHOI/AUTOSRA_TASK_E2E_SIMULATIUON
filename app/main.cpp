@@ -113,7 +113,7 @@ int main(int argc, char *argv[]) {
 
     std::unique_ptr<Simulation> simulation = std::make_unique<Simulation>(dag);
     std::unique_ptr<Communication> communicationClass = std::make_unique<RunnableImplicit>(dag);
-    simulation->SetCommunication(std::move(communicationClass));
+    simulation->SetCommunicationCommand(std::move(communicationClass));
     
     /*
     std::cout << "\033[H\033[2J\033[3J";

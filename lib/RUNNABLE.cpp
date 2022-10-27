@@ -6,7 +6,7 @@ const std::vector<std::shared_ptr<RUNNABLE>> RUNNABLE::GetInputRunnables() {
     tmpRunnables.reserve(this->GetNumberOfInputRunnables());
 
     for (auto &inputRunnable : this->inputRunnables_) {
-        tmpRunnables.push_back(inputRunnable.lock());
+        tmpRunnables.emplace_back(inputRunnable.lock());
     }
 
     return tmpRunnables;

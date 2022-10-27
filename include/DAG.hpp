@@ -68,11 +68,11 @@ private:
     void SetTaskPriority();
 
     // Mapping
-    void SetMapping(std::unique_ptr<Mapping>& newMapping) { mapping_ = std::move(newMapping); }
+    void SetMappingCommand(std::unique_ptr<Mapping>& newMapping) { mapping_ = std::move(newMapping); }
     void DoMapping() { mapping_->DoMapping(tasks_, runnables_); }
 
     // Precedence
-    void SetPrecedence(std::unique_ptr<Precedence>& newPrecedence) { precedence_ = std::move(newPrecedence); }
+    void SetPrecedenceCommand(std::unique_ptr<Precedence>& newPrecedence) { precedence_ = std::move(newPrecedence); }
     void DoPrecedence() { precedence_->SetPrecedence(runnables_, inputRunnables_, outputRunnables_); }
 
     // Set Status
@@ -88,7 +88,7 @@ private:
 
 public:
     // Constructor
-    DAG(std::unique_ptr<Mapping>& newMapping, std::unique_ptr<Precedence>& newPrecedence) { SetMapping(newMapping); SetPrecedence(newPrecedence); GenerateRunnables(); GenerateTasks(); DoPrecedence(); SetStatus(); }
+    DAG(std::unique_ptr<Mapping>& newMapping, std::unique_ptr<Precedence>& newPrecedence) { SetMappingCommand(newMapping); SetPrecedenceCommand(newPrecedence); GenerateRunnables(); GenerateTasks(); DoPrecedence(); SetStatus(); }
     DAG(const std::string dagJsonPath, const std::string mappingJsonPath) { ParseDag(dagJsonPath); ParseMapping(mappingJsonPath); SetStatus(); }
 
     // Destructor

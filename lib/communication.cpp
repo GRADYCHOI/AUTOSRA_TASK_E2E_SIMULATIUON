@@ -20,9 +20,12 @@ void Communication::InitializeMembers() {
 }
 
 void Communication::InitializeRunnables() {
+    RequiredTime initializedRequiredTime = {-1LL, -1LL};
+
     for (auto &task : this->dag_->GetTasksInPriority()) {
         for (auto &runnable : task->GetRunnables()) {
-            std::vector<RequiredTime>(static_cast<int>(this->dag_->GetHyperPeriod() / task->period_), {-1, -1}).swap(runnable->executionTimes_);
+            std::cout << "MaxCycle : " << runnable->GetMaxCycle() << "\n";
+            std::vector<RequiredTime>(runnable->GetMaxCycle(), initializedRequiredTime).swap(runnable->executionTimes_);
         }
     }
 }
@@ -43,14 +46,14 @@ void RunnableImplicit::SetTimeTable() {
                 int maxCycle = static_cast<int>(this->dag_->GetHyperPeriod() / task->period_);
 
                 for (int cycle = 0; cycle < maxCycle; cycle++) {
-                    int unitIndex = (task->period_ * cycle + task->offset_) / this->unit_;
+                    int unitIndex = ((task->period_ * cycle) + task->offset_) / this->unit_;
 
                     for (auto &runnable : task->GetRunnables()) {                  
                         // Regard time-line
                         while (this->emptyTimes_[unitIndex] == 0) unitIndex++;
 
                         // Set start time
-                        runnable->executionTimes_[cycle].startTime = static_cast<long long int>(unitIndex) * static_cast<long long int>(this->unit_) + static_cast<long long int>(this->unit_ - this->emptyTimes_[unitIndex]);
+                        runnable->executionTimes_[cycle].startTime = (static_cast<long long int>(unitIndex) * static_cast<long long int>(this->unit_)) + static_cast<long long int>(this->unit_ - this->emptyTimes_[unitIndex]);
 
                         int executionTime = runnable->executionTime_;
                         while (executionTime) {
@@ -60,7 +63,7 @@ void RunnableImplicit::SetTimeTable() {
 
                                 unitIndex++;
                             } else {
-                                runnable->executionTimes_[cycle].endTime = static_cast<long long int>(unitIndex) * static_cast<long long int>(this->unit_) + static_cast<long long int>(executionTime);
+                                runnable->executionTimes_[cycle].endTime = (static_cast<long long int>(unitIndex) * static_cast<long long int>(this->unit_)) + static_cast<long long int>(executionTime);
                                 this->emptyTimes_[unitIndex] -= executionTime;
                                 executionTime = 0;
                             }

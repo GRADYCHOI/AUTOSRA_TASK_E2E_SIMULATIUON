@@ -17,9 +17,9 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <errno.h>
-#include <random>
 #include "DAG.hpp"
 #include "communication.hpp"
+#include "sequence.hpp"
 #include "simulation_types.hpp"
 #include "rapidjson/document.h"
 #include "rapidjson/writer.h"
@@ -64,10 +64,13 @@ private:
 
     void Initialize();
 
-    int GetNumberOfCase();
+    void InitializeSequenceCommand();
+    void SetSequenceCommand(std::unique_ptr<Sequence>& sequence) { sequence_ = std::move(sequence); }
 
-    void SetSequence(int caseIndex);
-    void SetSequenceMatrix();
+    void SetSequence(int caseIndex) { sequence_->SetSequence(caseIndex); }
+    int GetNumberOfCase() { return sequence_->GetNumberOfCase(); }
+    int GetNumberOfRemainedCase() { return sequence_->GetNumberOfRemainedCase(); }
+    int GetRandomEmptyIndex() { return sequence_->GetRandomEmptyIndex(); }
 
 	// Strategy Pattern
 	void SetRunnableCommunicationTimes() { communication_->SetTimeTable(); }
@@ -78,20 +81,27 @@ private:
     void InitializeProcessExecutions();
 
     void CreateProcessExecutions();
-    void TraceProcessExecutions(auto& inputRunnableIter, const std::shared_ptr<RUNNABLE>& thisRunnable, std::vector<bool>& visitiedRunnable);
+    void TraceProcessExecutions(auto& inputRunnablePair, const std::shared_ptr<RUNNABLE>& thisRunnable, std::vector<bool>& visitiedRunnable);
 
     void CreateVisitedWorstCycle();
     void InitializeVisitedWorstCycle();
 	
 	ResultInformation GetResult();
-    long long int GetMaxReactionTime();
-    long long int GetMaxDataAge();
-    void SaveDataToCSV(ResultInformation& result);
+    long long int GetWorstReactionTime();
+    long long int GetWorstDataAge();
+    void SaveDataToCSV(ResultInformation& result);  // one save in one iteration
+    void SaveAllDataToCSV();  // save after whole iteration
 
     void GetDetailResult(std::map<int, std::vector<ResultInformation>>& results);
-    void GetReactionTimes(std::map<int, std::vector<int>>& reactionTimes);
-    void GetDataAges(std::map<int, std::vector<int>>& dataAges);
-    void SaveAllDataToCSV(std::map<int, std::vector<ResultInformation>>& results);
+    //void GetReactionTimeList(std::map<int, std::map<int, std::vector<ResultInformation>>>& results);
+    //void GetDataAgeList(std::map<int, std::map<int, std::vector<ResultInformation>>>& results);
+    //void InitializeResultsMap(std::map<int, std::map<int, std::vector<ResultInformation>>>& results, int seedNumber);
+    void SaveDetailToJson();
+
+    //ResultInformation ParseData(int seedNumber);
+
+    void DisplayDag();
+    void DisplayResult(ResultInformation& result, double processTime, int limitProcessTime);
 
     void SetDataDirectory();
     void MakeDataDirectory();
@@ -103,7 +113,7 @@ public:
     void Simulate();
 
     // Strategy Pattern
-	void SetCommunication(std::unique_ptr<Communication>&& newCommunication) { communication_ = std::move(newCommunication); }
+	void SetCommunicationCommand(std::unique_ptr<Communication>&& newCommunication) { communication_ = std::move(newCommunication); }
 
     /*
     rapidjson::Value SaveProcessTime(rapidjson::Document::AllocatorType& allocator);
