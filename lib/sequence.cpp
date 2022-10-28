@@ -46,7 +46,7 @@ void Sequence::SetSequence(int caseIndex) {
         sequence.reserve(task->GetNumberOfRunnables());
 
         for (auto runnablesWithSamePrecedence : runnableMatrix) {
-            int numberOfPermutation = static_cast<int>(std::tgamma(static_cast<int>(runnablesWithSamePrecedence.size())));
+            int numberOfPermutation = static_cast<int>(std::tgamma(static_cast<int>(runnablesWithSamePrecedence.size()) + 1));
             int permutationNumber = caseIndex % numberOfPermutation;
             caseIndex /= numberOfPermutation;
 
