@@ -5,6 +5,8 @@
 #include <cstdlib>
 #include <ctime>
 #include <vector>
+#include <sys/time.h>
+#include <sys/resource.h>
 #include "mapping.hpp"
 #include "communication.hpp"
 #include "DAG.hpp"
@@ -16,6 +18,15 @@
 
 
 int main(int argc, char *argv[]) {
+    struct rlimit rlim;
+    getrlimit( RLIMIT_STACK, &rlim );
+    printf( "Current Stack Size : [%d] Max Current Stack Size : [%d]\n", rlim.rlim_cur, rlim.rlim_max );
+    rlim.rlim_cur = (1024 * 1024 * 100);
+    rlim.rlim_max = (1024 * 1024 * 100);
+    setrlimit( RLIMIT_STACK, &rlim );
+    printf( "Current Stack Size : [%d] Max Current Stack Size : [%d]\n", rlim.rlim_cur, rlim.rlim_max );
+
+
     std::clog.setstate(std::ios_base::failbit);
     srand(time(NULL));
 
@@ -151,4 +162,5 @@ int main(int argc, char *argv[]) {
     simulation->Simulate();
     
     return 0;
+
 }

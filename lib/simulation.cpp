@@ -88,16 +88,11 @@ void Simulation::Simulate() {
     std::cin >> limitProcessTime;
 
     int numberOfCase = this->GetNumberOfCase();
-    std::cout << "ckpt1" << std::endl;
     for (int caseIndex = numberOfCase; caseIndex > 0; caseIndex--) {
-        std::cout << "ckpt2" << std::endl;
         int simulationIndex = this->GetRandomEmptyIndex();
-        std::cout << "ckpt3" << std::endl;
         this->SetSequence(simulationIndex);
-        std::cout << "ckpt4" << std::endl;
 
         ResultInformation result = this->GetResult();
-        std::cout << "ckpt5" << std::endl;
         result.seedNumber = simulationIndex;
         this->results_.emplace_back(result);
 
@@ -120,15 +115,11 @@ void Simulation::Simulate() {
 
 ResultInformation Simulation::GetResult() {
     this->SetRunnableCommunicationTimes();
-    std::cout << "ckpt4-1" << std::endl;
     this->SetProcessExecutions();
-    std::cout << "ckpt4-2" << std::endl;
 
     ResultInformation result;
     result.reactionTime = this->GetWorstReactionTime();
-    std::cout << "ckpt4-3" << std::endl;
     result.dataAge = this->GetWorstDataAge();
-    std::cout << "ckpt4-4" << std::endl;
 
     return result;
 }
@@ -172,7 +163,7 @@ void Simulation::DisplayDag() {
 }
 
 void Simulation::DisplayResult(ResultInformation& result, double processTime, int limitProcessTime) {
-    std::cout << "\033[H\033[2J\033[3J";
+    //std::cout << "\033[H\033[2J\033[3J";
     std::cout << "===========================================================================================================================\n";
     std::cout << " - Simulation Case            : " << std::setw(10) << (this->GetNumberOfCase() - this->GetNumberOfRemainedCase()) << " / " << std::setw(10) << this->GetNumberOfCase() << "\n";
     std::cout << " - Simulation Seed            : " << std::setw(23) << result.seedNumber << "\n";
@@ -199,11 +190,9 @@ void Simulation::SetProcessExecutions() {
         auto inputRunnableIter = this->processExecutions_.find(inputRunnable->id_);
         if (inputRunnableIter != this->processExecutions_.end()) {
             int maxCycle = inputRunnable->GetMaxCycle();
-            std::cout << "ckpt4-1-3" << std::endl;
 
             for (int cycle = 0; cycle < maxCycle; cycle++) {
                 this->TraceTime(inputRunnableIter, cycle, inputRunnable, cycle);
-                std::cout << "ckpt4-1-4" << std::endl;
             }
         } else {
             throw std::invalid_argument("[SetProcessExecutions] input Runnable is wrong");
@@ -217,12 +206,10 @@ void Simulation::TraceTime(auto& inputRunnableIter, int inputCycle, const std::s
 
         if (thisRunnable->GetStatus() != 1) {
             for (auto &outputRunnable : thisRunnable->GetOutputRunnables()) {
-                std::cout << "ckpt4-1-3-1" << std::endl;
                 int thisBaseCycle = thisCycle % thisRunnable->GetMaxCycle();
                 int thisHyperPeriodCount = thisCycle / thisRunnable->GetMaxCycle();
                 int outputMaxCycle = outputRunnable->GetMaxCycle();
                 int outputCycle = (this->visitedWorstCycle_[outputRunnable->id_] != -1) ? this->visitedWorstCycle_[outputRunnable->id_] : 0;
-                std::cout << "ckpt4-1-3-2" << std::endl;
 
                 while (thisRunnable->executionTimes_[thisBaseCycle].endTime >= outputRunnable->executionTimes_[outputCycle % outputMaxCycle].startTime) {
                     ++outputCycle;
@@ -231,31 +218,25 @@ void Simulation::TraceTime(auto& inputRunnableIter, int inputCycle, const std::s
                         break;
                     }
                 }
-                std::cout << "ckpt4-1-3-3" << std::endl;
 
                 this->TraceTime(inputRunnableIter, inputCycle, outputRunnable, outputCycle);
             }
         } else {
-            std::cout << "ckpt4-1-3-4" << std::endl;
             int thisMaxCycle = thisRunnable->GetMaxCycle();
             auto outputRunnableIter = inputRunnableIter->second.find(thisRunnable->id_);
 
             outputRunnableIter->second[inputCycle].startTime = this->dag_->GetRunnable(inputRunnableIter->first)->executionTimes_[inputCycle].startTime;
             outputRunnableIter->second[inputCycle].endTime = thisRunnable->executionTimes_[thisCycle % thisMaxCycle].endTime + (this->hyperPeriod_ * static_cast<long long int>(thisCycle / thisMaxCycle));
-            std::cout << "ckpt4-1-3-5" << std::endl;
         }
     } else {
         for (auto &outputRunnablePair : inputRunnableIter->second) {
-            std::cout << "ckpt4-1-3-6" << std::endl;
             if (inputCycle > 0) {
                 if (outputRunnablePair.second[inputCycle].endTime < outputRunnablePair.second[inputCycle - 1].endTime) {
                     outputRunnablePair.second[inputCycle].startTime = this->dag_->GetRunnable(inputRunnableIter->first)->executionTimes_[inputCycle].startTime;
                     outputRunnablePair.second[inputCycle].endTime = outputRunnablePair.second[inputCycle - 1].endTime;
                 }
             }
-            std::cout << "ckpt4-1-3-7" << std::endl;
         }
-        std::cout << "ckpt4-1-3-8" << std::endl;
     }
 }
 
@@ -292,14 +273,10 @@ void Simulation::TraceProcessExecutions(auto& inputRunnableIter, const std::shar
 
 void Simulation::InitializeProcessExecutions() {
     RequiredTime initializedRequiredTime = {-1LL, -1LL};
-    std::cout << "ckpt 4-0-1" << "\n";
 
     for (auto& inputRunnablePair : this->processExecutions_) {
-        std::cout << "ckpt 4-0-2" << "\n";
         for (auto& outputRunnablePair : inputRunnablePair.second) {
-            std::cout << "ckpt 4-0-3" << "\n";
             std::fill(outputRunnablePair.second.begin(), outputRunnablePair.second.end(), initializedRequiredTime);
-            std::cout << "ckpt 4-0-4" << "\n";
         }
     }
 }

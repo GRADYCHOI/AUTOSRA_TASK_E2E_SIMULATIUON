@@ -38,32 +38,32 @@ int Sequence::GetRandomEmptyIndex() {
 }
 
 void Sequence::SetSequence(int caseIndex) {
-    std::cout << "ckpt3-1\n";
+    std::cout << "Case Index : " << caseIndex << "\n";
     this->visitedPermutationNumber_[caseIndex] = true;
 
-    std::cout << "ckpt3-2\n";
     for (auto& [task, runnableMatrix] : this->sequenceMatrix_) { // 원본은 바뀌면 안된다.
         std::vector<std::shared_ptr<RUNNABLE>> sequence;
         sequence.reserve(task->GetNumberOfRunnables());
 
         for (auto runnablesWithSamePrecedence : runnableMatrix) {
-            std::cout << "ckpt3-3\n";
             int numberOfPermutation = static_cast<int>(std::tgamma(static_cast<int>(runnablesWithSamePrecedence.size())));
             int permutationNumber = caseIndex % numberOfPermutation;
             caseIndex /= numberOfPermutation;
 
-            std::cout << "ckpt3-4\n";
-            for (int index = 1; index < permutationNumber; index++) {
+            for (int index = 0; index < permutationNumber; index++) {
                 std::next_permutation(runnablesWithSamePrecedence.begin(), runnablesWithSamePrecedence.end(), [](std::shared_ptr<RUNNABLE>& a, std::shared_ptr<RUNNABLE>& b) { return a->id_ < b->id_; });
             }
 
-            std::cout << "ckpt3-5\n";
             sequence.insert(sequence.end(), runnablesWithSamePrecedence.begin(), runnablesWithSamePrecedence.end());
-            std::cout << "ckpt3-6\n";
         }
 
-        std::cout << "ckpt3-7\n";
         task->SetSequence(sequence);
+
+        std::cout << "Task " << task->id_ << " : ";
+        for (auto &runnable : sequence) {
+            std::cout << runnable->id_ << " -> ";
+        }
+        std::cout << "\n";
     }
 
     // Reducing remained case count

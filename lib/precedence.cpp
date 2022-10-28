@@ -68,12 +68,12 @@ void OutputToInputPrecedence::CheckPrecedence(const std::shared_ptr<RUNNABLE>& r
 }
 
 void Precedence::SetInputOutputRunnablePrecedence(std::vector<std::shared_ptr<RUNNABLE>>& inputRunnables, std::vector<std::shared_ptr<RUNNABLE>>& outputRunnables) {
-    int maxPrecedence = INT8_MIN;
+    int maxPrecedence = -1;
     for (auto &inputRunnable : inputRunnables) {
         maxPrecedence = (maxPrecedence > inputRunnable->GetPrecedence()) ? maxPrecedence : inputRunnable->GetPrecedence();
     }
 
-    maxPrecedence = INT8_MIN;
+    maxPrecedence = (maxPrecedence > -1) ? maxPrecedence : -1;
     for (auto &outputRunnable : outputRunnables) {
         maxPrecedence = (maxPrecedence > outputRunnable->GetPrecedence()) ? maxPrecedence : outputRunnable->GetPrecedence();
     }

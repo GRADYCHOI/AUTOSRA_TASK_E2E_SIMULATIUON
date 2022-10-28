@@ -46,9 +46,9 @@ void RunnableImplicit::SetTimeTable() {
                 int maxCycle = static_cast<int>(this->dag_->GetHyperPeriod() / task->period_);
 
                 for (int cycle = 0; cycle < maxCycle; cycle++) {
-                    int unitIndex = ((task->period_ * cycle) + task->offset_) / this->unit_;
+                    int unitIndex = static_cast<int>(((static_cast<long long int>(task->period_) * static_cast<long long int>(cycle)) + static_cast<long long int>(task->offset_)) / static_cast<long long int>(this->unit_));
 
-                    for (auto &runnable : task->GetRunnables()) {                  
+                    for (auto &runnable : task->GetRunnablesInSequence()) {                  
                         // Regard time-line
                         while (this->emptyTimes_[unitIndex] == 0) unitIndex++;
 
