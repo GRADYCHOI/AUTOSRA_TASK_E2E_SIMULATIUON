@@ -40,9 +40,12 @@ public:
     RUNNABLE(int id, int realId, long long int executionTime) : id_(id), realId_(realId), executionTime_((executionTime <= 0) ? 1 : executionTime) {}
     ~RUNNABLE() {}
 
+    // Const Values
     const int GetId() const { return id_; }
     const int GetRealId() const { return realId_; }
     const long long int GetExecutionTime() const { return executionTime_; }
+
+    // Dynamic Values
     const int GetStatus() const { return status_; }
     const int GetPrecedence() const { return precedence_; }
     const int GetMaxCycle() const { return maxCycle_; }

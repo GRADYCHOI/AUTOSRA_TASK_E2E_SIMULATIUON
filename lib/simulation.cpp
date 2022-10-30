@@ -38,8 +38,8 @@ void Simulation::SetDataDirectory() {
 void Simulation::MakeDataDirectory() {
     // make directory for save datas
     if (mkdir(this->dataDirectory_.c_str(), 0776) == -1 && errno != EEXIST) {
-        std::cerr << strerror(errno) << " directory create error : " << strerror(errno);
-        throw 0;
+        std::cerr << "[AUTOSAR Simulator] directory create error : " << strerror(errno) << std::endl;
+        throw std::invalid_argument("'data' directory is not exist");
     }
 }
 
@@ -76,7 +76,7 @@ void Simulation::InitializeSequenceCommand() {
 void Simulation::Simulate() {
     // For Reduce malloc delay
     this->CreateProcessExecutions();
-    this->CreateVisitedWorstCycle();
+    this->CreateVisitedWorstCycleList();
 
     // Random Number Generator
     std::clock_t simulationStart = std::clock();
@@ -115,7 +115,7 @@ void Simulation::Simulate() {
 
 ResultInformation Simulation::GetResult() {
     this->SetRunnableCommunicationTimes();
-    this->SetProcessExecutions();
+    this->SetProcessExecutionsList();
 
     ResultInformation result;
     result.reactionTime = this->GetWorstReactionTime();
@@ -181,6 +181,149 @@ void Simulation::DisplayResult(ResultInformation& result, double processTime, in
     std::cout << "===========================================================================================================================" << std::endl;
 }
 
+
+
+void Simulation::CreateProcessExecutions() {
+    std::map<int, std::map<int, std::vector<RequiredTime>>>().swap(this->processExecutions_);
+
+    std::vector<bool> visitiedRunnable(this->numberOfRunnables_, false);
+
+    for (auto &inputRunnable : this->dag_->GetInputRunnables()) {
+        std::fill(visitiedRunnable.begin(), visitiedRunnable.end(), false);
+        auto inputRunnableIterPair = this->processExecutions_.insert({inputRunnable->id_, std::map<int, std::vector<RequiredTime>>()});
+
+        this->TraceProcessExecutions(inputRunnableIterPair.first, inputRunnable, visitiedRunnable);
+    }
+}
+
+void Simulation::TraceProcessExecutions(auto& inputRunnableIter, const std::shared_ptr<RUNNABLE>& thisRunnable, std::vector<bool>& visitiedRunnable) {
+    if (!visitiedRunnable[thisRunnable->id_]) {
+        visitiedRunnable[thisRunnable->id_] = true;
+
+        if (thisRunnable->GetStatus() != 1) {
+            for (auto &outputRunnable : thisRunnable->GetOutputRunnables()) {
+                this->TraceProcessExecutions(inputRunnableIter, outputRunnable, visitiedRunnable);
+            }
+        } else {
+            auto outputRunnableIter = inputRunnableIter->second.find(thisRunnable->id_);
+
+            if (outputRunnableIter == inputRunnableIter->second.end()) {
+                inputRunnableIter->second.insert({thisRunnable->id_, std::vector<RequiredTime>(this->dag_->GetRunnable(inputRunnableIter->first)->GetMaxCycle(), {-1LL, -1LL})});
+            }
+        }
+    }
+}
+
+void Simulation::InitializeProcessExecutions() {
+    RequiredTime initializedRequiredTime = {-1LL, -1LL};
+
+    for (auto& inputRunnablePair : this->processExecutions_) {
+        for (auto& outputRunnablePair : inputRunnablePair.second) {
+            std::fill(outputRunnablePair.second.begin(), outputRunnablePair.second.end(), initializedRequiredTime);
+        }
+    }
+}
+
+// ################################ Trace Execution Time : Non-Recursion Version #################################
+
+void Simulation::CreateVisitedWorstCycleList() {
+    std::vector<VisitedInformation>().swap(this->visitedWorstCycleList_);
+    this->visitedWorstCycleList_.reserve(this->numberOfRunnables_);
+    
+    for (auto &runnable : this->dag_->GetRunnables()) {
+        this->visitedWorstCycleList_.push_back({runnable, -1, -1, -1LL, -1LL});
+    }
+}
+
+void Simulation::InitializeVisitedWorstCycleList() {
+    for (auto &visitedInformation : this->visitedWorstCycleList_) {
+        visitedInformation.inputRunnableCycle = -1;
+        visitedInformation.worstCycle = -1;
+        visitedInformation.startTime = -1LL;
+        visitedInformation.endTime = -1LL;
+    }
+}
+
+void Simulation::SetProcessExecutionsList() {
+    this->InitializeProcessExecutions();
+
+    for (auto &inputRunnable : this->dag_->GetInputRunnables()) {
+        this->InitializeVisitedWorstCycleList();
+
+        auto inputRunnableIter = this->processExecutions_.find(inputRunnable->id_);
+        if (inputRunnableIter != this->processExecutions_.end()) {
+            int maxCycle = inputRunnable->GetMaxCycle();
+
+            for (int cycle = 0; cycle < maxCycle; cycle++) {
+                this->TraceTimeList(inputRunnable, cycle);
+                this->SetExecutionList(inputRunnableIter, cycle);
+            }
+        } else {
+            throw std::invalid_argument("[SetProcessExecutions] input Runnable is wrong");
+        }
+    }
+}
+
+void Simulation::TraceTimeList(std::shared_ptr<RUNNABLE> inputRunnable, int inputRunnableCycle) {
+    this->visitedWorstCycleList_[inputRunnable->id_].inputRunnableCycle = inputRunnableCycle;
+    this->visitedWorstCycleList_[inputRunnable->id_].worstCycle = inputRunnableCycle;
+    this->visitedWorstCycleList_[inputRunnable->id_].startTime = this->visitedWorstCycleList_[inputRunnable->id_].runnable->executionTimes_[inputRunnableCycle].startTime;
+    this->visitedWorstCycleList_[inputRunnable->id_].endTime = this->visitedWorstCycleList_[inputRunnable->id_].runnable->executionTimes_[inputRunnableCycle].endTime;
+
+    // Check all runnables
+    for (int runnableIndex = 0; runnableIndex < this->numberOfRunnables_; runnableIndex++) {
+
+        // Check runnable is reacted
+        if (this->visitedWorstCycleList_[runnableIndex].inputRunnableCycle == inputRunnableCycle) {
+            
+            // Check runnable is input or middle runnable
+            if (this->visitedWorstCycleList_[runnableIndex].runnable->GetStatus() != 1) {
+                long long int thisEndTime = this->visitedWorstCycleList_[runnableIndex].endTime;
+
+                // Check next runnable
+                for (auto &outputRunnable : this->visitedWorstCycleList_[runnableIndex].runnable->GetOutputRunnables()) {
+
+                    // Re-write cycle count
+                    if (thisEndTime > this->visitedWorstCycleList_[outputRunnable->id_].startTime) {
+                        // Set input runnable's cycle
+                        this->visitedWorstCycleList_[outputRunnable->id_].inputRunnableCycle = inputRunnableCycle;
+
+                        // Set worst cycle & start time
+                        do {
+                            this->visitedWorstCycleList_[outputRunnable->id_].worstCycle++;
+                            this->visitedWorstCycleList_[outputRunnable->id_].startTime = this->visitedWorstCycleList_[outputRunnable->id_].runnable->executionTimes_[this->visitedWorstCycleList_[outputRunnable->id_].worstCycle % this->visitedWorstCycleList_[outputRunnable->id_].runnable->GetMaxCycle()].startTime + (this->hyperPeriod_ * static_cast<long long int>((this->visitedWorstCycleList_[outputRunnable->id_].worstCycle / this->visitedWorstCycleList_[outputRunnable->id_].runnable->GetMaxCycle())));
+                        } while (thisEndTime > this->visitedWorstCycleList_[outputRunnable->id_].startTime);
+
+                        // Set end time
+                        this->visitedWorstCycleList_[outputRunnable->id_].endTime = this->visitedWorstCycleList_[outputRunnable->id_].runnable->executionTimes_[this->visitedWorstCycleList_[outputRunnable->id_].worstCycle % this->visitedWorstCycleList_[outputRunnable->id_].runnable->GetMaxCycle()].endTime + (this->hyperPeriod_ * static_cast<long long int>((this->visitedWorstCycleList_[outputRunnable->id_].worstCycle / this->visitedWorstCycleList_[outputRunnable->id_].runnable->GetMaxCycle())));
+                    }
+                }
+            } else {
+                continue;                
+            }
+        } else {
+            continue;
+        }
+    }
+}
+
+void Simulation::SetExecutionList(auto& inputRunnableIter, int inputRunnableCycle) {
+    for (auto &outputRunnablePair : inputRunnableIter->second) {
+        outputRunnablePair.second[inputRunnableCycle].startTime = this->visitedWorstCycleList_[inputRunnableIter->first].startTime;
+        outputRunnablePair.second[inputRunnableCycle].endTime = this->visitedWorstCycleList_[outputRunnablePair.first].endTime;
+    }
+}
+
+// ################################ Trace Execution Time : Recursion Version #################################
+
+void Simulation::CreateVisitedWorstCycle() {
+    std::vector<int>(this->numberOfRunnables_, -1).swap(this->visitedWorstCycle_);
+}
+
+void Simulation::InitializeVisitedWorstCycle() {
+    std::fill(this->visitedWorstCycle_.begin(), this->visitedWorstCycle_.end(), -1);
+}
+
 void Simulation::SetProcessExecutions() {
     this->InitializeProcessExecutions();
 
@@ -240,54 +383,7 @@ void Simulation::TraceTime(auto& inputRunnableIter, int inputCycle, const std::s
     }
 }
 
-void Simulation::CreateProcessExecutions() {
-    std::map<int, std::map<int, std::vector<RequiredTime>>>().swap(this->processExecutions_);
-
-    std::vector<bool> visitiedRunnable(this->numberOfRunnables_, false);
-
-    for (auto &inputRunnable : this->dag_->GetInputRunnables()) {
-        std::fill(visitiedRunnable.begin(), visitiedRunnable.end(), false);
-        auto inputRunnableIterPair = this->processExecutions_.insert({inputRunnable->id_, std::map<int, std::vector<RequiredTime>>()});
-
-        this->TraceProcessExecutions(inputRunnableIterPair.first, inputRunnable, visitiedRunnable);
-    }
-}
-
-void Simulation::TraceProcessExecutions(auto& inputRunnableIter, const std::shared_ptr<RUNNABLE>& thisRunnable, std::vector<bool>& visitiedRunnable) {
-    if (!visitiedRunnable[thisRunnable->id_]) {
-        visitiedRunnable[thisRunnable->id_] = true;
-
-        if (thisRunnable->GetStatus() != 1) {
-            for (auto &outputRunnable : thisRunnable->GetOutputRunnables()) {
-                this->TraceProcessExecutions(inputRunnableIter, outputRunnable, visitiedRunnable);
-            }
-        } else {
-            auto outputRunnableIter = inputRunnableIter->second.find(thisRunnable->id_);
-
-            if (outputRunnableIter == inputRunnableIter->second.end()) {
-                inputRunnableIter->second.insert({thisRunnable->id_, std::vector<RequiredTime>(this->dag_->GetRunnable(inputRunnableIter->first)->GetMaxCycle(), {-1LL, -1LL})});
-            }
-        }
-    }
-}
-
-void Simulation::InitializeProcessExecutions() {
-    RequiredTime initializedRequiredTime = {-1LL, -1LL};
-
-    for (auto& inputRunnablePair : this->processExecutions_) {
-        for (auto& outputRunnablePair : inputRunnablePair.second) {
-            std::fill(outputRunnablePair.second.begin(), outputRunnablePair.second.end(), initializedRequiredTime);
-        }
-    }
-}
-
-void Simulation::CreateVisitedWorstCycle() {
-    std::vector<int>(this->numberOfRunnables_, -1).swap(this->visitedWorstCycle_);
-}
-
-void Simulation::InitializeVisitedWorstCycle() {
-    std::fill(this->visitedWorstCycle_.begin(), this->visitedWorstCycle_.end(), -1);
-}
+// ################################ Get Result #################################
 
 long long int Simulation::GetWorstReactionTime() {
     long long int tmpEndTime = -1;
@@ -423,6 +519,8 @@ void Simulation::GetDataAgeList(std::map<int, std::map<int, std::vector<ResultIn
     }
 }
 */
+
+// ################################ Save Data #################################
 
 void Simulation::SaveDataToCSV(ResultInformation& result) {
     std::string fileDirectory = this->dataDirectory_ + "/Result.csv";

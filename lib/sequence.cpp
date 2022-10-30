@@ -38,7 +38,6 @@ int Sequence::GetRandomEmptyIndex() {
 }
 
 void Sequence::SetSequence(int caseIndex) {
-    std::cout << "Case Index : " << caseIndex << "\n";
     this->visitedPermutationNumber_[caseIndex] = true;
 
     for (auto& [task, runnableMatrix] : this->sequenceMatrix_) { // 원본은 바뀌면 안된다.
@@ -58,12 +57,6 @@ void Sequence::SetSequence(int caseIndex) {
         }
 
         task->SetSequence(sequence);
-
-        std::cout << "Task " << task->id_ << " : ";
-        for (auto &runnable : sequence) {
-            std::cout << runnable->id_ << " -> ";
-        }
-        std::cout << "\n";
     }
 
     // Reducing remained case count

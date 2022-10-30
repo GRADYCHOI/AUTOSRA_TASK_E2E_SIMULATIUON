@@ -41,6 +41,7 @@ private:
     std::unique_ptr<Communication> communication_;
 
     std::vector<bool> visitedPermutationNumber_;
+    std::vector<VisitedInformation> visitedWorstCycleList_;
     std::vector<int> visitedWorstCycle_;
 
     // processExecutions
@@ -74,6 +75,12 @@ private:
 
 	// Strategy Pattern
 	void SetRunnableCommunicationTimes() { communication_->SetTimeTable(); }
+
+    void CreateVisitedWorstCycleList();
+    void InitializeVisitedWorstCycleList();
+    void SetProcessExecutionsList();
+    void TraceTimeList(std::shared_ptr<RUNNABLE> inputRunnable, int inputRunnableCycle);
+    void SetExecutionList(auto& inputRunnableIter, int inputRunnableCycle);
 
     void SetProcessExecutions();
     void TraceTime(auto& inputRunnableIter, int inputCycle, const std::shared_ptr<RUNNABLE>& thisRunnable, int thisCycle);

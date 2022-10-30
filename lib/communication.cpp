@@ -24,7 +24,6 @@ void Communication::InitializeRunnables() {
 
     for (auto &task : this->dag_->GetTasksInPriority()) {
         for (auto &runnable : task->GetRunnables()) {
-            std::cout << "MaxCycle : " << runnable->GetMaxCycle() << "\n";
             std::vector<RequiredTime>(runnable->GetMaxCycle(), initializedRequiredTime).swap(runnable->executionTimes_);
         }
     }
@@ -76,7 +75,68 @@ void RunnableImplicit::SetTimeTable() {
 }
 
 void TaskImplicit::SetTimeTable() {
+    // Seperate time-line by core
+    for (int coreIndex = 0; coreIndex < this->numberOfCores_; coreIndex++) {
+        // Reset time-line vector
+        this->InitializeEmptyTimes();
+
+        // Set Time-Table
+        for (auto &task : this->dag_->GetTasksInPriority()) {
+            if (task->GetCore() == coreIndex) {
+                int maxCycle = static_cast<int>(this->dag_->GetHyperPeriod() / task->period_);
+
+                for (int cycle = 0; cycle < maxCycle; cycle++) {
+                    int unitIndex = static_cast<int>(((static_cast<long long int>(task->period_) * static_cast<long long int>(cycle)) + static_cast<long long int>(task->offset_)) / static_cast<long long int>(this->unit_));
+
+                    // Regard time-line
+                    while (this->emptyTimes_[unitIndex] == 0) unitIndex++;
+
+                    // Set start time
+                    for (auto &runnable : task->GetRunnablesInSequence()) {    
+                        runnable->executionTimes_[cycle].startTime = (static_cast<long long int>(unitIndex) * static_cast<long long int>(this->unit_)) + static_cast<long long int>(this->unit_ - this->emptyTimes_[unitIndex]);
+                    }
+
+                    // Set end time
+                    long long int executionTime = task->GetExecutionTime();
+                    while (executionTime) {
+                        if (this->emptyTimes_[unitIndex] < executionTime) {
+                            executionTime -= this->emptyTimes_[unitIndex];
+                            this->emptyTimes_[unitIndex] = 0;
+
+                            unitIndex++;
+                        } else {
+                            for (auto &runnable : task->GetRunnablesInSequence()) {  
+                                runnable->executionTimes_[cycle].endTime = (static_cast<long long int>(unitIndex) * static_cast<long long int>(this->unit_)) + static_cast<long long int>(executionTime);
+                            }
+                            this->emptyTimes_[unitIndex] -= executionTime;
+                            executionTime = 0;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 void LET::SetTimeTable() {
+    // Seperate time-line by core
+    for (int coreIndex = 0; coreIndex < this->numberOfCores_; coreIndex++) {
+        // Reset time-line vector
+        this->InitializeEmptyTimes();
+
+        // Set Time-Table
+        for (auto &task : this->dag_->GetTasksInPriority()) {
+            if (task->GetCore() == coreIndex) {
+                int maxCycle = static_cast<int>(this->dag_->GetHyperPeriod() / task->period_);
+
+                for (int cycle = 0; cycle < maxCycle; cycle++) {
+                    // Set start & end time
+                    for (auto &runnable : task->GetRunnablesInSequence()) {    
+                        runnable->executionTimes_[cycle].startTime = (static_cast<long long int>(task->period_) * static_cast<long long int>(cycle)) + static_cast<long long int>(task->offset_);
+                        runnable->executionTimes_[cycle].startTime = (static_cast<long long int>(task->period_) * static_cast<long long int>(cycle + 1)) + static_cast<long long int>(task->offset_);
+                    }
+                }
+            }
+        }
+    }
 }

@@ -18,6 +18,7 @@
 
 
 int main(int argc, char *argv[]) {
+    /* Resize Stack
     struct rlimit rlim;
     getrlimit( RLIMIT_STACK, &rlim );
     printf( "Current Stack Size : [%d] Max Current Stack Size : [%d]\n", rlim.rlim_cur, rlim.rlim_max );
@@ -25,6 +26,7 @@ int main(int argc, char *argv[]) {
     rlim.rlim_max = (1024 * 1024 * 100);
     setrlimit( RLIMIT_STACK, &rlim );
     printf( "Current Stack Size : [%d] Max Current Stack Size : [%d]\n", rlim.rlim_cur, rlim.rlim_max );
+    */
 
 
     std::clog.setstate(std::ios_base::failbit);

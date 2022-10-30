@@ -24,12 +24,18 @@ private:
 public:
 	// Inherent characters
     const int id_;
-    const int period_;
-    const int offset_;
+    const long long int period_;
+    const long long int offset_;
 
     TASK(int id, int period, int offset) : id_(id), period_(period), offset_(offset) {}
     ~TASK() {}
+
+    // Const Values
+    const int GetId() const { return id_; }
+    const long long int GetPeriod() const { return period_; }
+    const long long int GetOffset() const { return offset_; }
     
+    // Dynamic Values
     const int GetPriority() const { return priority_; }
     const long long int GetExecutionTime() { return executionTime_; }
     const int GetCore() const { return core_; }
