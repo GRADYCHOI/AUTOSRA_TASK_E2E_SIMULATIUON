@@ -29,7 +29,7 @@
 
 
 class Simulation {
-private:
+protected:
     std::shared_ptr<DAG> dag_;
 
     // Command Method Pattern
@@ -99,14 +99,6 @@ private:
     void SaveDataToCSV(ResultInformation& result);  // one save in one iteration
     void SaveAllDataToCSV();  // save after whole iteration
 
-    void GetDetailResult(std::map<int, std::vector<ResultInformation>>& results);
-    //void GetReactionTimeList(std::map<int, std::map<int, std::vector<ResultInformation>>>& results);
-    //void GetDataAgeList(std::map<int, std::map<int, std::vector<ResultInformation>>>& results);
-    //void InitializeResultsMap(std::map<int, std::map<int, std::vector<ResultInformation>>>& results, int seedNumber);
-    void SaveDetailToJson();
-
-    //ResultInformation ParseData(int seedNumber);
-
     void DisplayDag();
     void DisplayResult(ResultInformation& result, double processTime, int limitProcessTime);
 
@@ -123,7 +115,6 @@ public:
 	void SetCommunicationCommand(std::unique_ptr<Communication>&& newCommunication) { communication_ = std::move(newCommunication); }
 
     /*
-    rapidjson::Value SaveProcessTime(rapidjson::Document::AllocatorType& allocator);
     rapidjson::Value SaveReactionTime(rapidjson::Document::AllocatorType& allocator);
     rapidjson::Value SaveDataAge(rapidjson::Document::AllocatorType& allocator);
     */

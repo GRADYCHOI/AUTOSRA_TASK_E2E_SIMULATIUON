@@ -6,7 +6,6 @@
 #include <ctime>
 #include <vector>
 #include <sys/time.h>
-#include <sys/resource.h>
 #include "mapping.hpp"
 #include "communication.hpp"
 #include "DAG.hpp"
@@ -18,24 +17,15 @@
 
 
 int main(int argc, char *argv[]) {
-    /* Resize Stack
-    struct rlimit rlim;
-    getrlimit( RLIMIT_STACK, &rlim );
-    printf( "Current Stack Size : [%d] Max Current Stack Size : [%d]\n", rlim.rlim_cur, rlim.rlim_max );
-    rlim.rlim_cur = (1024 * 1024 * 100);
-    rlim.rlim_max = (1024 * 1024 * 100);
-    setrlimit( RLIMIT_STACK, &rlim );
-    printf( "Current Stack Size : [%d] Max Current Stack Size : [%d]\n", rlim.rlim_cur, rlim.rlim_max );
-    */
-
-
     std::clog.setstate(std::ios_base::failbit);
     srand(time(NULL));
 
     std::shared_ptr<DAG> dag;
-    if (argc > 2) { // DAG.json + Mapping.json
+    if (argc > 2) {
+        // Load DAG & Mapping
         dag = std::make_shared<DAG>(argv[1], argv[2]);
     } else {
+        // Generate DAG
         std::cout << "\033[H\033[2J\033[3J";
         std::cout << "*** Select Mapping Strategy ***" << "\n";
         std::cout << " 0 : Input Mapping" << "\n";
@@ -97,44 +87,16 @@ int main(int argc, char *argv[]) {
 
         dag = std::make_shared<DAG>(mappingClass, precedenceClass);
     }
-
-    /*
-    std::cout << "\033[H\033[2J\033[3J";
-    std::cout << "*** Range of Cases ***" << "\n";
-    std::cout << " 0 : All Case" << "\n";
-    std::cout << " 1 : Precedence" << "\n";
-    std::cout << "\n" << "Enter Number : ";
-
-    std::cin >> permutationMethod;
-    switch (permutationMethod) {
-        case 0 : {
-            dag->SetRunnableAllCase();
-            break;
-        }
-
-        case 1 : {
-            dag->SetPrecedenceRunnablePriority();
-            break;
-        }
-
-        default : {
-            std::cout << "Wrong Runnable's Priority Method." << std::endl;
-            return 0;
-        }
-    }
-    */
-
     std::unique_ptr<Simulation> simulation = std::make_unique<Simulation>(dag);
-    std::unique_ptr<Communication> communicationClass = std::make_unique<RunnableImplicit>(dag);
-    simulation->SetCommunicationCommand(std::move(communicationClass));
-    
-    /*
+
+    // Set Communication Method
     std::cout << "\033[H\033[2J\033[3J";
     std::cout << "*** Communication Method ***" << "\n";
     std::cout << " 0 : Runnable Implicit" << "\n";
     std::cout << " 1 : Task Implicit" << "\n";
     std::cout << " 2 : LET" << "\n";
     std::cout << "\n" << "Enter Number : ";
+    int simulateMethod = -1;
     std::cin >> simulateMethod;
 
     std::unique_ptr<Communication> communicationClass;
@@ -145,12 +107,12 @@ int main(int argc, char *argv[]) {
         }
 
         case 1 : {
-            communicationClass = std::make_unique<Task Implicit>(dag);
+            communicationClass = std::make_unique<TaskImplicit>(dag);
             break;
         }
 
         case 2 : {
-            communicationClass = std::make_unique<Task Implicit>(dag);
+            communicationClass = std::make_unique<LET>(dag);
             break;
         }
 
@@ -159,10 +121,9 @@ int main(int argc, char *argv[]) {
             return 0;
         }
     }
-    */
 
+    simulation->SetCommunicationCommand(std::move(communicationClass));
     simulation->Simulate();
     
     return 0;
-
 }
