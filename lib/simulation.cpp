@@ -104,7 +104,7 @@ void Simulation::Simulate() {
         //this->SaveDataToCSV(result);
 
         if (limitProcessTime != 0) {
-            if ((static_cast<int>(processTime) / CLOCKS_PER_SEC) > limitProcessTime) {
+            if (static_cast<int>(processTime) > limitProcessTime) {
                 break;
             }
         }
