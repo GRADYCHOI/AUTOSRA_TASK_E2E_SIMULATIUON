@@ -11,7 +11,7 @@ int Sequence::GetNumberOfCase() {
 
         for (auto &taskPair : this->sequenceMatrix_) {
             for (auto &runnablesWithSamePrecedence : taskPair.second) {
-                numberOfCase *= static_cast<int>(runnablesWithSamePrecedence.size());
+                numberOfCase *= static_cast<int>(std::tgamma(static_cast<int>(runnablesWithSamePrecedence.size()) + 1));
             }
         }
 
