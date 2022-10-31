@@ -2,7 +2,7 @@
 
 #define __DETAIL_SIMULATION_HPP__
 
-#include "simulation.h"
+#include "simulation.hpp"
 
 /*
 class DetailSimulation :: public Simulation {
