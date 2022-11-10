@@ -250,9 +250,9 @@ const long long int Simulation::GetNumberOfPath() {
 
 void Simulation::SetVisitRunnable() {
     // std::vector<std::vector<bool>>(this->GetNumberOfPath(), std::vector<bool>(this->numberOfRunnables_, false)).swap(this->visitRunnable_);
-    std::vector<std::vector<bool>>((this->GetNumberOfPath() > 50) ? 50 : this->GetNumberOfPath(), std::vector<bool>(this->numberOfRunnables_, false)).swap(this->visitRunnable_);
+    std::vector<std::vector<bool>>((this->GetNumberOfPath() > 50L) ? 50L : this->GetNumberOfPath(), std::vector<bool>(this->numberOfRunnables_, false)).swap(this->visitRunnable_);
 
-    const long long int numberofPath = (this->GetNumberOfPath() > 50) ? 50 : this->GetNumberOfPath();
+    const long long int numberofPath = (this->GetNumberOfPath() > 50L) ? 50L : this->GetNumberOfPath();
     for (long long int i = 0; i < numberofPath; i++) {
         std::shared_ptr<RUNNABLE> tmp_runnable;
         long long int path_index = i + 1;
