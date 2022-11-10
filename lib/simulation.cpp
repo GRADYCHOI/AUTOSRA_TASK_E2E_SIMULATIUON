@@ -23,11 +23,8 @@ void Simulation::Initialize() {
 
     this->DisplayDag();
 
-    std::cerr << "ckpt init 1\n";
     this->SetNumberOfPathList();
-    std::cerr << "ckpt init 2\n";
     this->SetVisitRunnable();
-    std::cerr << "ckpt init 3\n";
 }
 
 void Simulation::SetDataDirectory() {
@@ -142,12 +139,14 @@ void Simulation::SimulateTest() {
     std::cout << "Select limitation of time (second) : ";
     std::cin >> limitProcessTime;
 
+    std::cerr << "ckpt1\n";
     int numberOfCase = this->GetNumberOfCase();
+    std::cerr << "ckpt2\n";
     for (int caseIndex = numberOfCase; caseIndex > 0; caseIndex--) {
         int simulationIndex = this->GetRandomEmptyIndex();
-        std::cerr << "ckpt1\n";
+        std::cerr << "ckpt3\n";
         this->SetSequence(simulationIndex);
-        std::cerr << "ckpt2\n";
+        std::cerr << "ckpt4\n";
 
         this->GetReactionTimeList();
         std::cout << "case number : " << caseIndex << std::endl;
@@ -244,13 +243,10 @@ const long long int Simulation::GetNumberOfPath() {
 }
 
 void Simulation::SetVisitRunnable() {
-    std::cerr << "ckpt Set Visit 1\n";
     // std::vector<std::vector<bool>>(this->GetNumberOfPath(), std::vector<bool>(this->numberOfRunnables_, false)).swap(this->visitRunnable_);
-    std::vector<std::vector<bool>>(50, std::vector<bool>(this->numberOfRunnables_, false)).swap(this->visitRunnable_);
+    std::vector<std::vector<bool>>((this->GetNumberOfPath() > 50) ? 50 : this->GetNumberOfPath(), std::vector<bool>(this->numberOfRunnables_, false)).swap(this->visitRunnable_);
 
-    std::cerr << "ckpt Set Visit 2\n";
     const long long int numberofPath = this->GetNumberOfPath();
-    std::cerr << "ckpt Set Visit 3\n";
     for (long long int i = 0; i < numberofPath; i++) {
         std::shared_ptr<RUNNABLE> tmp_runnable;
         long long int path_index = i + 1;
