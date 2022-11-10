@@ -148,22 +148,19 @@ void Simulation::SimulateTest() {
     std::cerr << "ckpt4\n";
     int numberOfCase = this->GetNumberOfCase();
     std::cerr << "ckpt2\n";
-    for (int caseIndex = numberOfCase; caseIndex > 0; caseIndex--) {
-        int simulationIndex = this->GetRandomEmptyIndex();
-        std::cerr << "ckpt5\n";
-        this->SetSequence(simulationIndex);
-        std::cerr << "ckpt6\n";
 
-        this->GetReactionTimeList();
-        std::cout << "case number : " << caseIndex << std::endl;
+    this->SetSequence(1);
+    std::cerr << "ckpt6\n";
 
-        simulationCheckpoint = std::clock();
-        double processTime = static_cast<double>(simulationCheckpoint - simulationStart) / CLOCKS_PER_SEC;
+    this->GetReactionTimeList();
+    std::cout << "case number : " << caseIndex << std::endl;
 
-        if (limitProcessTime != 0) {
-            if (static_cast<int>(processTime) > limitProcessTime) {
-                break;
-            }
+    simulationCheckpoint = std::clock();
+    double processTime = static_cast<double>(simulationCheckpoint - simulationStart) / CLOCKS_PER_SEC;
+
+    if (limitProcessTime != 0) {
+        if (static_cast<int>(processTime) > limitProcessTime) {
+            break;
         }
     }
 }
