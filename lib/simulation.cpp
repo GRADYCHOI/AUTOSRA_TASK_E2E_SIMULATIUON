@@ -279,6 +279,8 @@ void Simulation::SetVisitRunnable() {
                         tmp_runnable = runnable;
                     }
                 }
+
+                std::cerr << "ramained path_index : " << path_index << "\n";
             } else {
                 break;
             }
