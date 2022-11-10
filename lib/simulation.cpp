@@ -245,7 +245,8 @@ const long long int Simulation::GetNumberOfPath() {
 
 void Simulation::SetVisitRunnable() {
     std::cerr << "ckpt Set Visit 1\n";
-    std::vector<std::vector<bool>>(this->GetNumberOfPath(), std::vector<bool>(this->numberOfRunnables_, false)).swap(this->visitRunnable_);
+    // std::vector<std::vector<bool>>(this->GetNumberOfPath(), std::vector<bool>(this->numberOfRunnables_, false)).swap(this->visitRunnable_);
+    std::vector<std::vector<bool>>(50, std::vector<bool>(this->numberOfRunnables_, false)).swap(this->visitRunnable_);
 
     std::cerr << "ckpt Set Visit 2\n";
     const long long int numberofPath = this->GetNumberOfPath();
