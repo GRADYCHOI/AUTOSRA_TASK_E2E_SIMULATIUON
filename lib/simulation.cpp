@@ -23,8 +23,11 @@ void Simulation::Initialize() {
 
     this->DisplayDag();
 
+    std::cerr << "ckpt init 1\n";
     this->SetNumberOfPathList();
+    std::cerr << "ckpt init 2\n";
     this->SetVisitRunnable();
+    std::cerr << "ckpt init 3\n";
 }
 
 void Simulation::SetDataDirectory() {
