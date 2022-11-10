@@ -127,8 +127,11 @@ void Simulation::Simulate() {
 
 void Simulation::SimulateTest() {
     // For Reduce malloc delay
+    std::cerr << "ckpt1\n";
     this->CreateProcessExecutions();
+    std::cerr << "ckpt2\n";
     this->CreateVisitedWorstCycleList();
+    std::cerr << "ckpt3\n";
 
     // Random Number Generator
     std::clock_t simulationStart = std::clock();
@@ -139,14 +142,14 @@ void Simulation::SimulateTest() {
     std::cout << "Select limitation of time (second) : ";
     std::cin >> limitProcessTime;
 
-    std::cerr << "ckpt1\n";
+    std::cerr << "ckpt4\n";
     int numberOfCase = this->GetNumberOfCase();
     std::cerr << "ckpt2\n";
     for (int caseIndex = numberOfCase; caseIndex > 0; caseIndex--) {
         int simulationIndex = this->GetRandomEmptyIndex();
-        std::cerr << "ckpt3\n";
+        std::cerr << "ckpt5\n";
         this->SetSequence(simulationIndex);
-        std::cerr << "ckpt4\n";
+        std::cerr << "ckpt6\n";
 
         this->GetReactionTimeList();
         std::cout << "case number : " << caseIndex << std::endl;
