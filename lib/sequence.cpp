@@ -94,3 +94,13 @@ void SequenceByAllcase::SetSequenceMatrix() {
 
     sequenceMatrix.swap(this->sequenceMatrix_);
 }
+
+void OneCase::SetSequence(int caseIndex) {
+    for (auto &task : this->dag_->GetTasksInPriority()) {
+        task->SortRunnablesByPrecedence();
+        task->SetSequence(task->GetRunnables());
+    }
+
+    // Reducing remained case count
+    this->numberOfRemainedCase_ -= 1;
+}

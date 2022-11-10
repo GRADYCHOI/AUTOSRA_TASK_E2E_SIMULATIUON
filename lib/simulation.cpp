@@ -22,6 +22,9 @@ void Simulation::Initialize() {
     this->dag_->SaveMapping(this->dataDirectory_);
 
     this->DisplayDag();
+
+    this->SetNumberOfPathList();
+    this->SetVisitRunnable();
 }
 
 void Simulation::SetDataDirectory() {
@@ -45,10 +48,11 @@ void Simulation::MakeDataDirectory() {
 
 void Simulation::InitializeSequenceCommand() {
     // Initialize sequence
-    std::cout << "\033[H\033[2J\033[3J";
+    // std::cout << "\033[H\033[2J\033[3J";
     std::cout << "*** What do you want sequencing strategy? ***" << "\n";
     std::cout << " 0 : Sequencing by Precedence" << "\n";
     std::cout << " 1 : All Case" << "\n";
+    std::cout << " 2 : One Case" << "\n";
     std::cout << "\n" << "Enter Number : ";
     int sequenceMethod = -1;
     std::cin >> sequenceMethod;
@@ -62,6 +66,11 @@ void Simulation::InitializeSequenceCommand() {
 
         case 1: {
             sequenceClass = std::make_unique<SequenceByAllcase>(this->dag_);
+            break;
+        }
+
+        case 2: {
+            sequenceClass = std::make_unique<OneCase>(this->dag_);
             break;
         }
 
@@ -92,6 +101,9 @@ void Simulation::Simulate() {
         int simulationIndex = this->GetRandomEmptyIndex();
         this->SetSequence(simulationIndex);
 
+        this->GetResult();
+        std::cout << "case number : " << caseIndex << std::endl;
+
         ResultInformation result = this->GetResult();
         result.seedNumber = simulationIndex;
         this->results_.emplace_back(result);
@@ -101,7 +113,7 @@ void Simulation::Simulate() {
 
         this->DisplayResult(result, processTime, limitProcessTime);
 
-        //this->SaveDataToCSV(result);
+        this->SaveDataToCSV(result);
 
         if (limitProcessTime != 0) {
             if (static_cast<int>(processTime) > limitProcessTime) {
@@ -111,6 +123,41 @@ void Simulation::Simulate() {
     }
 
     this->SaveAllDataToCSV();
+}
+
+void Simulation::SimulateTest() {
+    // For Reduce malloc delay
+    this->CreateProcessExecutions();
+    this->CreateVisitedWorstCycleList();
+
+    // Random Number Generator
+    std::clock_t simulationStart = std::clock();
+    std::clock_t simulationCheckpoint;
+
+    // Set Time
+    int limitProcessTime;
+    std::cout << "Select limitation of time (second) : ";
+    std::cin >> limitProcessTime;
+
+    int numberOfCase = this->GetNumberOfCase();
+    for (int caseIndex = numberOfCase; caseIndex > 0; caseIndex--) {
+        int simulationIndex = this->GetRandomEmptyIndex();
+        std::cerr << "ckpt1\n";
+        this->SetSequence(simulationIndex);
+        std::cerr << "ckpt2\n";
+
+        this->GetReactionTimeList();
+        std::cout << "case number : " << caseIndex << std::endl;
+
+        simulationCheckpoint = std::clock();
+        double processTime = static_cast<double>(simulationCheckpoint - simulationStart) / CLOCKS_PER_SEC;
+
+        if (limitProcessTime != 0) {
+            if (static_cast<int>(processTime) > limitProcessTime) {
+                break;
+            }
+        }
+    }
 }
 
 ResultInformation Simulation::GetResult() {
@@ -165,6 +212,160 @@ void Simulation::InitializeProcessExecutions() {
     }
 }
 
+void Simulation::SetNumberOfPathList() {
+    std::vector<long long int> number_of_path(this->numberOfRunnables_, 1ll);
+    
+    for (int i = this->numberOfRunnables_ - 1; i >= 0; --i) {
+		if (this->dag_->GetRunnable(i)->GetStatus() != 1) { // sensor, middle runnable
+            int tmp_number_of_path = 0;
+
+            for (auto &output_runnable : this->dag_->GetRunnable(i)->GetOutputRunnables()) {
+                tmp_number_of_path += number_of_path[output_runnable->GetId()];
+            }
+
+            number_of_path[i] = tmp_number_of_path;
+		}
+	}
+
+    this->numberOfPathList_.swap(number_of_path);
+}
+
+const long long int Simulation::GetNumberOfPath() {
+    long long int number_of_path = 0;
+
+    for (auto &input_runnable : this->dag_->GetInputRunnables()) {
+        number_of_path += this->numberOfPathList_[input_runnable->GetId()];
+    }
+
+    return number_of_path;
+}
+
+void Simulation::SetVisitRunnable() {
+    std::vector<std::vector<bool>>(this->GetNumberOfPath(), std::vector<bool>(this->numberOfRunnables_, false)).swap(this->visitRunnable_);
+
+    const long long int numberofPath = this->GetNumberOfPath();
+    for (long long int i = 0; i < numberofPath; i++) {
+        std::shared_ptr<RUNNABLE> tmp_runnable;
+        long long int path_index = i + 1;
+
+        // Select Sensor Runnable
+        for (auto &input_runnable : this->dag_->GetInputRunnables()) {
+            if (path_index > this->numberOfPathList_[input_runnable->GetId()]) {
+                path_index -= this->numberOfPathList_[input_runnable->GetId()];
+            } else {
+                this->visitRunnable_[i][input_runnable->GetId()] = true;
+                tmp_runnable = input_runnable->GetSharedPtr();
+                break;
+            }
+        }
+
+        // Trace Path
+        while (path_index > 0) {
+            if (tmp_runnable->GetStatus() != 1) {
+                for (auto &runnable : tmp_runnable->GetOutputRunnables()) { 
+                    if (path_index > this->numberOfPathList_[runnable->GetId()]) {
+                        path_index -= this->numberOfPathList_[runnable->GetId()];
+                    } else {
+                        this->visitRunnable_[i][runnable->GetId()] = true;
+                        tmp_runnable = runnable;
+                    }
+                }
+            } else {
+                break;
+            }
+        }
+    }
+}
+
+void Simulation::GetReactionTimeList() {
+    for (auto &visitRunnable : this->visitRunnable_) {
+        int maxCycle = 0;
+
+        for (auto &inputRunnable : this->dag_->GetInputRunnables()) {
+            if (visitRunnable[inputRunnable->GetId()]) {
+                maxCycle = inputRunnable->GetMaxCycle();
+                break;
+            }
+        }
+        
+        std::vector<long long int> result(maxCycle, -1LL);
+
+        std::clock_t simulationStart = std::clock();
+        
+        for (int cycle = 0; cycle < maxCycle; cycle++) {
+            result[cycle] = this->SetReactionTimeNew(visitRunnable, cycle);
+        }
+
+        std::clock_t simulationEnd1 = std::clock();
+
+        std::vector<std::future<long long int>> workers;
+        workers.reserve(maxCycle);
+        for (int cycle = 0; cycle < maxCycle; cycle++) {
+            workers.emplace_back(std::async(std::launch::async, &Simulation::SetReactionTimeNew, this, visitRunnable, cycle));
+        }
+
+        for (int cycle = 0; cycle < maxCycle; cycle++) {
+            result[cycle] = workers[cycle].get();
+        }
+
+        // std::vector<std::thread> workers;
+        // int max_thread = (MAX_THREAD < maxCycle) ? MAX_THREAD : maxCycle;
+        // for (int threadIndex = 0; threadIndex < max_thread; threadIndex++) {
+        //     int startIndex = ((maxCycle / max_thread)  * threadIndex);
+        //     int endIndex = (((maxCycle / max_thread)  * (threadIndex + 1) - 1) > maxCycle) ? maxCycle : ((maxCycle / max_thread)  * (threadIndex + 1) - 1);
+        //     workers.emplace_back(std::thread(&Simulation::SetReactionTimeNew, this, visitRunnable, startIndex, endIndex, result));
+        // }
+
+        // for (int threadIndex = 0; threadIndex < MAX_THREAD; threadIndex++) {
+        //     workers[threadIndex].join();
+        // }
+
+        std::clock_t simulationEnd2 = std::clock();
+
+        std::cout << "Base Tracer : " << static_cast<double>(simulationEnd1 - simulationStart) / CLOCKS_PER_SEC << "ms, Thread Tracer : " << static_cast<double>(simulationEnd2 - simulationEnd1) / CLOCKS_PER_SEC << std::endl;
+
+    }
+}
+
+long long int Simulation::SetReactionTimeNew(std::vector<bool> visitRunnable, int cycle) {
+    long long int startTime = 0;
+    long long int thisTime = 0;
+
+    // Check all runnables
+    for (auto &runnable : this->dag_->GetRunnables()) {
+        // Check runnable is reacted
+        if (visitRunnable[runnable->GetId()]) {
+
+            if (runnable->GetStatus() == 0) {
+                startTime = runnable->executionTimes_[cycle].startTime;
+            }
+
+            // Check runnable is input or middle runnable
+            int tmp_cycle = 0;
+            long long int hyperPeriod = (thisTime / this->hyperPeriod_) ? ((thisTime / this->hyperPeriod_) * this->hyperPeriod_) : 0;
+
+            while (thisTime > runnable->executionTimes_[tmp_cycle].startTime + hyperPeriod) {
+                ++tmp_cycle;
+
+                if (tmp_cycle >= this->hyperPeriod_) {
+                    hyperPeriod += this->hyperPeriod_;
+                    tmp_cycle = 0;
+                }
+            }
+
+            thisTime = runnable->executionTimes_[tmp_cycle].endTime + hyperPeriod;
+
+            if (runnable->GetStatus() == 1) {
+                break;
+            }
+        }
+    }
+
+    return thisTime - startTime;
+}
+
+/* Old-version tracer */
+
 // ################################ Trace Execution Time : Non-Recursion Version #################################
 
 void Simulation::CreateVisitedWorstCycleList() {
@@ -189,7 +390,7 @@ void Simulation::SetProcessExecutionsList() {
     this->InitializeProcessExecutions();
 
     for (auto &inputRunnable : this->dag_->GetInputRunnables()) {
-        this->InitializeVisitedWorstCycleList();
+        // this->InitializeVisitedWorstCycleList();
 
         auto inputRunnableIter = this->processExecutions_.find(inputRunnable->id_);
         if (inputRunnableIter != this->processExecutions_.end()) {
@@ -580,7 +781,7 @@ void Simulation::DisplayDag() {
 }
 
 void Simulation::DisplayResult(ResultInformation& result, double processTime, int limitProcessTime) {
-    //std::cout << "\033[H\033[2J\033[3J";
+    // std::cout << "\033[H\033[2J\033[3J";
     std::cout << "===========================================================================================================================\n";
     std::cout << " - Simulation Case            : " << std::setw(10) << (this->GetNumberOfCase() - this->GetNumberOfRemainedCase()) << " / " << std::setw(10) << this->GetNumberOfCase() << "\n";
     std::cout << " - Simulation Seed            : " << std::setw(23) << result.seedNumber << "\n";

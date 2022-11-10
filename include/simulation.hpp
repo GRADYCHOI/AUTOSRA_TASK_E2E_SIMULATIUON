@@ -105,11 +105,20 @@ protected:
     void SetDataDirectory();
     void MakeDataDirectory();
 
+    std::vector<long long int> numberOfPathList_;
+    std::vector<std::vector<bool>> visitRunnable_;
+    void SetNumberOfPathList();
+    const long long int GetNumberOfPath();
+    void SetVisitRunnable();
+    void GetReactionTimeList();
+    long long int SetReactionTimeNew(std::vector<bool> visitRunnable, int cycle);
+
 public:
     Simulation(std::shared_ptr<DAG> newDag) : dag_(newDag) { Initialize(); }
     ~Simulation() { std::clog << "Delete Simulation Class" << std::endl; }
 
     void Simulate();
+    void SimulateTest();
 
     // Strategy Pattern
 	void SetCommunicationCommand(std::unique_ptr<Communication>&& newCommunication) { communication_ = std::move(newCommunication); }

@@ -2,9 +2,14 @@
 
 #define __COMMUNICATION__HPP__
 
+#include <thread>
+#include <future>
+#include <ctime>
 #include "DAG.hpp"
 #include "simulation_types.hpp"
 
+
+#define MAX_THREAD 20
 
 class Communication {
 protected:

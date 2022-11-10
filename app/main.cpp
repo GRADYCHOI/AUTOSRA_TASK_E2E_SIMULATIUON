@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
     std::unique_ptr<Simulation> simulation = std::make_unique<Simulation>(dag);
 
     // Set Communication Method
-    std::cout << "\033[H\033[2J\033[3J";
+    // std::cout << "\033[H\033[2J\033[3J";
     std::cout << "*** Communication Method ***" << "\n";
     std::cout << " 0 : Runnable Implicit" << "\n";
     std::cout << " 1 : Task Implicit" << "\n";
@@ -123,7 +123,7 @@ int main(int argc, char *argv[]) {
     }
 
     simulation->SetCommunicationCommand(std::move(communicationClass));
-    simulation->Simulate();
+    simulation->SimulateTest();
     
     return 0;
 }
