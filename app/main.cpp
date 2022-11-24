@@ -123,7 +123,7 @@ int main(int argc, char *argv[]) {
     }
 
     simulation->SetCommunicationCommand(std::move(communicationClass));
-    simulation->SimulateTest();
+    simulation->Simulate();
     
     return 0;
 }

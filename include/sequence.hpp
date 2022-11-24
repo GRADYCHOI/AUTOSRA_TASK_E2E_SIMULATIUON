@@ -24,11 +24,11 @@ public:
     Sequence(std::shared_ptr<DAG> newDag) : dag_(newDag) {}
     virtual ~Sequence() { std::clog << "Delete Sequence Class" << std::endl; }
 
-    void SetSequence(int caseIndex);
+    virtual void SetSequence(int caseIndex);
 
     int GetNumberOfCase();
     int GetNumberOfRemainedCase() const { return numberOfRemainedCase_; }
-    int GetRandomEmptyIndex();
+    virtual int GetRandomEmptyIndex();
 };
 
 class SequenceByPrecedence : public Sequence {
@@ -50,11 +50,12 @@ public:
 class OneCase : public Sequence {
 protected:
     void SetSequenceMatrix() {}
-    
+
 public:
-    OneCase(std::shared_ptr<DAG> newDag) : Sequence(newDag) { numberOfCase_ = 1; numberOfRemainedCase_ = 1; }
+    OneCase(std::shared_ptr<DAG> newDag) : Sequence(newDag) { }
 
     void SetSequence(int caseIndex);
+    int GetRandomEmptyIndex() { return numberOfRemainedCase_; }
 };
 
 #endif

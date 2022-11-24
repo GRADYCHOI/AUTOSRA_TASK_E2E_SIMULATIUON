@@ -62,7 +62,7 @@ void worker(int cycle, std::shared_ptr<TASK> task, std::vector<int>::iterator em
 
 // TODO : 최대 thread 개수에 따른 실험 결과 비교 구축
 void RunnableImplicit::SetTimeTable() {
-    std::clock_t simulationStart = std::clock();
+    // std::clock_t simulationStart = std::clock();
 
     // Seperate time-line by core
     for (int coreIndex = 0; coreIndex < this->numberOfCores_; coreIndex++) {
@@ -74,28 +74,32 @@ void RunnableImplicit::SetTimeTable() {
             if (task->GetCore() == coreIndex) {
                 int maxCycle = static_cast<int>(this->dag_->GetHyperPeriod() / task->period_);
 
-                std::clock_t simulationStart = std::clock();
-
-                std::vector<std::future<void>> workers;
-                for (int cycle = 0; cycle < maxCycle; cycle++) {
-                    workers.emplace_back(std::async(std::launch::async, worker, cycle, task, this->emptyTimes_.begin(), this->unit_ ));
-                }
-
-                std::clock_t simulationEnd1 = std::clock();
+                // std::clock_t simulationStart = std::clock();
 
                 for (int cycle = 0; cycle < maxCycle; cycle++) {
-                    workers[cycle].get();
-                    //std::cout << "thread free : " << threadIndex << "\n";
+                    worker(cycle, task, this->emptyTimes_.begin(), this->unit_);
                 }
 
-                std::clock_t simulationEnd2 = std::clock();
+                // std::clock_t simulationEnd1 = std::clock();
 
-                std::cout << "Base Communication : " << static_cast<double>(simulationEnd1 - simulationStart) / CLOCKS_PER_SEC << "ms, Thread Communication : " << static_cast<double>(simulationEnd2 - simulationEnd1) / CLOCKS_PER_SEC << std::endl;
+                // std::vector<std::future<void>> workers;
+                // for (int cycle = 0; cycle < maxCycle; cycle++) {
+                //     workers.emplace_back(std::async(std::launch::async, worker, cycle, task, this->emptyTimes_.begin(), this->unit_ ));
+                // }
+
+                // for (int cycle = 0; cycle < maxCycle; cycle++) {
+                //     workers[cycle].get();
+                //     //std::cout << "thread free : " << threadIndex << "\n";
+                // }
+
+                // std::clock_t simulationEnd2 = std::clock();
+
+                // std::cout << "Base Communication : " << static_cast<double>(simulationEnd1 - simulationStart) / CLOCKS_PER_SEC << "ms, Thread Communication : " << static_cast<double>(simulationEnd2 - simulationEnd1) / CLOCKS_PER_SEC << std::endl;
             }
         }
     }
 
-    std::cout << "communication calc time : " << static_cast<double>(std::clock() - simulationStart) / CLOCKS_PER_SEC << " s." << "\n";
+    // std::cout << "communication calc time : " << static_cast<double>(std::clock() - simulationStart) / CLOCKS_PER_SEC << " s." << "\n";
 }
 
 

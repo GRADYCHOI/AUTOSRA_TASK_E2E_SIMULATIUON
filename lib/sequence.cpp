@@ -96,9 +96,16 @@ void SequenceByAllcase::SetSequenceMatrix() {
 }
 
 void OneCase::SetSequence(int caseIndex) {
+    std::cerr << "[Sequence] ckpt0\n";
     for (auto &task : this->dag_->GetTasksInPriority()) {
+        std::cerr << "[Sequence] ckpt1\n";
         task->SortRunnablesByPrecedence();
-        task->SetSequence(task->GetRunnables());
+        std::cerr << "[Sequence] ckpt2\n";
+        auto sequence = task->GetRunnables();
+        std::cerr << "[Sequence] ckpt3\n";
+
+        task->SetSequence(sequence);
+        std::cerr << "[Sequence] ckpt4\n";
     }
 
     // Reducing remained case count

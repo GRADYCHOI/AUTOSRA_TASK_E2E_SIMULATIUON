@@ -48,7 +48,7 @@ protected:
     std::map<int, std::map<int, std::vector<RequiredTime>>> processExecutions_;
 
 	// Store results of all cases
-    std::vector<ResultInformation> results_;
+    std::map<int, std::map<int, ResultInformation>> results_;
 
     // Showing information
     int maxCycle_;
@@ -92,15 +92,17 @@ protected:
 
     void CreateVisitedWorstCycle();
     void InitializeVisitedWorstCycle();
-	
-	ResultInformation GetResult();
-    long long int GetWorstReactionTime();
-    long long int GetWorstDataAge();
-    void SaveDataToCSV(ResultInformation& result);  // one save in one iteration
-    void SaveAllDataToCSV();  // save after whole iteration
+
+    void SetResult();
+	void SetResultMap();
+    void InitResultMap();
+    void GetWorstReactionTime();
+    void GetWorstDataAge();
+    void SaveDataToCSV(int seedNumber);  // one save in one iteration
+    // void SaveAllDataToCSV();  // save after whole iteration
 
     void DisplayDag();
-    void DisplayResult(ResultInformation& result, double processTime, int limitProcessTime);
+    void DisplayResult(int seedNumber, double processTime, int limitProcessTime);
 
     void SetDataDirectory();
     void MakeDataDirectory();
@@ -112,6 +114,8 @@ protected:
     void SetVisitRunnable();
     void GetReactionTimeList();
     long long int SetReactionTimeNew(std::vector<bool> visitRunnable, int cycle);
+
+    void SetReactionTimeThread(std::shared_ptr<RUNNABLE> inputRunnable, int inputRunnableCycle, std::map<int, std::map<int, std::vector<RequiredTime>>>::iterator inputRunnableIter);
 
 public:
     Simulation(std::shared_ptr<DAG> newDag) : dag_(newDag) { Initialize(); }
