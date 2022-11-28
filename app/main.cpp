@@ -17,7 +17,7 @@
 
 
 int main(int argc, char *argv[]) {
-    std::clog.setstate(std::ios_base::failbit);
+    //std::clog.setstate(std::ios_base::failbit);
     srand(time(NULL));
 
     std::shared_ptr<DAG> dag;
@@ -122,8 +122,11 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    std::clog << "[Debug] main CKPT1" << "\n";
     simulation->SetCommunicationCommand(std::move(communicationClass));
+    std::clog << "[Debug] main CKPT2" << "\n";
     simulation->Simulate();
+    std::clog << "[Debug] main CKPT3" << "\n";
     
     return 0;
 }

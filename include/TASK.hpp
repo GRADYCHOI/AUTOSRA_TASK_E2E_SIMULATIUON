@@ -42,6 +42,8 @@ public:
 
     const int GetNumberOfRunnables() { return static_cast<int>(runnables_.size()); }
 
+    std::vector<std::shared_ptr<RUNNABLE>> CopyRunnables() const { return runnables_; }
+
     const std::vector<std::shared_ptr<RUNNABLE>>& GetRunnables() const { return runnables_; }
     const std::vector<std::shared_ptr<RUNNABLE>>& GetRunnablesInSequence() const { return runnablesInSequence_; }
 	const std::shared_ptr<RUNNABLE>& GetRunnable(const int index) const { return runnables_[index]; }

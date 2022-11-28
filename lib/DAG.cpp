@@ -278,7 +278,7 @@ void DAG::SaveMapping(std::string dataDirectory) {
         taskObject.AddMember("Priority", task->GetPriority(), allocator);
         taskObject.AddMember("Core", task->GetCore(), allocator);
 
-        for (auto &runnable : task->GetRunnables()) {
+        for (auto &runnable : task->GetRunnablesInSequence()) {
             runnableArray.PushBack(runnable->realId_, allocator);
         }
         taskObject.AddMember("Runnables", runnableArray, allocator);
@@ -288,7 +288,7 @@ void DAG::SaveMapping(std::string dataDirectory) {
     dagObject.AddMember("Tasks", taskArray, allocator);
 
     // Save to json
-    std::string fileName = dataDirectory + "/Mapping.json";
+    std::string fileName = dataDirectory + "/Mapping_Sequence.json";
 
     std::ofstream ofs(fileName.c_str());
     rapidjson::OStreamWrapper osw(ofs);

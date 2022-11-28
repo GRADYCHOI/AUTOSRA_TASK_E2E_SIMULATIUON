@@ -95,6 +95,64 @@ void SequenceByAllcase::SetSequenceMatrix() {
     sequenceMatrix.swap(this->sequenceMatrix_);
 }
 
+void OptimizeCase::SetSequence(int caseIndex) {
+    for (auto &task : this->dag_->GetTasksInPriority()) {
+        long long int targetPeriod = task->GetPeriod();
+
+        for (auto& runnable : task->GetRunnables()) {
+            // Receive
+            float receiveInterWeight = 0.0f;
+            std::vector<std::shared_ptr<RUNNABLE>> sameTaskInputRunnables;
+
+            for (auto inputRunnable : runnable->GetInputRunnables()) {
+                if (task->GetId() != inputRunnable->GetTask()->GetId()) {
+                    float tmpInterWeight = static_cast<float>(targetPeriod) / static_cast<float>(inputRunnable->GetTask()->GetPeriod());
+                    if (receiveInterWeight < tmpInterWeight) {
+                        receiveInterWeight = tmpInterWeight;
+                    }
+                } else { 
+                    sameTaskInputRunnables.push_back(inputRunnable);
+                }
+            }
+
+            for (auto inputRunnable : sameTaskInputRunnables) {
+                receiveInterWeight = std::max(receiveInterWeight, inputRunnable->GetReceiveInterWeight());
+            }
+
+            runnable->SetReceiveInterWeight(receiveInterWeight);
+
+            // Send
+            float sendInterWeight = 0.0f;
+            std::vector<std::shared_ptr<RUNNABLE>> sameTaskOutputRunnables;
+
+            for (auto outputRunnable : runnable->GetOutputRunnables()) {
+                if (task->GetId() != outputRunnable->GetTask()->GetId()) {
+                    float tmpInterWeight = static_cast<float>(outputRunnable->GetTask()->GetPeriod()) / static_cast<float>(targetPeriod);
+                    if (sendInterWeight < tmpInterWeight) {
+                        sendInterWeight = tmpInterWeight;
+                    }
+                } else {
+                    sameTaskOutputRunnables.push_back(outputRunnable);
+                }
+            }
+
+            for (auto outputRunnable : sameTaskOutputRunnables) {
+                sendInterWeight = std::max(sendInterWeight, outputRunnable->GetSendInterWeight());
+            }
+
+            runnable->SetSendInterWeight(sendInterWeight);
+        }
+
+        std::vector<std::shared_ptr<RUNNABLE>> sequence = task->CopyRunnables();
+        std::sort(sequence.begin(), sequence.end(), [](std::shared_ptr<RUNNABLE> a, std::shared_ptr<RUNNABLE> b){ return (a->GetInterWeight() != b->GetInterWeight()) ? a->GetInterWeight() < b->GetInterWeight() : a->GetPrecedence() < b->GetPrecedence(); });
+
+        task->SetSequence(sequence);
+    }
+
+    // Reducing remained case count
+    this->numberOfRemainedCase_ -= 1;
+}
+
 void OneCase::SetSequence(int caseIndex) {
     std::cerr << "[Sequence] ckpt0\n";
     for (auto &task : this->dag_->GetTasksInPriority()) {

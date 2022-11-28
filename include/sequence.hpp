@@ -47,6 +47,17 @@ public:
     SequenceByAllcase(std::shared_ptr<DAG> newDag) : Sequence(newDag) { SetSequenceMatrix(); InitializeVisitedPermutationNumber(); }
 };
 
+class OptimizeCase : public Sequence {
+protected:
+    void SetSequenceMatrix() {}
+
+public:
+    OptimizeCase(std::shared_ptr<DAG> newDag) : Sequence(newDag) {}
+
+    void SetSequence(int caseIndex);
+    int GetRandomEmptyIndex() { return numberOfRemainedCase_; }
+};
+
 class OneCase : public Sequence {
 protected:
     void SetSequenceMatrix() {}

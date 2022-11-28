@@ -44,6 +44,9 @@ protected:
     std::vector<VisitedInformation> visitedWorstCycleList_;
     std::vector<int> visitedWorstCycle_;
 
+    // path
+    std::vector<std::vector<bool>> pathes_;
+
     // processExecutions
     std::map<int, std::map<int, std::vector<RequiredTime>>> processExecutions_;
 
@@ -92,6 +95,9 @@ protected:
 
     void CreateVisitedWorstCycle();
     void InitializeVisitedWorstCycle();
+
+    void SetPathes();
+    void TracePath(const std::shared_ptr<RUNNABLE>& runnable, std::vector<bool> tmp_path);
 
     void SetResult();
 	void SetResultMap();

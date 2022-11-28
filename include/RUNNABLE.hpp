@@ -15,6 +15,8 @@ private:
     int status_ = 0; // 0 = input runnable, 1 = output runnable, 2 = middle runnable
 	int precedence_ = -1;
     int maxCycle_ = -1;
+    float receiveInterWeight_ = 0.0f;
+    float sendInterWeight_ = 0.0f;
 
     // relative Runnables
     std::vector<std::weak_ptr<RUNNABLE>> inputRunnables_;
@@ -49,6 +51,9 @@ public:
     const int GetStatus() const { return status_; }
     const int GetPrecedence() const { return precedence_; }
     const int GetMaxCycle() const { return maxCycle_; }
+    const float GetReceiveInterWeight() const { return receiveInterWeight_; }
+    const float GetSendInterWeight() const { return sendInterWeight_; }
+    const float GetInterWeight() const { return sendInterWeight_ - receiveInterWeight_; }
 
     const std::shared_ptr<TASK> GetTask() { return task_.lock(); }
 	
@@ -63,6 +68,8 @@ public:
 	
 	void SetPrecedence(const int precedence) { precedence_ = precedence; }
     void SetMaxCycle(const int maxCycle) { maxCycle_ = maxCycle; }
+    void SetReceiveInterWeight(const float interWeight) { receiveInterWeight_ = interWeight; }
+    void SetSendInterWeight(const float interWeight) { sendInterWeight_ = interWeight; }
 
     void SetTask(const std::weak_ptr<TASK> task) { task_ = task; }
 
