@@ -279,7 +279,7 @@ void DAG::SaveMapping(std::string dataDirectory) {
         taskObject.AddMember("Core", task->GetCore(), allocator);
 
         for (auto &runnable : task->GetRunnablesInSequence()) {
-            runnableArray.PushBack(runnable->realId_, allocator);
+            runnableArray.PushBack(runnable->GetId(), allocator);
         }
         taskObject.AddMember("Runnables", runnableArray, allocator);
 

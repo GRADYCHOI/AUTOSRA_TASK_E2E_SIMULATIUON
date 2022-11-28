@@ -17,7 +17,7 @@
 
 
 int main(int argc, char *argv[]) {
-    //std::clog.setstate(std::ios_base::failbit);
+    std::clog.setstate(std::ios_base::failbit);
     srand(time(NULL));
 
     std::shared_ptr<DAG> dag;

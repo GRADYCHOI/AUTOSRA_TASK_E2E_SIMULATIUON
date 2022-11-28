@@ -21,8 +21,6 @@ void Simulation::Initialize() {
     // Pre-save Dag & Mapping   
     this->SetDataDirectory();
     this->MakeDataDirectory();
-    this->dag_->SaveDag(this->dataDirectory_);
-    this->dag_->SaveMapping(this->dataDirectory_);
 
     this->DisplayDag();
 
@@ -196,7 +194,8 @@ void Simulation::Simulate() {
             currentActuatorRunnableCycle = worstCycle[actuatorRunnable->GetId()];
 
             if (worstReactionTime < ((this->dag_->GetHyperPeriod() * hyperPeriodCount) + actuatorRunnable->executionTimes_[currentActuatorRunnableCycle].endTime - sensorRunnable->executionTimes_[currentSensorRunnableCycle].startTime)) worstReactionTime = (this->dag_->GetHyperPeriod() * hyperPeriodCount) + actuatorRunnable->executionTimes_[currentActuatorRunnableCycle].endTime - sensorRunnable->executionTimes_[currentSensorRunnableCycle].startTime;
-            if (worstDataAge < ((this->dag_->GetHyperPeriod() * hyperPeriodCount) + actuatorRunnable->executionTimes_[currentActuatorRunnableCycle - 1].endTime - sensorRunnable->executionTimes_[preSensorRunnableCycle].startTime)) worstDataAge = (this->dag_->GetHyperPeriod() * hyperPeriodCount) + actuatorRunnable->executionTimes_[currentActuatorRunnableCycle - 1].endTime - sensorRunnable->executionTimes_[preSensorRunnableCycle].startTime;
+            if (worstDataAge < ((this->dag_->GetHyperPeriod() * hyperPeriodCount) + actuatorRunnable->executionTimes_[(currentActuatorRunnableCycle - 1 < 0) ? actuatorRunnable->GetMaxCycle() : currentActuatorRunnableCycle - 1].endTime - sensorRunnable->executionTimes_[preSensorRunnableCycle].startTime)) worstDataAge = (this->dag_->GetHyperPeriod() * hyperPeriodCount) + actuatorRunnable->executionTimes_[(currentActuatorRunnableCycle - 1 < 0) ? actuatorRunnable->GetMaxCycle() : currentActuatorRunnableCycle - 1].endTime - sensorRunnable->executionTimes_[preSensorRunnableCycle].startTime;
+            if (worstDataAge < worstReactionTime) worstDataAge = worstReactionTime;
 
             preSensorRunnableCycle = currentSensorRunnableCycle;
         }
@@ -219,6 +218,9 @@ void Simulation::Simulate() {
     }
 
     resultFile.close();
+
+    this->dag_->SaveDag(this->dataDirectory_);
+    this->dag_->SaveMapping(this->dataDirectory_);
 }
 
 // void Simulation::SetResult() {
@@ -976,7 +978,7 @@ rapidjson::Value Simulation::SaveDataAge(rapidjson::Document::AllocatorType& all
 // ################################ Display Data on Console #################################
 
 void Simulation::DisplayDag() {
-    std::cout << "\033[H\033[2J\033[3J";
+    // std::cout << "\033[H\033[2J\033[3J";
     std::cout << "===========================================================================================================================\n";
     std::cout << " - Max Cycle                  : " << this->maxCycle_ << "\n";
     std::cout << " - Hyper Period               : " << this->hyperPeriod_ << "\n";
