@@ -144,7 +144,7 @@ void OptimizeCase::SetSequence(int caseIndex) {
         }
 
         std::vector<std::shared_ptr<RUNNABLE>> sequence = task->CopyRunnables();
-        std::sort(sequence.begin(), sequence.end(), [](std::shared_ptr<RUNNABLE> a, std::shared_ptr<RUNNABLE> b){ return (a->GetInterWeight() != b->GetInterWeight()) ? a->GetInterWeight() < b->GetInterWeight() : a->GetPrecedence() < b->GetPrecedence(); });
+        std::sort(sequence.begin(), sequence.end(), [](std::shared_ptr<RUNNABLE> a, std::shared_ptr<RUNNABLE> b){ return (a->GetInterWeight() != b->GetInterWeight()) ? a->GetInterWeight() > b->GetInterWeight() : a->GetPrecedence() < b->GetPrecedence(); });
 
         task->SetSequence(sequence);
     }
