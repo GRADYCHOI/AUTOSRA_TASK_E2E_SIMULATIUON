@@ -69,4 +69,15 @@ public:
     int GetRandomEmptyIndex() { return numberOfRemainedCase_; }
 };
 
+class CustomCase : public Sequence {
+protected:
+    void SetSequenceMatrix() {}
+
+public:
+    CustomCase(std::shared_ptr<DAG> newDag) : Sequence(newDag) { }
+
+    void SetSequence(int caseIndex);
+    int GetRandomEmptyIndex() { return numberOfRemainedCase_; }
+};
+
 #endif

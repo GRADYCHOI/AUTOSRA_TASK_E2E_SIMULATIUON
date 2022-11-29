@@ -106,9 +106,11 @@ void OptimizeCase::SetSequence(int caseIndex) {
 
             for (auto inputRunnable : runnable->GetInputRunnables()) {
                 if (task->GetId() != inputRunnable->GetTask()->GetId()) {
-                    float tmpInterWeight = static_cast<float>(targetPeriod) / static_cast<float>(inputRunnable->GetTask()->GetPeriod());
-                    if (receiveInterWeight < tmpInterWeight) {
-                        receiveInterWeight = tmpInterWeight;
+                    if (targetPeriod < inputRunnable->GetTask()->GetPeriod()) {
+                        float tmpInterWeight = static_cast<float>(targetPeriod) / static_cast<float>(inputRunnable->GetTask()->GetPeriod());
+                        if (receiveInterWeight < tmpInterWeight) {
+                            receiveInterWeight = tmpInterWeight;
+                        }
                     }
                 } else { 
                     sameTaskInputRunnables.push_back(inputRunnable);
@@ -127,9 +129,11 @@ void OptimizeCase::SetSequence(int caseIndex) {
 
             for (auto outputRunnable : runnable->GetOutputRunnables()) {
                 if (task->GetId() != outputRunnable->GetTask()->GetId()) {
-                    float tmpInterWeight = static_cast<float>(outputRunnable->GetTask()->GetPeriod()) / static_cast<float>(targetPeriod);
-                    if (sendInterWeight < tmpInterWeight) {
-                        sendInterWeight = tmpInterWeight;
+                    if (targetPeriod < outputRunnable->GetTask()->GetPeriod()) {
+                        float tmpInterWeight = static_cast<float>(outputRunnable->GetTask()->GetPeriod()) / static_cast<float>(targetPeriod);
+                        if (sendInterWeight < tmpInterWeight) {
+                            sendInterWeight = tmpInterWeight;
+                        }
                     }
                 } else {
                     sameTaskOutputRunnables.push_back(outputRunnable);
@@ -164,6 +168,16 @@ void OneCase::SetSequence(int caseIndex) {
 
         task->SetSequence(sequence);
         std::cerr << "[Sequence] ckpt4\n";
+    }
+
+    // Reducing remained case count
+    this->numberOfRemainedCase_ -= 1;
+}
+
+void CustomCase::SetSequence(int caseIndex) {
+    for (auto &task : this->dag_->GetTasksInPriority()) {
+        auto sequence = task->GetRunnables();
+        task->SetSequence(sequence);
     }
 
     // Reducing remained case count
