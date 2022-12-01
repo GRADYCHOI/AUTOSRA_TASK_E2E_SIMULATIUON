@@ -182,6 +182,7 @@ void Simulation::Simulate() {
                     if (currentRunnable->executionTimes_[currentRunnable->GetMaxCycle() - 1].startTime < currentTime) {
                         currentTime = currentRunnable->executionTimes_[0].endTime;
                         hyperPeriodCount += 1ll;
+                        worstCycle[i] = 0;
                     } else {
                         worstCycle[i] = 0;
                         while (currentRunnable->executionTimes_[worstCycle[i]].startTime < currentTime) worstCycle[i]++;
