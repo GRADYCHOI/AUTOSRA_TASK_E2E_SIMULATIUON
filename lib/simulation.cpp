@@ -182,6 +182,7 @@ void Simulation::Simulate() {
                     if (currentRunnable->executionTimes_[currentRunnable->GetMaxCycle() - 1].startTime < currentTime) {
                         currentTime = currentRunnable->executionTimes_[0].endTime;
                         hyperPeriodCount += 1ll;
+                        worstCycle[i] = 0;
                     } else {
                         worstCycle[i] = 0;
                         while (currentRunnable->executionTimes_[worstCycle[i]].startTime < currentTime) worstCycle[i]++;
@@ -189,12 +190,16 @@ void Simulation::Simulate() {
                     }
                 }
             }
-            std::cout << "[Debug] end\n";
+            std::cout << "[Debug] end : " << currentTime + hyperPeriodCount * this->dag_->GetHyperPeriod() << "\n";
 
             currentActuatorRunnableCycle = worstCycle[actuatorRunnable->GetId()];
+            std::cout << "[Debug] tmpReactionTime : " << (this->dag_->GetHyperPeriod() * hyperPeriodCount) + actuatorRunnable->executionTimes_[currentActuatorRunnableCycle].endTime - sensorRunnable->executionTimes_[currentSensorRunnableCycle].startTime << "\n";
+            std::cout << "[Debug] tmpHyperPeriod : " << this->dag_->GetHyperPeriod() * hyperPeriodCount << "\n";
+            std::cout << "[Debug] tmpEndTime : " << actuatorRunnable->executionTimes_[currentActuatorRunnableCycle].endTime << "\n";
+            std::cout << "[Debug] tmpStartTime : " << sensorRunnable->executionTimes_[currentSensorRunnableCycle].startTime << "\n";
 
             if (worstReactionTime < ((this->dag_->GetHyperPeriod() * hyperPeriodCount) + actuatorRunnable->executionTimes_[currentActuatorRunnableCycle].endTime - sensorRunnable->executionTimes_[currentSensorRunnableCycle].startTime)) worstReactionTime = (this->dag_->GetHyperPeriod() * hyperPeriodCount) + actuatorRunnable->executionTimes_[currentActuatorRunnableCycle].endTime - sensorRunnable->executionTimes_[currentSensorRunnableCycle].startTime;
-            if (worstDataAge < ((this->dag_->GetHyperPeriod() * hyperPeriodCount) + actuatorRunnable->executionTimes_[(currentActuatorRunnableCycle - 1 < 0) ? actuatorRunnable->GetMaxCycle() : currentActuatorRunnableCycle - 1].endTime - sensorRunnable->executionTimes_[preSensorRunnableCycle].startTime)) worstDataAge = (this->dag_->GetHyperPeriod() * hyperPeriodCount) + actuatorRunnable->executionTimes_[(currentActuatorRunnableCycle - 1 < 0) ? actuatorRunnable->GetMaxCycle() : currentActuatorRunnableCycle - 1].endTime - sensorRunnable->executionTimes_[preSensorRunnableCycle].startTime;
+            if (worstDataAge < ((this->dag_->GetHyperPeriod() * hyperPeriodCount) + actuatorRunnable->executionTimes_[(currentActuatorRunnableCycle - 1 < 0) ? actuatorRunnable->GetMaxCycle() - 1 : currentActuatorRunnableCycle - 1].endTime - sensorRunnable->executionTimes_[preSensorRunnableCycle].startTime)) worstDataAge = (this->dag_->GetHyperPeriod() * hyperPeriodCount) + actuatorRunnable->executionTimes_[(currentActuatorRunnableCycle - 1 < 0) ? actuatorRunnable->GetMaxCycle() : currentActuatorRunnableCycle - 1].endTime - sensorRunnable->executionTimes_[preSensorRunnableCycle].startTime;
             if (worstDataAge < worstReactionTime) worstDataAge = worstReactionTime;
 
             preSensorRunnableCycle = currentSensorRunnableCycle;
@@ -203,8 +208,8 @@ void Simulation::Simulate() {
         resultFile << static_cast<double>(worstReactionTime / 1000ll) + (static_cast<double>(worstReactionTime % 1000ll) / 1000.0) << ",";
         resultFile << static_cast<double>(worstDataAge / 1000ll) + (static_cast<double>(worstDataAge % 1000ll) / 1000.0) << ",";
 
-        std::cout << "[Debug] worstReactionTime" << worstReactionTime << "\n";
-        std::cout << "[Debug] worstDataAge" << worstDataAge << "\n";
+        std::cout << "[Debug] worstReactionTime : " << worstReactionTime << "\n";
+        std::cout << "[Debug] worstDataAge : " << worstDataAge << "\n";
 
         for (int i = 0; i < this->numberOfRunnables_; i++) {
             if (path[i]) {
