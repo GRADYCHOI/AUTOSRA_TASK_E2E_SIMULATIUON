@@ -106,7 +106,7 @@ void OptimizeCase::SetSequence(int caseIndex) {
 
             for (auto inputRunnable : runnable->GetInputRunnables()) {
                 if (task->GetId() != inputRunnable->GetTask()->GetId()) {
-                    if (targetPeriod < inputRunnable->GetTask()->GetPeriod()) {
+                    if (targetPeriod > inputRunnable->GetTask()->GetPeriod()) {
                         float tmpInterWeight = static_cast<float>(targetPeriod) / static_cast<float>(inputRunnable->GetTask()->GetPeriod());
                         if (receiveInterWeight < tmpInterWeight) {
                             receiveInterWeight = tmpInterWeight;
@@ -129,7 +129,7 @@ void OptimizeCase::SetSequence(int caseIndex) {
 
             for (auto outputRunnable : runnable->GetOutputRunnables()) {
                 if (task->GetId() != outputRunnable->GetTask()->GetId()) {
-                    if (targetPeriod > outputRunnable->GetTask()->GetPeriod()) {
+                    if (targetPeriod < outputRunnable->GetTask()->GetPeriod()) {
                         float tmpInterWeight = static_cast<float>(outputRunnable->GetTask()->GetPeriod()) / static_cast<float>(targetPeriod);
                         if (sendInterWeight < tmpInterWeight) {
                             sendInterWeight = tmpInterWeight;
