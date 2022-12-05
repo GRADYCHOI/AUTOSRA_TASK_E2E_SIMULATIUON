@@ -185,13 +185,3 @@ void OneCase::SetSequence(int caseIndex) {
     // Reducing remained case count
     this->numberOfRemainedCase_ -= 1;
 }
-
-void CustomCase::SetSequence(int caseIndex) {
-    for (auto &task : this->dag_->GetTasksInPriority()) {
-        auto sequence = task->GetRunnables();
-        task->SetSequence(sequence);
-    }
-
-    // Reducing remained case count
-    this->numberOfRemainedCase_ -= 1;
-}
