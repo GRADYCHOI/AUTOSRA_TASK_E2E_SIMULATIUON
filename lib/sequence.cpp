@@ -129,13 +129,25 @@ void OptimizeCase::SetSequence(int caseIndex) {
 
             for (auto outputRunnable : runnable->GetOutputRunnables()) {
                 if (task->GetId() != outputRunnable->GetTask()->GetId()) {
-                    if (targetPeriod > outputRunnable->GetTask()->GetPeriod()) {
+                    if (targetPeriod < outputRunnable->GetTask()->GetPeriod()) {
                         float tmpInterWeight = static_cast<float>(outputRunnable->GetTask()->GetPeriod()) / static_cast<float>(targetPeriod);
                         if (sendInterWeight < tmpInterWeight) {
                             sendInterWeight = tmpInterWeight;
                         }
                     }
-                } else {
+                }
+            }
+
+            runnable->SetSendInterWeight(sendInterWeight);
+        }
+
+        for (auto& runnable : task->GetRunnables()) {
+            // Send
+            float sendInterWeight = 0.0f;
+            std::vector<std::shared_ptr<RUNNABLE>> sameTaskOutputRunnables;
+
+            for (auto outputRunnable : runnable->GetOutputRunnables()) {
+                if (task->GetId() == outputRunnable->GetTask()->GetId()) {
                     sameTaskOutputRunnables.push_back(outputRunnable);
                 }
             }
@@ -168,6 +180,16 @@ void OneCase::SetSequence(int caseIndex) {
 
         task->SetSequence(sequence);
         std::cerr << "[Sequence] ckpt4\n";
+    }
+
+    // Reducing remained case count
+    this->numberOfRemainedCase_ -= 1;
+}
+
+void CustomCase::SetSequence(int caseIndex) {
+    for (auto &task : this->dag_->GetTasksInPriority()) {
+        auto sequence = task->GetRunnables();
+        task->SetSequence(sequence);
     }
 
     // Reducing remained case count
