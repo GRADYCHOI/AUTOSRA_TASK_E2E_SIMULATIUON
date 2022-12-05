@@ -135,7 +135,19 @@ void OptimizeCase::SetSequence(int caseIndex) {
                             sendInterWeight = tmpInterWeight;
                         }
                     }
-                } else {
+                }
+            }
+
+            runnable->SetSendInterWeight(sendInterWeight);
+        }
+
+        for (auto& runnable : task->GetRunnables()) {
+            // Send
+            float sendInterWeight = 0.0f;
+            std::vector<std::shared_ptr<RUNNABLE>> sameTaskOutputRunnables;
+
+            for (auto outputRunnable : runnable->GetOutputRunnables()) {
+                if (task->GetId() == outputRunnable->GetTask()->GetId()) {
                     sameTaskOutputRunnables.push_back(outputRunnable);
                 }
             }
