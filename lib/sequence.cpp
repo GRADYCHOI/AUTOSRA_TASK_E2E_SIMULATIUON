@@ -102,7 +102,6 @@ void OptimizeCase::SetSequence(int caseIndex) {
         for (auto& runnable : task->GetRunnables()) {
             // Receive
             float receiveInterWeight = 0.0f;
-            std::vector<std::shared_ptr<RUNNABLE>> sameTaskInputRunnables;
 
             for (auto inputRunnable : runnable->GetInputRunnables()) {
                 if (task->GetId() != inputRunnable->GetTask()->GetId()) {
@@ -112,20 +111,13 @@ void OptimizeCase::SetSequence(int caseIndex) {
                             receiveInterWeight = tmpInterWeight;
                         }
                     }
-                } else { 
-                    sameTaskInputRunnables.push_back(inputRunnable);
                 }
-            }
-
-            for (auto inputRunnable : sameTaskInputRunnables) {
-                receiveInterWeight = std::max(receiveInterWeight, inputRunnable->GetReceiveInterWeight());
             }
 
             runnable->SetReceiveInterWeight(receiveInterWeight);
 
             // Send
             float sendInterWeight = 0.0f;
-            std::vector<std::shared_ptr<RUNNABLE>> sameTaskOutputRunnables;
 
             for (auto outputRunnable : runnable->GetOutputRunnables()) {
                 if (task->GetId() != outputRunnable->GetTask()->GetId()) {
@@ -142,8 +134,24 @@ void OptimizeCase::SetSequence(int caseIndex) {
         }
 
         for (auto& runnable : task->GetRunnables()) {
-            // Send
+            float receiveInterWeight = 0.0f;
             float sendInterWeight = 0.0f;
+
+            // Receive
+            std::vector<std::shared_ptr<RUNNABLE>> sameTaskInputRunnables;
+
+            for (auto inputRunnable : runnable->GetInputRunnables()) {
+                if (task->GetId() == inputRunnable->GetTask()->GetId()) {
+                    sameTaskInputRunnables.push_back(inputRunnable);
+                }
+            }
+
+            for (auto inputRunnable : sameTaskInputRunnables) {
+                receiveInterWeight = std::max(receiveInterWeight, inputRunnable->GetReceiveInterWeight());
+                sendInterWeight = std::max(sendInterWeight, inputRunnable->GetSendInterWeight());
+            }
+
+            // Send
             std::vector<std::shared_ptr<RUNNABLE>> sameTaskOutputRunnables;
 
             for (auto outputRunnable : runnable->GetOutputRunnables()) {
@@ -153,9 +161,11 @@ void OptimizeCase::SetSequence(int caseIndex) {
             }
 
             for (auto outputRunnable : sameTaskOutputRunnables) {
+                receiveInterWeight = std::max(receiveInterWeight, outputRunnable->GetReceiveInterWeight());
                 sendInterWeight = std::max(sendInterWeight, outputRunnable->GetSendInterWeight());
             }
 
+            runnable->SetReceiveInterWeight(receiveInterWeight);
             runnable->SetSendInterWeight(sendInterWeight);
         }
 
