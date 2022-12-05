@@ -79,22 +79,22 @@ protected:
 	// Strategy Pattern
 	void SetRunnableCommunicationTimes() { communication_->SetTimeTable(); }
 
-    void CreateVisitedWorstCycleList();
-    void InitializeVisitedWorstCycleList();
-    void SetProcessExecutionsList();
-    void TraceTimeList(std::shared_ptr<RUNNABLE> inputRunnable, int inputRunnableCycle);
-    void SetExecutionList(auto& inputRunnableIter, int inputRunnableCycle);
+    // void CreateVisitedWorstCycleList();
+    // void InitializeVisitedWorstCycleList();
+    // void SetProcessExecutionsList();
+    // void TraceTimeList(std::shared_ptr<RUNNABLE> inputRunnable, int inputRunnableCycle);
+    // void SetExecutionList(auto& inputRunnableIter, int inputRunnableCycle);
 
-    void SetProcessExecutions();
-    void TraceTime(auto& inputRunnableIter, int inputCycle, const std::shared_ptr<RUNNABLE>& thisRunnable, int thisCycle);
+    // void SetProcessExecutions();
+    // void TraceTime(auto& inputRunnableIter, int inputCycle, const std::shared_ptr<RUNNABLE>& thisRunnable, int thisCycle);
 
-    void InitializeProcessExecutions();
+    // void InitializeProcessExecutions();
 
-    void CreateProcessExecutions();
-    void TraceProcessExecutions(auto& inputRunnablePair, const std::shared_ptr<RUNNABLE>& thisRunnable, std::vector<bool>& visitiedRunnable);
+    // void CreateProcessExecutions();
+    // void TraceProcessExecutions(auto& inputRunnablePair, const std::shared_ptr<RUNNABLE>& thisRunnable, std::vector<bool>& visitiedRunnable);
 
-    void CreateVisitedWorstCycle();
-    void InitializeVisitedWorstCycle();
+    // void CreateVisitedWorstCycle();
+    // void InitializeVisitedWorstCycle();
 
     void SetPathes();
     void TracePath(const std::shared_ptr<RUNNABLE>& runnable, std::vector<bool> tmp_path);
