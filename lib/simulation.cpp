@@ -4,7 +4,7 @@
 void Simulation::Initialize() {
     // this->InitializeSequenceCommand();
     std::unique_ptr<Sequence> sequenceClass;
-    sequenceClass = std::make_unique<CustomCase>(this->dag_);
+    sequenceClass = std::make_unique<RandomCase>(this->dag_);
     this->SetSequenceCommand(sequenceClass);
 
     // Initialize Dag's Informations

@@ -195,3 +195,17 @@ void CustomCase::SetSequence(int caseIndex) {
     // Reducing remained case count
     this->numberOfRemainedCase_ -= 1;
 }
+
+void RandomCase::SetSequence(int caseIndex) {
+    std::random_device rd;
+    std::mt19937 g(rd());
+
+    for (auto &task : this->dag_->GetTasksInPriority()) {
+        auto sequence = task->GetRunnables();
+        std::shuffle(sequence.begin(), sequence.end(), g);
+        task->SetSequence(sequence);
+    }
+
+    // Reducing remained case count
+    this->numberOfRemainedCase_ -= 1;
+}

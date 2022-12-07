@@ -4,6 +4,7 @@
 
 #include <random>
 #include <math.h>
+#include <algorithm>
 #include "DAG.hpp"
 
 
@@ -75,6 +76,17 @@ protected:
 
 public:
     CustomCase(std::shared_ptr<DAG> newDag) : Sequence(newDag) { }
+
+    void SetSequence(int caseIndex);
+    int GetRandomEmptyIndex() { return numberOfRemainedCase_; }
+};
+
+class RandomCase : public Sequence {
+protected:
+    void SetSequenceMatrix() {}
+
+public:
+    RandomCase(std::shared_ptr<DAG> newDag) : Sequence(newDag) { }
 
     void SetSequence(int caseIndex);
     int GetRandomEmptyIndex() { return numberOfRemainedCase_; }
